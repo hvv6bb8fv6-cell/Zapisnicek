@@ -75,17 +75,17 @@ nav .t.on svg{color:var(--ac);transform:translateY(-2px) scale(1.12)}
 nav .t em{position:absolute;top:0;right:22%;background:var(--ac2);color:#fff;font:700 10px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-style:normal;min-width:16px;height:16px;border-radius:8px;display:grid;place-items:center;padding:0 4px}
 #fab{width:64px;height:64px;border-radius:50%;border:0;color:#fff;background:linear-gradient(135deg,var(--ac),var(--ac2));box-shadow:0 10px 28px rgba(139,123,255,.55);display:grid;place-items:center;margin:-34px auto 0;cursor:pointer;transition:transform .25s;border:4px solid var(--bg)}
 #fab:active{transform:scale(.88) rotate(90deg)}
-#ov,#gov{position:absolute;inset:0;background:rgba(5,5,20,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:20;opacity:0;pointer-events:none;transition:.3s;display:flex;align-items:flex-end;justify-content:center}
-#ov.open,#gov.open{opacity:1;pointer-events:auto}
-#sheet,#gsheet{width:min(520px,100%);padding:18px 18px calc(env(safe-area-inset-bottom,0px) + 18px);background:var(--nav);border:1px solid var(--bd);border-radius:28px 28px 0 0;transform:translateY(100%);transition:transform .4s cubic-bezier(.2,.9,.3,1.1)}
-#ov.open #sheet,#gov.open #gsheet{transform:none}
+#ov,#gov,#rov{position:absolute;inset:0;background:rgba(5,5,20,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:20;opacity:0;pointer-events:none;transition:.3s;display:flex;align-items:flex-end;justify-content:center}
+#ov.open,#gov.open,#rov.open{opacity:1;pointer-events:auto}
+#sheet,#gsheet,#rsheet{width:min(520px,100%);padding:18px 18px calc(env(safe-area-inset-bottom,0px) + 18px);background:var(--nav);border:1px solid var(--bd);border-radius:28px 28px 0 0;transform:translateY(100%);transition:transform .4s cubic-bezier(.2,.9,.3,1.1)}
+#ov.open #sheet,#gov.open #gsheet,#rov.open #rsheet{transform:none}
 #sheet textarea{width:100%;height:110px;resize:none;background:var(--glass);border:1px solid var(--bd);border-radius:16px;color:var(--txt);font:17px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:14px;outline:none}
 #sheet textarea:focus{border-color:var(--ac);box-shadow:0 0 0 4px rgba(139,123,255,.2)}
 .seg{display:flex;gap:6px;margin:12px 0}
 .seg button{flex:1;border:1px solid var(--bd);background:var(--glass);color:var(--mut);font:600 13px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:9px 4px;border-radius:12px;cursor:pointer;transition:.2s}
 .seg button.on{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-color:transparent}
-#save,#gsave{width:100%;border:0;padding:14px;border-radius:16px;font:700 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#fff;background:linear-gradient(135deg,var(--ac),var(--ac2));cursor:pointer;display:flex;gap:8px;justify-content:center;align-items:center}
-#save:active,#gsave:active{transform:scale(.97)}
+#save,#gsave,#rsave{width:100%;border:0;padding:14px;border-radius:16px;font:700 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#fff;background:linear-gradient(135deg,var(--ac),var(--ac2));cursor:pointer;display:flex;gap:8px;justify-content:center;align-items:center}
+#save:active,#gsave:active,#rsave:active{transform:scale(.97)}
 #toast{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 104px);transform:translate(-50%,20px);background:var(--nav);border:1px solid var(--bd);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:30;display:flex;gap:12px;align-items:center;white-space:nowrap}
 #toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 #toast button{background:none;border:0;color:var(--ac);font:700 14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;cursor:pointer;padding:0}
@@ -125,6 +125,12 @@ h3 span{color:#ff8fa0;text-transform:none;letter-spacing:0;font-size:13px}
 #gsheet input:focus{border-color:var(--ac);box-shadow:0 0 0 4px rgba(255,107,107,.2)}
 .gb{display:flex;gap:10px;align-items:center;margin:2px 2px 14px;color:var(--mut)}
 .gb input{width:22px;height:22px;accent-color:#2fbf71}
+
+#rsheet h2{margin:0 0 6px;font-size:19px}
+#rsheet p{margin:0 0 14px;font-weight:600;color:var(--mut);word-break:break-word}
+#rsheet label{display:block;color:var(--mut);font-size:13px;margin-bottom:12px}
+#rsheet input,#rsheet select{display:block;width:100%;margin-top:6px;background:var(--glass);border:1px solid var(--bd);border-radius:14px;color:var(--txt);font:17px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:13px 14px;outline:none;min-height:50px}
+#rsheet option{color:#23244a}
 </style>
 </head>
 <body>
@@ -156,6 +162,13 @@ h3 span{color:#ff8fa0;text-transform:none;letter-spacing:0;font-size:13px}
   <label class="gb"><input type="checkbox" id="gb"> Už koupeno</label>
   <button id="gsave"></button>
 </div></div>
+<div id="rov"><div id="rsheet">
+  <h2>Připomenout v kalendáři 🔔</h2>
+  <p id="rtx"></p>
+  <label>V kolik hodin?<input id="rt" type="time" value="09:00"></label>
+  <label>Upozornit<select id="rl"><option value="0">v čas události</option><option value="10">10 minut předem</option><option value="30">30 minut předem</option><option value="60">hodinu předem</option><option value="1440">den předem</option></select></label>
+  <button id="rsave"></button>
+</div></div>
 <div id="toast"><span id="tmsg"></span><button id="tund" hidden>Zpět</button></div>
 
 <script>
@@ -172,6 +185,7 @@ const P={
  right:'<path d="M5 12h14M13 6l6 6-6 6"/>',
  left:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
  x:'<path d="M18 6L6 18M6 6l12 12"/>',
+ bell:'<path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 003.4 0"/>',
  gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v7a2 2 0 01-2 2H7a2 2 0 01-2-2v-7M7.5 8a2.5 2.5 0 010-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 010 5"/>',
  spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>'
 };
@@ -201,7 +215,8 @@ function taskHTML(t){
   return `<li class="task glass ${t.done?'done':''}" data-id="${t.id}">
   ${t.done?'':`<span class="grip">${ic('grip',18)}</span>`}
   <button class="chk" data-a="tg" aria-label="Hotovo">${ic('check',16)}</button>
-  <div class="tx" data-a="ed">${esc(t.text)}${dl&&!t.done?`<small class="${dl.c}">${dl.t}</small>`:''}</div>
+  <div class="tx" data-a="ed">${esc(t.text)}${dl&&!t.done?`<small class="${dl.c}">${dl.t}${t.time?' · '+t.time:''}</small>`:''}</div>
+  ${t.list==='today'&&t.date&&!t.done?`<button class="ib" data-a="bl" aria-label="Připomenout">${ic('bell',19)}</button>`:''}
   ${t.list==='today'&&!t.done?`<label class="ib">${ic('cal',19)}<input type="date" value="${t.date||''}" data-a="dt"></label>`:''}
   ${t.done?'':`<button class="pill" data-a="mv">${t.list==='today'?'Někdy '+ic('right',13):ic('left',13)+' Dnes'}</button>`}
   <button class="ib" data-a="rm" aria-label="Smazat">${ic('x',18)}</button></li>`;
@@ -256,6 +271,7 @@ $('#view').addEventListener('click',e=>{
   }
   if(a==='mv'&&t){li.classList.add('out');setTimeout(()=>{t.list=t.list==='today'?'later':'today';if(t.list==='later')t.date='';t.o=-Date.now();save();render();toast('Přesunuto do „'+(t.list==='today'?'Dnes':'Někdy')+'“')},300)}
   if(a==='rm'&&t){const i=S.tasks.indexOf(t);li.classList.add('out');setTimeout(()=>{S.tasks.splice(i,1);save();render();toast('Úkol smazán',()=>{S.tasks.splice(i,0,t);save();render()})},300)}
+  if(a==='bl'&&t){openR(t);return}
   if(a==='ed'&&t&&!t.done){const v=prompt('Upravit úkol',t.text);if(v&&v.trim()){t.text=v.trim();save();render()}}
   if(a==='clr'){const old=S.tasks;S.tasks=S.tasks.filter(x=>!(x.list===S.tab&&x.done));save();render();toast('Hotové smazány',()=>{S.tasks=old;save();render()})}
   if(a==='i2t'||a==='i2l'){const i=S.ideas.find(x=>x.id===id);li.classList.add('out');
@@ -349,6 +365,24 @@ $('#gov').onclick=e=>{if(e.target.id==='gov')closeG()};
 [['#gn','#gg'],['#gg','#gp']].forEach(([a,b])=>$(a).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$(b).focus()}}));
 $('#gp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();saveG()}});
 
+
+// ---- připomínky (kalendář)
+function mkIcs(t,time,lead){const p=n=>String(n).padStart(2,'0'),[y,m,d]=t.date.split('-').map(Number),[h,mi]=time.split(':').map(Number);
+  const s=new Date(y,m-1,d,h,mi),e=new Date(s.getTime()+30*6e4),f=x=>x.getFullYear()+p(x.getMonth()+1)+p(x.getDate())+'T'+p(x.getHours())+p(x.getMinutes())+'00';
+  const q=v=>v.replace(/\\/g,'\\\\').replace(/[,;]/g,'\\$&').replace(/\n/g,'\\n');
+  return ['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Zapisnik//CS','BEGIN:VEVENT','UID:'+t.id+'-'+Date.now()+'@zapisnik','DTSTAMP:'+new Date().toISOString().replace(/[-:]/g,'').split('.')[0]+'Z','DTSTART:'+f(s),'DTEND:'+f(e),'SUMMARY:'+q(t.text),'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:'+q(t.text),'TRIGGER:-PT'+lead+'M','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n')}
+let rT=null;
+function openR(t){rT=t;$('#rtx').textContent=t.text;$('#rt').value=t.time||'09:00';$('#rl').value=String(t.lead==null?30:t.lead);$('#rov').classList.add('open')}
+function closeR(){$('#rov').classList.remove('open');if(document.activeElement)document.activeElement.blur()}
+$('#rov').onclick=e=>{if(e.target.id==='rov')closeR()};
+$('#rsave').innerHTML=ic('bell',20)+'Přidat do kalendáře';
+$('#rsave').onclick=async()=>{
+  const time=$('#rt').value||'09:00',lead=+$('#rl').value,t=rT;t.time=time;t.lead=lead;save();
+  const txt=mkIcs(t,time,lead),name='ukol-'+t.date+'.ics';closeR();render();
+  try{const f=new File([txt],name,{type:'text/calendar'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:t.text});return}}catch(e){if(e&&e.name==='AbortError')return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/calendar'}));a.download=name;document.body.appendChild(a);a.click();a.remove();
+  toast('Otevři stažený soubor a přidej ho do kalendáře')};
+
 // ---- rychlý zápis
 let tgt='idea';
 function setT(k){tgt=k;document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
@@ -368,7 +402,7 @@ $('#save').onclick=commit;$('#gsave').innerHTML=ic('check',20)+'Uložit';
 $('#seg').onclick=e=>{const b=e.target.closest('button');if(b)setT(b.dataset.k)};
 $('#ov').onclick=e=>{if(e.target.id==='ov')closeSheet()};
 $('#inp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();commit()}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSheet();closeG()}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSheet();closeG();closeR()}});
 function fit(){try{
   var d=Math.round(document.documentElement.getBoundingClientRect().top);if(!(d>0&&d<120))d=0;
   var T=navigator.standalone?Math.max(screen.height,window.innerHeight):window.innerHeight;
