@@ -75,17 +75,17 @@ nav .t.on svg{color:var(--ac);transform:translateY(-2px) scale(1.12)}
 nav .t em{position:absolute;top:0;right:22%;background:var(--ac2);color:#fff;font:700 10px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-style:normal;min-width:16px;height:16px;border-radius:8px;display:grid;place-items:center;padding:0 4px}
 #fab{width:64px;height:64px;border-radius:50%;border:0;color:#fff;background:linear-gradient(135deg,var(--ac),var(--ac2));box-shadow:0 10px 28px rgba(139,123,255,.55);display:grid;place-items:center;margin:-34px auto 0;cursor:pointer;transition:transform .25s;border:4px solid var(--bg)}
 #fab:active{transform:scale(.88) rotate(90deg)}
-#ov,#gov{position:absolute;inset:0;background:rgba(5,5,20,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:20;opacity:0;pointer-events:none;transition:.3s;display:flex;align-items:flex-end;justify-content:center}
-#ov.open,#gov.open{opacity:1;pointer-events:auto}
-#sheet,#gsheet{width:min(520px,100%);padding:18px 18px calc(env(safe-area-inset-bottom,0px) + 18px);background:var(--nav);border:1px solid var(--bd);border-radius:28px 28px 0 0;transform:translateY(100%);transition:transform .4s cubic-bezier(.2,.9,.3,1.1)}
-#ov.open #sheet,#gov.open #gsheet{transform:none}
+#ov,#gov,#rov{position:absolute;inset:0;background:rgba(5,5,20,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:20;opacity:0;pointer-events:none;transition:.3s;display:flex;align-items:flex-end;justify-content:center}
+#ov.open,#gov.open,#rov.open{opacity:1;pointer-events:auto}
+#sheet,#gsheet,#rsheet{width:min(520px,100%);padding:18px 18px calc(env(safe-area-inset-bottom,0px) + 18px);background:var(--nav);border:1px solid var(--bd);border-radius:28px 28px 0 0;transform:translateY(100%);transition:transform .4s cubic-bezier(.2,.9,.3,1.1)}
+#ov.open #sheet,#gov.open #gsheet,#rov.open #rsheet{transform:none}
 #sheet textarea{width:100%;height:110px;resize:none;background:var(--glass);border:1px solid var(--bd);border-radius:16px;color:var(--txt);font:17px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:14px;outline:none}
 #sheet textarea:focus{border-color:var(--ac);box-shadow:0 0 0 4px rgba(139,123,255,.2)}
 .seg{display:flex;gap:6px;margin:12px 0}
 .seg button{flex:1;border:1px solid var(--bd);background:var(--glass);color:var(--mut);font:600 13px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:9px 4px;border-radius:12px;cursor:pointer;transition:.2s}
 .seg button.on{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-color:transparent}
-#save,#gsave{width:100%;border:0;padding:14px;border-radius:16px;font:700 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#fff;background:linear-gradient(135deg,var(--ac),var(--ac2));cursor:pointer;display:flex;gap:8px;justify-content:center;align-items:center}
-#save:active,#gsave:active{transform:scale(.97)}
+#save,#gsave,#rsave{width:100%;border:0;padding:14px;border-radius:16px;font:700 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#fff;background:linear-gradient(135deg,var(--ac),var(--ac2));cursor:pointer;display:flex;gap:8px;justify-content:center;align-items:center}
+#save:active,#gsave:active,#rsave:active{transform:scale(.97)}
 #toast{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 104px);transform:translate(-50%,20px);background:var(--nav);border:1px solid var(--bd);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:30;display:flex;gap:12px;align-items:center;white-space:nowrap}
 #toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 #toast button{background:none;border:0;color:var(--ac);font:700 14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;cursor:pointer;padding:0}
@@ -125,26 +125,78 @@ h3 span{color:#ff8fa0;text-transform:none;letter-spacing:0;font-size:13px}
 #gsheet input:focus{border-color:var(--ac);box-shadow:0 0 0 4px rgba(255,107,107,.2)}
 .gb{display:flex;gap:10px;align-items:center;margin:2px 2px 14px;color:var(--mut)}
 .gb input{width:22px;height:22px;accent-color:#2fbf71}
+
+#rsheet h2{margin:0 0 6px;font-size:19px}
+#rsheet p{margin:0 0 14px;font-weight:600;color:var(--mut);word-break:break-word}
+#rsheet label{display:block;color:var(--mut);font-size:13px;margin-bottom:12px}
+#rsheet input,#rsheet select{display:block;width:100%;margin-top:6px;background:var(--glass);border:1px solid var(--bd);border-radius:14px;color:var(--txt);font:17px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:13px 14px;outline:none;min-height:50px}
+#rsheet option{color:#23244a}
+
+.dchip{display:flex;align-items:center;gap:4px;background:var(--glass);border:1px solid var(--bd);padding:5px 10px;border-radius:999px;font-weight:700;font-size:15px;color:#ffd36b;margin-right:4px}
+.dchip.bump{animation:bump .5s}@keyframes bump{40%{transform:scale(1.3)}}
+.fx{position:fixed;z-index:50;pointer-events:none;display:flex;align-items:center;gap:2px;font-weight:800;color:#ffd36b;animation:fup 1.1s ease-out forwards}
+@keyframes fup{to{transform:translateY(-70px);opacity:0}}
+.task.star{border-color:rgba(255,211,107,.7);background:linear-gradient(135deg,rgba(255,211,107,.2),var(--glass));box-shadow:0 0 0 1px rgba(255,211,107,.4),0 8px 28px rgba(255,170,60,.25)}
+.pill.on{background:linear-gradient(135deg,#ffd36b,#ff9f5a);color:#3a2300}
+.task{padding-left:12px}
+.pcard{padding:14px;margin-bottom:8px;animation:in .4s both}
+.pcard h4{margin:0 0 4px;font-size:18px}.pcard p{margin:0;color:var(--mut);font-size:14px}
+.pname{display:flex;justify-content:space-between;align-items:center}.pname b{font-size:20px}
+.pname span{background:linear-gradient(135deg,rgba(255,200,120,.35),rgba(255,122,184,.3));padding:4px 10px;border-radius:999px;font-size:12px;font-weight:600}
+.stage{position:relative;height:270px;margin:10px 0;border-radius:24px;overflow:hidden;background:linear-gradient(#bfe6ff,#ffe9f6 62%,#d6f5c9 62%)}
+.stage::before{content:'';position:absolute;top:26px;left:-90px;width:80px;height:26px;border-radius:20px;background:#fff;box-shadow:30px -10px 0 6px #fff;opacity:.85;animation:cloud 28s linear infinite}
+.stage::after{content:'';position:absolute;left:-15%;right:-15%;bottom:-44px;height:112px;border-radius:50%;background:#b9ecab}
+.stage.glow{animation:glow 1.4s}
+@keyframes glow{40%{box-shadow:inset 0 0 60px 10px rgba(255,214,102,.8)}}
+@keyframes cloud{to{transform:translateX(560px)}}
+.pet{position:absolute;inset:0;display:grid;place-items:center;z-index:2}
+.pet svg{width:230px;height:244px;margin-top:12px;overflow:visible;animation:bob 3.2s ease-in-out infinite;transform-origin:50% 90%}
+.pet.hop svg{animation:hop .6s}
+@keyframes bob{50%{transform:translateY(-5px) scale(1.015,.985)}}
+@keyframes hop{30%{transform:translateY(-22px) scale(1.05,.95)}60%{transform:translateY(0) scale(.96,1.04)}}
+.wag{transform-box:fill-box;transform-origin:0% 100%;animation:wag .8s ease-in-out infinite alternate}
+@keyframes wag{to{transform:rotate(14deg)}}
+.bloom{animation:sway 4s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes sway{to{transform:rotate(4deg)}}
+.bub{position:absolute;left:50%;top:10px;transform:translateX(-50%);z-index:7;background:#fff;color:#3b2a4a;padding:8px 14px;border-radius:16px;font-weight:600;font-size:14px;max-width:84%;text-align:center;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.bub::after{content:'';position:absolute;left:50%;bottom:-6px;width:12px;height:12px;background:#fff;transform:translateX(-50%) rotate(45deg)}
+.bub.show{animation:popb .35s cubic-bezier(.2,1.6,.4,1)}
+@keyframes popb{from{transform:translateX(-50%) scale(.4);opacity:0}}
+.pf{position:absolute;z-index:6;pointer-events:none;font-style:normal;font-size:18px;animation:pf 1.5s ease-out forwards}
+.pf.big{font-size:30px}
+@keyframes pf{0%{transform:translate(0,0) scale(.5);opacity:0}15%{opacity:1}100%{transform:translate(var(--dx),var(--dy)) scale(1.1);opacity:0}}
+.xpbar{height:10px;border-radius:5px;background:rgba(128,128,160,.25);overflow:hidden}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,#8bf0b4,#ffe27a);transition:width .8s}
+.xptx,.phint{text-align:center;font-size:12px;color:var(--mut);margin-top:6px}
+.pdone{text-align:center;font-weight:700;margin:12px 0 4px;color:var(--ok)}
+.prow{display:flex;gap:10px;margin-top:12px}
+.pbtn{flex:1;border:1px solid var(--bd);background:var(--glass);color:var(--txt);font:700 15px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:14px 8px;border-radius:16px;cursor:pointer;display:flex;gap:6px;justify-content:center;align-items:center;transition:transform .2s}
+.pbtn:active{transform:scale(.95)}
+.pbtn.gold{width:100%;margin-top:10px;background:linear-gradient(135deg,#ffe27a,#ffa63d);color:#4a2c00;border:0;box-shadow:0 8px 22px rgba(255,166,61,.4)}
+.pbtn.gold em{background:rgba(255,255,255,.55);border-radius:10px;padding:1px 8px;font-style:normal}
+.pgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.pick{position:relative;padding:10px 8px 12px;text-align:center;color:var(--txt);cursor:pointer;font-family:inherit;font-size:15px;display:flex;flex-direction:column;align-items:center;gap:4px;animation:in .4s both}
+.pick svg{width:100%;max-width:130px;height:auto;overflow:visible}
+.pick:active{transform:scale(.96)}.pick small{color:var(--mut);font-size:11px}
+.pick.lock::after{content:'🔒';position:absolute;top:6px;right:8px;font-size:13px;opacity:.7}
+.pick.lock{cursor:pointer}
 </style>
 </head>
 <body>
 <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="snow" id="snow"></div>
 <div id="app">
-  <header><div><h1 id="ttl"></h1><p id="sub"></p></div><div class="hr"><button id="snowbtn" class="ib" hidden aria-label="Sníh">❄</button><button id="theme" class="ib" aria-label="Motiv"></button><div class="ring" id="ring"></div></div></header>
+  <header><div><h1 id="ttl"></h1><p id="sub"></p></div><div class="hr"><div class="dchip" id="drops"></div><button id="snowbtn" class="ib" hidden aria-label="Sníh">❄</button><button id="theme" class="ib" aria-label="Motiv"></button><div class="ring" id="ring"></div></div></header>
   <main id="view"></main>
 </div>
 <nav id="nav">
-  <button class="t" data-t="today"></button>
-  <button class="t" data-t="later"></button>
+  <button class="t" data-t="tasks"></button>
+  <button class="t" data-t="shop"></button>
   <button id="fab" aria-label="Rychlý zápis"></button>
-  <button class="t" data-t="ideas"></button>
   <button class="t" data-t="gifts"></button>
+  <button class="t" data-t="garden"></button>
 </nav>
 <div id="ov"><div id="sheet">
   <textarea id="inp" placeholder="Co máš na mysli?…" enterkeyhint="done"></textarea>
-  <div class="seg" id="seg">
-    <button data-k="today">Dnes</button><button data-k="later">Někdy</button><button data-k="idea">Nápad</button>
-  </div>
   <button id="save"></button>
 </div></div>
 <div id="gov"><div id="gsheet">
@@ -160,7 +212,8 @@ h3 span{color:#ff8fa0;text-transform:none;letter-spacing:0;font-size:13px}
 
 <script>
 const $=s=>document.querySelector(s);
-const P={
+const P={cart:'<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 002 1.6h9.7a2 2 0 002-1.6L23 6H6"/>',
+ sprout:'<path d="M7 20h10M10 20c5.5-2.5.8-6.4 3-10M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8zM14.1 6a7 7 0 00-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
  moon:'<path d="M21 12.8A9 9 0 1111.2 3a7 7 0 009.8 9.8z"/>',
  cal:'<rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>',
@@ -172,6 +225,7 @@ const P={
  right:'<path d="M5 12h14M13 6l6 6-6 6"/>',
  left:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
  x:'<path d="M18 6L6 18M6 6l12 12"/>',
+ bell:'<path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 003.4 0"/>',
  gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v7a2 2 0 01-2 2H7a2 2 0 01-2-2v-7M7.5 8a2.5 2.5 0 010-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 010 5"/>',
  spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>'
 };
@@ -179,7 +233,7 @@ const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="no
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const KEY='zapisnik.v1';
-let S={tasks:[],ideas:[],gifts:[],budget:0,tab:'today',theme:'dark'};
+let S={tasks:[],ideas:[],gifts:[],budget:0,shop:[],drops:0,pet:null,coll:[],tab:'tasks',theme:'dark'};
 try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 
@@ -196,47 +250,51 @@ function dlabel(s){
 const fmt=s=>{const[y,m,d]=s.split('-');return +d+'. '+(+m)+'.'};
 const ago=ts=>{const m=Math.round((Date.now()-ts)/6e4);if(m<1)return'právě teď';if(m<60)return`před ${m} min`;const h=Math.round(m/60);if(h<24)return`před ${h} h`;return new Date(ts).getDate()+'. '+(new Date(ts).getMonth()+1)+'.'};
 
-function taskHTML(t){
-  const dl=t.list==='today'&&t.date?dlabel(t.date):null;
-  return `<li class="task glass ${t.done?'done':''}" data-id="${t.id}">
-  ${t.done?'':`<span class="grip">${ic('grip',18)}</span>`}
-  <button class="chk" data-a="tg" aria-label="Hotovo">${ic('check',16)}</button>
-  <div class="tx" data-a="ed">${esc(t.text)}${dl&&!t.done?`<small class="${dl.c}">${dl.t}</small>`:''}</div>
-  ${t.list==='today'&&!t.done?`<label class="ib">${ic('cal',19)}<input type="date" value="${t.date||''}" data-a="dt"></label>`:''}
-  ${t.done?'':`<button class="pill" data-a="mv">${t.list==='today'?'Někdy '+ic('right',13):ic('left',13)+' Dnes'}</button>`}
-  <button class="ib" data-a="rm" aria-label="Smazat">${ic('x',18)}</button></li>`;
-}
-const sorted=l=>S.tasks.filter(t=>t.list===l&&!t.done).sort((a,b)=>a.o-b.o);
-const empty=(t,s)=>`<div class="empty">${ic('spark',44)}<div><b>${t}</b></div><div>${s}</div></div>`;
 
+function migrate(){
+  if(S.v>=2)return;
+  (S.ideas||[]).forEach(i=>S.tasks.push({id:i.id,text:i.text,done:false,o:-(i.ts||Date.now())}));
+  S.ideas=[];S.tasks.forEach(t=>{if(t.list==='today'&&!t.done)t.star=true;t.paid=true});
+  S.v=2;save()}
+migrate();if(!['tasks','shop','gifts','garden'].includes(S.tab))S.tab='tasks';
+const empty=(t,s)=>`<div class="empty">${ic('spark',44)}<div><b>${t}</b></div><div>${s}</div></div>`;
+const drop=s=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24"><defs><linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe27a"/><stop offset="1" stop-color="#ffa63d"/></linearGradient></defs><path d="M12 2.5C12 2.5 5 10 5 15a7 7 0 0014 0c0-5-7-12.5-7-12.5z" fill="url(#gd)"/><path d="M9 15a3 3 0 003 3" stroke="#fff" stroke-opacity=".75" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`;
+function chip(b){const c=$('#drops');c.innerHTML=drop(18)+'<b>'+S.drops+'</b>';if(b){c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump')}}
+function dropFx(el){const r=el.getBoundingClientRect(),i=document.createElement('div');i.className='fx';i.style.left=r.left+'px';i.style.top=r.top+'px';i.innerHTML='+1 '+drop(20);document.body.appendChild(i);setTimeout(()=>i.remove(),1150);chip(true)}
+const srt=(a,b)=>(b.star?1:0)-(a.star?1:0)||a.o-b.o;
+function tHTML(t,shop){return `<li class="task glass ${t.done?'done':''} ${t.star&&!t.done?'star':''}" data-id="${t.id}"><button class="chk" data-a="tg" aria-label="Hotovo">${ic('check',16)}</button><div class="tx" data-a="ed">${esc(t.text)}</div>${shop||t.done?'':`<button class="pill ${t.star?'on':''}" data-a="st">${ic('sun',13)} Dnes</button>`}<button class="ib" data-a="rm" aria-label="Smazat">${ic('x',18)}</button></li>`}
+function listHTML(K){
+  const shop=K==='shop',open=S[K].filter(t=>!t.done).sort(srt),done=S[K].filter(t=>t.done);
+  let h=open.length?`<ul>${open.map(t=>tHTML(t,shop)).join('')}</ul>`:empty(shop?'Nákupní seznam je prázdný':'Čistý stůl',shop?'Klepni na + a přidej, co chceš koupit.':'Klepni na + a zapiš úkol nebo myšlenku.');
+  if(done.length)h+=`<h3>${shop?'V košíku':'Hotovo'} (${done.length})<button data-a="clr">${shop?'Vysypat košík':'Smazat hotové'}</button></h3><ul>${done.map(t=>tHTML(t,shop)).join('')}</ul>`;
+  return h}
 function render(){
   const T=S.tab,now=new Date();
-  document.documentElement.dataset.theme=S.theme;document.body.classList.toggle('xmas',S.tab==='gifts');document.body.classList.toggle('nosnow',S.snow===false);$('#snowbtn').hidden=S.tab!=='gifts';$('#snowbtn').classList.toggle('off',S.snow===false);
-  $('#theme').innerHTML=ic(S.theme==='dark'?'sun':'moon');
-  const titles={today:'Dnes',later:'Někdy',ideas:'Nápady',gifts:'Dárky 🎄'};
-  $('#ttl').textContent=titles[T];
-  $('#sub').textContent=T==='today'?`${DN[now.getDay()]} ${now.getDate()}. ${MN[now.getMonth()]}`:T==='later'?'Bez spěchu, ale na očích':T==='gifts'?xsub(now):'Myšlenky k uschování';
-  // ring
-  const all=S.tasks.filter(t=>t.list==='today'),dn=all.filter(t=>t.done).length,pc=T==='today'&&all.length?dn/all.length:0;
-  $('#ring').innerHTML=T==='today'?`<svg width="54" height="54"><circle cx="27" cy="27" r="22" fill="none" stroke="var(--glass)" stroke-width="6"/><circle cx="27" cy="27" r="22" fill="none" stroke="url(#g)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${138.2}" stroke-dashoffset="${138.2*(1-pc)}" style="transition:stroke-dashoffset .6s"/><defs><linearGradient id="g"><stop stop-color="#8b7bff"/><stop offset="1" stop-color="#5be3b0"/></linearGradient></defs></svg><b>${dn}/${all.length}</b>`:'';
-  // nav
-  const cnt={today:sorted('today').length,later:sorted('later').length,ideas:S.ideas.length,gifts:S.gifts.filter(x=>!x.bought).length};
-  const lab={today:['sun','Dnes'],later:['layers','Někdy'],ideas:['bulb','Nápady'],gifts:['gift','Dárky']};
+  document.documentElement.dataset.theme=S.theme;
+  document.body.classList.toggle('xmas',T==='gifts');document.body.classList.toggle('nosnow',S.snow===false);
+  $('#snowbtn').hidden=T!=='gifts';$('#snowbtn').classList.toggle('off',S.snow===false);
+  $('#theme').innerHTML=ic(S.theme==='dark'?'sun':'moon');chip();$('#ring').innerHTML='';
+  const op=S.tasks.filter(t=>!t.done),ns=op.filter(t=>t.star).length;
+  $('#ttl').textContent={tasks:'Úkoly & Myšlenky',shop:'Nákupy',gifts:'Dárky 🎄',garden:'Zahrádka 🌷'}[T];
+  $('#sub').textContent=T==='tasks'?`Otevřeno: ${op.length}${ns?' · Dnes: '+ns:''}`:T==='shop'?'Odškrtni a získej zlatou kapku 💧':T==='gifts'?xsub(now):'Pečuj o svého kamaráda';
+  const cnt={tasks:op.length,shop:S.shop.filter(t=>!t.done).length,gifts:S.gifts.filter(x=>!x.bought).length,garden:S.pet&&!S.pet.done?S.drops:0};
+  const lab={tasks:['check','Úkoly'],shop:['cart','Nákupy'],gifts:['gift','Dárky'],garden:['sprout','Zahrada']};
   document.querySelectorAll('nav .t[data-t]').forEach(b=>{const k=b.dataset.t;b.classList.toggle('on',k===T);b.innerHTML=ic(lab[k][0])+lab[k][1]+(cnt[k]?`<em>${cnt[k]}</em>`:'')});
-  // view
-  let h='';
-  if(T==='gifts'){h=giftsHTML()}else if(T==='ideas'){
-    h=S.ideas.length?S.ideas.map(i=>`<div class="idea glass" data-id="${i.id}"><p>${esc(i.text)}</p><div class="row"><time>${ago(i.ts)}</time><button class="pill" data-a="i2t">${ic('check',13)} Dnes</button><button class="pill" data-a="i2l">Někdy</button><button class="ib" data-a="irm">${ic('x',18)}</button></div></div>`).join(''):empty('Zatím žádné nápady','Klepni na + a zapiš cokoliv z hlavy.');
-  }else{
-    const open=sorted(T),done=S.tasks.filter(t=>t.list===T&&t.done);
-    h=open.length?`<ul id="lst">${open.map(taskHTML).join('')}</ul>`:empty(T==='today'?(done.length?'Hotovo, jsi borec ✨':'Čistý stůl'):'Nic ve výhledu',T==='today'?'Klepni na + a přidej, co chceš stihnout.':'Sem patří věci bez termínu.');
-    if(done.length)h+=`<h3>Hotovo (${done.length})<button data-a="clr">Smazat hotové</button></h3><ul>${done.map(taskHTML).join('')}</ul>`;
-  }
-  $('#view').innerHTML=h;if(T==='gifts')giftsFX();
+  $('#view').innerHTML=T==='gifts'?giftsHTML():T==='garden'?gardenHTML():listHTML(T);
+  if(T==='gifts')giftsFX();
 }
+$('#view').addEventListener('click',e=>{
+  const b=e.target.closest('[data-a]');if(!b)return;
+  const li=b.closest('[data-id]'),a=b.dataset.a,K=S.tab==='shop'?'shop':'tasks',arr=S[K],t=li&&arr.find(x=>x.id===li.dataset.id);
+  if(a==='tg'&&t){t.done=!t.done;
+    if(t.done){t.star=false;if(!t.paid){t.paid=true;S.drops++;dropFx(b)}save();li.classList.add('done','flash');b.classList.add('on');confetti(b);setTimeout(()=>li.classList.add('out'),350);setTimeout(render,700)}
+    else{save();render()}}
+  if(a==='st'&&t){t.star=!t.star;t.o=-Date.now();save();li.classList.add('flash');setTimeout(render,260)}
+  if(a==='ed'&&t&&!t.done){const v=prompt('Upravit',t.text);if(v&&v.trim()){t.text=v.trim();save();render()}}
+  if(a==='rm'&&t){const i=arr.indexOf(t);li.classList.add('out');setTimeout(()=>{arr.splice(i,1);save();render();toast('Smazáno',()=>{arr.splice(i,0,t);save();render()})},300)}
+  if(a==='clr'){const old=arr.slice();S[K]=arr.filter(x=>!x.done);save();render();toast(K==='shop'?'Košík vysypán 🛒':'Hotové smazány',()=>{S[K]=old;save();render()})}
+});
 
-// ---- akce
-const find=id=>S.tasks.find(t=>t.id===id);
 let undo=null,tt;
 function toast(m,u){$('#tmsg').textContent=m;undo=u||null;$('#tund').hidden=!u;$('#toast').classList.add('show');clearTimeout(tt);tt=setTimeout(()=>$('#toast').classList.remove('show'),3200)}
 $('#tund').onclick=()=>{if(undo)undo();undo=null;$('#toast').classList.remove('show')};
@@ -247,56 +305,15 @@ function confetti(el){
     document.body.appendChild(c);setTimeout(()=>c.remove(),900)}
   if(navigator.vibrate)navigator.vibrate(15);
 }
-$('#view').addEventListener('click',e=>{
-  const b=e.target.closest('[data-a]');if(!b||b.dataset.a==='dt')return;
-  const li=b.closest('[data-id]');const id=li&&li.dataset.id,a=b.dataset.a,t=id&&find(id);
-  if(a==='tg'&&t){
-    t.done=!t.done;save();
-    if(t.done){b.classList.add('on');li.classList.add('flash');confetti(b);setTimeout(()=>li.classList.add('out'),350);setTimeout(render,700)}else render();
-  }
-  if(a==='mv'&&t){li.classList.add('out');setTimeout(()=>{t.list=t.list==='today'?'later':'today';if(t.list==='later')t.date='';t.o=-Date.now();save();render();toast('Přesunuto do „'+(t.list==='today'?'Dnes':'Někdy')+'“')},300)}
-  if(a==='rm'&&t){const i=S.tasks.indexOf(t);li.classList.add('out');setTimeout(()=>{S.tasks.splice(i,1);save();render();toast('Úkol smazán',()=>{S.tasks.splice(i,0,t);save();render()})},300)}
-  if(a==='ed'&&t&&!t.done){const v=prompt('Upravit úkol',t.text);if(v&&v.trim()){t.text=v.trim();save();render()}}
-  if(a==='clr'){const old=S.tasks;S.tasks=S.tasks.filter(x=>!(x.list===S.tab&&x.done));save();render();toast('Hotové smazány',()=>{S.tasks=old;save();render()})}
-  if(a==='i2t'||a==='i2l'){const i=S.ideas.find(x=>x.id===id);li.classList.add('out');
-    S.tasks.push({id:uid(),text:i.text,list:a==='i2t'?'today':'later',done:false,date:'',o:-Date.now()});S.ideas=S.ideas.filter(x=>x!==i);save();
-    setTimeout(()=>{render();toast('Z nápadu je úkol ✨')},250)}
-  if(a==='irm'){const i=S.ideas.find(x=>x.id===id),k=S.ideas.indexOf(i);S.ideas.splice(k,1);save();render();toast('Nápad smazán',()=>{S.ideas.splice(k,0,i);save();render()})}
-});
-$('#view').addEventListener('change',e=>{
-  if(e.target.dataset.a!=='dt')return;const t=find(e.target.closest('[data-id]').dataset.id);t.date=e.target.value;save();render()});
-
-// ---- přetahování (řazení podržením úchytu)
-$('#view').addEventListener('pointerdown',e=>{
-  const g=e.target.closest('.grip');if(!g)return;e.preventDefault();
-  const li=g.closest('.task'),box=li.parentElement;let y0=e.clientY;
-  li.classList.add('drag');g.setPointerCapture(e.pointerId);
-  if(navigator.vibrate)navigator.vibrate(10);
-  const mv=ev=>{
-    li.style.transform=`translateY(${ev.clientY-y0}px)`;
-    const r=li.getBoundingClientRect(),c=r.top+r.height/2,p=li.previousElementSibling,n=li.nextElementSibling,top=li.offsetTop;
-    if(p){const pr=p.getBoundingClientRect();if(c<pr.top+pr.height/2)box.insertBefore(li,p)}
-    if(n){const nr=n.getBoundingClientRect();if(c>nr.top+nr.height/2)box.insertBefore(n,li)}
-    y0+=li.offsetTop-top;li.style.transform=`translateY(${ev.clientY-y0}px)`;
-    const sc=$('#view').getBoundingClientRect();if(ev.clientY>sc.bottom-110)$('#view').scrollTop+=8;if(ev.clientY<sc.top+40)$('#view').scrollTop-=8;
-  };
-  const up=()=>{
-    g.removeEventListener('pointermove',mv);g.removeEventListener('pointerup',up);g.removeEventListener('pointercancel',up);
-    const ids=[...box.querySelectorAll('.task')].map(x=>x.dataset.id),ts=ids.map(find),os=ts.map(t=>t.o).sort((a,b)=>a-b);
-    ts.forEach((t,i)=>t.o=os[i]);save();render();
-  };
-  g.addEventListener('pointermove',mv);g.addEventListener('pointerup',up);g.addEventListener('pointercancel',up);
-});
-
 // ---- navigace
 document.querySelectorAll('nav .t[data-t]').forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;save();render();$('#view').scrollTop=0});
-$('#snowbtn').onclick=()=>{S.snow=S.snow===false;save();render();toast(S.snow===false?'Sníh vypnutý':'Sníh zapnutý ❄️')};
+$('#snowbtn').onclick=()=>{S.snow=S.snow===false;save();render();toast(S.snow===false?'Přestalo sněžit 🌤️':'Sněží! ❄️')};
 $('#theme').onclick=()=>{S.theme=S.theme==='dark'?'light':'dark';document.querySelector('meta[name=theme-color]').content=S.theme==='dark'?'#0e0f23':'#f2f0ff';save();render()};
 let touchX=null;
 $('#view').addEventListener('touchstart',e=>{touchX=e.target.closest('.grip')?null:e.touches[0].clientX},{passive:true});
 $('#view').addEventListener('touchend',e=>{
   if(touchX===null)return;const d=e.changedTouches[0].clientX-touchX;if(Math.abs(d)<80)return;
-  const o=['today','later','ideas','gifts'],i=o.indexOf(S.tab)+(d<0?1:-1);if(o[i]){S.tab=o[i];save();render()}
+  const o=['tasks','shop','gifts','garden'],i=o.indexOf(S.tab)+(d<0?1:-1);if(o[i]){S.tab=o[i];save();render()}
 });
 
 
@@ -349,23 +366,116 @@ $('#gov').onclick=e=>{if(e.target.id==='gov')closeG()};
 [['#gn','#gg'],['#gg','#gp']].forEach(([a,b])=>$(a).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$(b).focus()}}));
 $('#gp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();saveG()}});
 
+
+
+// ---- zahrádka
+const STAGES=[0,30,80,150],stOf=x=>x>=150?3:x>=80?2:x>=30?1:0;
+const LBL={plant:['Semínko','Klíček','Poupě','Rozkvetlá'],animal:['Miminko','Mládě','Skoro dospělé','Dospělé']};
+const face=(x,y,s=1,c='#3b2a4a')=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="-7" cy="-1" r="2.6" fill="${c}"/><circle cx="7" cy="-1" r="2.6" fill="${c}"/><circle cx="-6.2" cy="-1.9" r=".9" fill="#fff"/><circle cx="7.8" cy="-1.9" r=".9" fill="#fff"/><path d="M-3.5 3q3.5 3.5 7 0" stroke="${c}" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="-12" cy="4" r="3" fill="#ff8fa3" opacity=".55"/><circle cx="12" cy="4" r="3" fill="#ff8fa3" opacity=".55"/></g>`;
+const leaf=(x,y,r,s)=>`<path d="M0 0C-9-8-9-22 0-30 9-22 9-8 0 0z" fill="#5fcf80" transform="translate(${x} ${y}) rotate(${r}) scale(${s})"/>`;
+const PL={
+ rose:{n:'Růže',h:1,b:'#ff5d7a',f:()=>`<circle r="27" fill="#ff5d7a"/><circle r="21" fill="#ff7d96"/><circle r="15" fill="#ff5d7a"/><path d="M-13 -6a14 14 0 0126 0" stroke="#d93a5c" stroke-width="2.4" fill="none" stroke-linecap="round"/>`+face(0,4,.8)},
+ sun:{n:'Slunečnice',h:1.18,b:'#ffc83d',f:()=>[...Array(14)].map((_,i)=>`<ellipse cy="-31" rx="7.5" ry="15" fill="#ffc83d" transform="rotate(${i*360/14})"/>`).join('')+`<circle r="21" fill="#8a5a2b"/>`+face(0,3,.85,'#ffe9b8')},
+ tulip:{n:'Tulipán',h:.88,b:'#ff6f9f',f:()=>`<path d="M-22 -2C-24 -28 -10 -36 0 -48C10 -36 24 -28 22 -2C20 16 -18 16 -22 -2z" fill="#ff6f9f"/><path d="M-22 -2C-25 -26 -14 -36 -6 -44C-4 -24 -8 -4 2 12C-14 14 -21 8 -22 -2z" fill="#ff94b9"/><path d="M22 -2C25 -26 14 -36 6 -44C4 -24 8 -4 -2 12C14 14 21 8 22 -2z" fill="#ff94b9" opacity=".85"/>`+face(0,-10,.8)},
+ orch:{n:'Orchidej',h:.96,b:'#c58bff',f:()=>[0,1,2,3,4].map(i=>`<ellipse cy="-24" rx="13" ry="26" fill="${i%2?'#d9a8ff':'#f1dcff'}" transform="rotate(${i*72})"/>`).join('')+`<circle r="14" fill="#ff7ac8"/>`+face(0,1,.75,'#fff')}
+};
+function plantSVG(sp,st){
+  const P0=PL[sp],H=[0,28,56,80][st]*P0.h,top=143-H;
+  let g=`<ellipse cx="100" cy="190" rx="48" ry="7" fill="rgba(0,0,0,.16)"/>`;
+  if(st>0)g+=`<path d="M100 143Q97 ${143-H/2} 100 ${top}" stroke="#4fbf73" stroke-width="6" fill="none" stroke-linecap="round"/>`;
+  if(st>=1)g+=leaf(100,143-H*.35,-60,.7+st*.12)+leaf(100,143-H*.5,60,.7+st*.12);
+  if(st>=2)g+=leaf(100,143-H*.2,-80,.9)+leaf(100,143-H*.62,75,.8);
+  g+=`<path d="M62 150h76l-9 36a6 6 0 01-6 4H77a6 6 0 01-6-4z" fill="#e58d6b"/><rect x="58" y="142" width="84" height="14" rx="7" fill="#f2a583"/><ellipse cx="100" cy="143" rx="36" ry="4.5" fill="#7a4a3a"/>`+face(100,172,.9);
+  if(st===0)g+=`<path d="M100 141q-3-10-13-13 1 10 13 13zM100 141q3-10 13-13-1 10-13 13z" fill="#6fd08c"/>`;
+  else if(st===1)g+=`<ellipse cx="100" cy="${top-8}" rx="8" ry="11" fill="${P0.b}"/>`;
+  else if(st===2)g+=`<g transform="translate(100 ${top-14})"><ellipse rx="15" ry="19" fill="${P0.b}"/><path d="M-15 0Q0 14 15 0" fill="rgba(255,255,255,.35)"/></g>`;
+  else g+=`<g transform="translate(100 ${top-16})"><g class="bloom">${P0.f()}</g></g>`;
+  return `<svg viewBox="0 -25 200 225">${g}</svg>`}
+const AN={cat:{n:'Koťátko',c:'#ffb36b',b:'#fff1dc',i:'#ffb3c1',s:'Mňau'},dog:{n:'Štěňátko',c:'#e0aa7d',b:'#fff1dc',i:'#a56b44',s:'Haf haf'},hare:{n:'Zajíček',c:'#b8a698',b:'#f4ece4',i:'#ffb3c1',s:'Žuch'},rab:{n:'Králíček',c:'#ffffff',b:'#ffe1ea',i:'#ffd0dd',s:'Fňuk'},gp:{n:'Morčátko',c:'#f0a86a',b:'#fff3e0',i:'#ffb3c1',s:'Kvík kvík'}};
+function animalSVG(sp,st){
+  const A=AN[sp],sc=[.6,.76,.9,1][st],hs=[1.3,1.16,1.07,1][st],es=[.5,.8,.95,1][st],tl=[0,.55,.85,1][st],er=[5.8,5.1,4.7,4.4][st],bw=(sp==='gp'?52:44)*[.72,.86,.95,1][st],bh=[28,31,33,34][st],bl=[20,23,26,27][st];
+  const E=x=>`<g transform="translate(0 ${92*(1-es)}) scale(1 ${es})">${x}</g>`,T=x=>st?`<g transform="translate(138 164) scale(${tl}) translate(-138 -164)">${x}</g>`:'';
+  let ears='',tail='',mark='',acc='',hacc='';
+  if(sp==='cat'){ears=E(`<path d="M64 92L68 56L94 78z" fill="${A.c}"/><path d="M136 92L132 56L106 78z" fill="${A.c}"/><path d="M70 82L71 66L84 77z" fill="${A.i}"/><path d="M130 82L129 66L116 77z" fill="${A.i}"/>`);
+    tail=T(`<path d="M138 164q34-2 24-40" stroke="${A.c}" stroke-width="10" fill="none" stroke-linecap="round" class="wag"/>`);
+    if(st>=1)mark=`<path d="M92 76q0 8-3 12M100 74v10M108 76q0 8 3 12" stroke="#e08a3c" stroke-width="3" fill="none" stroke-linecap="round"/>`+(st>=2?`<path d="M62 106q8 2 10 8M138 106q-8 2-10 8" stroke="#e08a3c" stroke-width="3" fill="none" stroke-linecap="round"/>`:'');
+    if(st>=2)acc=`<path d="M76 142q24 16 48 0" stroke="#ff6b8b" stroke-width="7" fill="none" stroke-linecap="round"/>`+(st>=3?`<circle cx="100" cy="153" r="5.5" fill="#ffd36b" stroke="#e0a93b"/>`:'')}
+  if(sp==='dog'){ears=E(`<ellipse cx="62" cy="110" rx="13" ry="27" fill="${A.i}" transform="rotate(14 62 110)"/><ellipse cx="138" cy="110" rx="13" ry="27" fill="${A.i}" transform="rotate(-14 138 110)"/>`);
+    tail=T(`<path d="M140 156q24-6 20-28" stroke="${A.c}" stroke-width="9" fill="none" stroke-linecap="round" class="wag"/>`);
+    if(st>=1)mark=`<ellipse cx="84" cy="104" rx="14" ry="13" fill="#a56b44" opacity=".75"/>`;
+    if(st>=2)acc=`<path d="M76 142q24 16 48 0" stroke="#4aa8ff" stroke-width="7" fill="none" stroke-linecap="round"/>`+(st>=3?`<circle cx="100" cy="154" r="5.5" fill="#ffd36b" stroke="#e0a93b"/>`:'')}
+  if(sp==='hare'){ears=E(`<ellipse cx="80" cy="52" rx="10" ry="34" fill="${A.c}" transform="rotate(-8 80 52)"/><ellipse cx="80" cy="54" rx="5" ry="25" fill="${A.i}" transform="rotate(-8 80 52)"/><ellipse cx="120" cy="52" rx="10" ry="34" fill="${A.c}" transform="rotate(8 120 52)"/><ellipse cx="120" cy="54" rx="5" ry="25" fill="${A.i}" transform="rotate(8 120 52)"/>`+(st>=2?`<ellipse cx="77" cy="22" rx="8" ry="6" fill="#4a3f3a" transform="rotate(-8 80 52)"/><ellipse cx="123" cy="22" rx="8" ry="6" fill="#4a3f3a" transform="rotate(8 120 52)"/>`:''));
+    tail=T(`<circle cx="146" cy="168" r="11" fill="#fff"/>`);
+    if(st>=3)acc=`<path d="M76 140h48l-24 24z" fill="#ff9f43"/>`}
+  if(sp==='rab'){ears=E(`<ellipse cx="64" cy="114" rx="12" ry="29" fill="#ffd9e3" transform="rotate(16 64 114)"/><ellipse cx="136" cy="114" rx="12" ry="29" fill="#ffd9e3" transform="rotate(-16 136 114)"/>`);
+    tail=T(`<circle cx="146" cy="168" r="11" fill="#ffe1ea"/>`);
+    if(st>=2)acc=`<path d="M100 148l-17-10v20zM100 148l17-10v20z" fill="#ff7aa8"/><circle cx="100" cy="148" r="4.5" fill="#ff5d8a"/>`}
+  if(sp==='gp'){ears=`<circle cx="66" cy="88" r="9" fill="${A.i}"/><circle cx="134" cy="88" r="9" fill="${A.i}"/>`;
+    if(st>=1)mark=`<ellipse cx="122" cy="94" rx="20" ry="17" fill="#fff3e0"/>`;
+    if(st>=2)hacc=`<circle cx="76" cy="80" r="8" fill="#ff7aa8"/><circle cx="76" cy="80" r="3.4" fill="#ffd36b"/>`;
+    if(st>=2)mark+=`<ellipse cx="70" cy="150" rx="18" ry="16" fill="#fff3e0" opacity=".9"/>`}
+  const whisk=sp==='dog'||sp==='gp'?'':`<path d="M72 122l-22-4M72 126l-22 4M128 122l22-4M128 126l22 4" stroke="#8a6a5a" stroke-width="1.6" stroke-linecap="round"/>`;
+  const crown=st===3?`<path d="M82 74l4-16 10 9 4-14 4 14 10-9 4 16z" fill="#ffd36b" stroke="#f2a93b" stroke-width="2" stroke-linejoin="round"/><circle cx="100" cy="62" r="2.6" fill="#ff6b8b"/>`:'';
+  const g=`<ellipse cx="100" cy="190" rx="${52*sc}" ry="7" fill="rgba(0,0,0,.16)"/><g transform="translate(100 188) scale(${sc}) translate(-100 -188)">${tail}<ellipse cx="100" cy="156" rx="${bw}" ry="${bh}" fill="${A.c}"/>${sp==='gp'&&st<2?`<ellipse cx="70" cy="150" rx="18" ry="16" fill="#fff3e0" opacity=".9"/>`:''}<ellipse cx="100" cy="166" rx="${bl}" ry="22" fill="${A.b}"/><ellipse cx="78" cy="186" rx="14" ry="8" fill="${A.b}"/><ellipse cx="122" cy="186" rx="14" ry="8" fill="${A.b}"/><g transform="translate(100 112) scale(${hs}) translate(-100 -112)">${ears}<ellipse cx="100" cy="108" rx="42" ry="35" fill="${A.c}"/>${mark}<ellipse cx="100" cy="122" rx="17" ry="11" fill="${A.b}"/><circle cx="84" cy="106" r="${er}" fill="#3b2a4a"/><circle cx="116" cy="106" r="${er}" fill="#3b2a4a"/><circle cx="${85.6-er*.1}" cy="${104.6-er*.1}" r="${er*.32}" fill="#fff"/><circle cx="${117.6-er*.1}" cy="${104.6-er*.1}" r="${er*.32}" fill="#fff"/><circle cx="74" cy="118" r="5" fill="#ff8fa3" opacity=".5"/><circle cx="126" cy="118" r="5" fill="#ff8fa3" opacity=".5"/><ellipse cx="100" cy="115" rx="4.6" ry="3.3" fill="#e7708a"/><path d="M100 118v3M94 123q6 5 6 0q0 5 6 0" stroke="#3b2a4a" stroke-width="1.6" fill="none" stroke-linecap="round"/>${sp==='dog'?'<path d="M97 126q3 9 6 0z" fill="#ff7a93"/>':''}${whisk}${hacc}${crown}</g>${acc}</g>`;
+  return `<svg viewBox="0 -25 200 225">${g}</svg>`}
+const petSVG=(p,st)=>p.kind==='plant'?plantSVG(p.sp,st):animalSVG(p.sp,st);
+const pname=p=>(p.kind==='plant'?PL:AN)[p.sp].n;
+function pxp(p){const st=stOf(p.xp);if(st>=3)return{pct:100,tx:'Plně vyrostlo! 🎉'};const a=STAGES[st],b=STAGES[st+1];return{pct:(p.xp-a)/(b-a)*100,tx:`${p.xp-a} / ${b-a} XP do fáze „${LBL[p.kind][st+1]}“`}}
+function petHTML(){const p=S.pet,st=stOf(p.xp),x=pxp(p),pl=p.kind==='plant';
+  return `<div class="pcard glass"><div class="pname"><b>${pname(p)}</b><span id="plbl">${LBL[p.kind][st]}</span></div><div class="stage" id="stage"><div class="pet" id="pet">${petSVG(p,st)}</div><div class="bub" id="bub" hidden></div></div><div class="xpbar"><i id="xpb" style="width:${x.pct}%"></i></div><div class="xptx" id="xptx">${x.tx}</div>`+
+  (p.done?`<div class="pdone">Uloženo do sbírky 🏆</div><button class="pbtn gold" data-p="new">${pl?'🌱 Zasadit novou kytičku':'🐾 Adoptovat nové zvířátko'}</button>`
+  :`<div class="prow">${pl?'<button class="pbtn" data-p="free">💦 Zalít jen tak</button>':'<button class="pbtn" data-p="pet">🤗 Podrbat</button><button class="pbtn" data-p="feed">🍪 Nakrmit</button>'}</div><button class="pbtn gold" data-p="prem">${drop(20)} Prémiová péče <em id="pcnt">${S.drops}</em></button><div class="phint">Péče pro radost je zdarma a dává trochu XP. Zlaté kapky získáš za splněné úkoly a nákupy.</div>`)+`</div>`}
+function chooserHTML(){const c=(k,sp,svg,n)=>`<button class="pick glass" data-p="pick" data-k="${k}" data-sp="${sp}"><div>${svg}</div><b>${n}</b></button>`;
+  return `<div class="pcard glass"><h4>Koho chceš pěstovat? 💛</h4><p>Vyber si kytičku nebo zvířátko, o které se budeš starat.</p></div><h3>Kytičky</h3><div class="pgrid">${Object.keys(PL).map(s=>c('plant',s,plantSVG(s,3),PL[s].n)).join('')}</div><h3>Zvířátka</h3><div class="pgrid">${Object.keys(AN).map(s=>c('animal',s,animalSVG(s,3),AN[s].n)).join('')}</div>`}
+function galleryHTML(){const c=(k,sp,n)=>`<div class="pick glass lock" data-p="peek" data-k="${k}" data-sp="${sp}" data-st="3"><div>${petSVG({kind:k,sp},3)}</div><b>${n}</b><small>ťukni a uvidíš růst</small></div>`;
+  return `<h3>Galerie · odemkne se, až kamarád vyroste</h3><div class="pgrid">${Object.keys(PL).map(s=>c('plant',s,PL[s].n)).join('')}${Object.keys(AN).map(s=>c('animal',s,AN[s].n)).join('')}</div>`}
+function gardenHTML(){
+  let h=S.pet?petHTML():chooserHTML();
+  if(S.pet&&!S.pet.done)h+=galleryHTML();
+  h+=`<h3>Sbírka (${S.coll.length})</h3>`+(S.coll.length?`<div class="pgrid">${S.coll.map(c=>{const d=new Date(c.ts);return `<div class="pick glass"><div>${petSVG(c,3)}</div><b>${pname(c)}</b><small>${d.getDate()}. ${d.getMonth()+1}.</small></div>`}).join('')}</div>`:`<div class="empty" style="padding:24px">Zatím prázdná. Až první kamarád vyroste, objeví se tady 🏆</div>`);
+  return h}
+const MSG={plant:["Mám tě rád! 🥰","Dneska ti to moc sluší! ✨","Ach, to je osvěžení! 💦","Cítím, jak rostu! 🌱","Jsi nejlepší zahradnice! 🌷","Sluníčko a ty, dokonalá dvojka ☀️","Šimrá to, hihi! 😆","Díky, že na mě myslíš 💕","Dneska je krásný den! 🌈","Ještě trochu a rozkvetu! 🌸","S tebou se mi roste skvěle! 💚","Máš zlatou ruku! 🏅"],
+ pet:["Mám tě rád! 🥰","{s}, to je příjemné! 🐾","Ty jsi nejlepší! 💖","Ještě kousek za uchem! 😻","Dneska ti to moc sluší! ✨","Hřeješ jako sluníčko ☀️","Jsem nejšťastnější na světě! 🌟","Pojď si se mnou hrát! 🎾","Tolik tě mám rád! 💕","Mazlení je moje oblíbené! 🤗"],
+ feed:["{s}, to bylo dobré! 🐾","Mňam mňam! 😋","Dobrou chuť nám oběma! 🍽️","Přesně to jsem chtěl! 😍","Ještě jedno sousto? 🥕","Bříško je spokojené! 😊","Nejlepší kuchařka široko daleko! 👩‍🍳","Děkuju, jsem sytý a šťastný! 💛"],
+ prem:["Wow, to je nejlepší dárek! 🌟","Cítím se úplně nový! ✨","Zlatá péče, to je luxus! 👑","Rostu jako z vody! 🚀","Děkuju z celého srdce! 💛"]};
+const BAGS={};let bt;
+function pickMsg(k){if(!BAGS[k]||!BAGS[k].length)BAGS[k]=[...MSG[k]].sort(()=>Math.random()-.5);return BAGS[k].pop().replace('{s}',S.pet&&S.pet.kind==='animal'?AN[S.pet.sp].s:'Hurá')}
+function say(t){const b=$('#bub');if(!b)return;b.textContent=t;b.hidden=false;b.classList.remove('show');void b.offsetWidth;b.classList.add('show');clearTimeout(bt);bt=setTimeout(()=>{b.hidden=true},2800)}
+function pf(st,ch,mode,big){const i=document.createElement('i');i.className='pf'+(big?' big':'');i.textContent=ch;const x=st.clientWidth*(.2+Math.random()*.6);
+  i.style.cssText=mode==='fall'?`left:${x}px;top:-10px;--dx:${(Math.random()-.5)*30}px;--dy:210px;animation-delay:${Math.random()*.6}s`:`left:${x}px;top:150px;--dx:${(Math.random()-.5)*90}px;--dy:-${90+Math.random()*60}px;animation-delay:${Math.random()*.4}s`;
+  st.appendChild(i);setTimeout(()=>i.remove(),2300)}
+function fx(type){const st=$('#stage');if(!st)return;
+  if(type==='free')for(let i=0;i<12;i++)pf(st,'💧','fall');
+  else if(type==='pet')for(let i=0;i<9;i++)pf(st,'❤️','rise');
+  else if(type==='feed')for(let i=0;i<8;i++)pf(st,['🍪','🥕','🍓'][i%3],'fall');
+  else{for(let i=0;i<14;i++)pf(st,['✨','⭐','💛','🌟'][i%4],'rise');for(let i=0;i<10;i++)pf(st,'💧','fall');st.classList.remove('glow');void st.offsetWidth;st.classList.add('glow')}
+  pf(st,['😊','🥰','😍','🤗','😻','😄'][Math.random()*6|0],'rise',true);
+  const pe=$('#pet');pe.classList.remove('hop');void pe.offsetWidth;pe.classList.add('hop')}
+function addXp(n){const p=S.pet;if(!p||p.done)return null;const before=stOf(p.xp);p.xp=Math.min(150,p.xp+n);const after=stOf(p.xp);
+  if(p.xp>=150){p.done=true;S.coll.push({kind:p.kind,sp:p.sp,ts:Date.now()})}return{before,after,done:!!p.done}}
+function care(a){const p=S.pet;if(!p||p.done)return;let res=null;
+  if(a==='prem'){if(S.drops<1){toast('Zlaté kapky získáš za úkoly a nákupy 💧');return}S.drops--;res=addXp(45);fx('prem');say(pickMsg('prem'))}
+  else{const t=Date.now();if(t-(p.last||0)>12000){p.last=t;res=addXp(3)}fx(a);say(pickMsg(a==='free'?'plant':a))}
+  save();chip(a==='prem');
+  if($('#pcnt'))$('#pcnt').textContent=S.drops;
+  const x=pxp(p);$('#xpb').style.width=x.pct+'%';$('#xptx').textContent=x.tx;
+  if(res&&res.after>res.before){$('#pet').innerHTML=petSVG(p,res.after);$('#plbl').textContent=LBL[p.kind][res.after];const s=$('#stage');confetti(s);for(let i=0;i<16;i++)pf(s,['⭐','✨','🎉'][i%3],'rise');toast('Nová fáze: '+LBL[p.kind][res.after]+' 🎉')}
+  if(res&&res.done){const s=$('#stage');setTimeout(()=>confetti(s),400);setTimeout(()=>confetti(s),900);toast('Hurá! Uloženo do sbírky 🏆');setTimeout(render,2400)}}
+$('#view').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(!b)return;const a=b.dataset.p;
+  if(a==='pick'){S.pet={kind:b.dataset.k,sp:b.dataset.sp,xp:0,last:0};save();render();setTimeout(()=>{say('Ahoj! 👋 Jsem tvůj nový kamarád!');fx('prem')},150)}
+  else if(a==='new'){S.pet=null;save();render()}
+  else if(a==='peek'){const n=((+b.dataset.st)+1)%4,o={kind:b.dataset.k,sp:b.dataset.sp};b.dataset.st=n;b.querySelector('div').innerHTML=petSVG(o,n);b.querySelector('small').textContent='Fáze: '+LBL[o.kind][n]}
+  else care(a)});
+
 // ---- rychlý zápis
-let tgt='idea';
-function setT(k){tgt=k;document.querySelectorAll('#seg button').forEach(b=>b.classList.toggle('on',b.dataset.k===k));
-  $('#save').innerHTML=ic('check',20)+'Uložit'}
-function openSheet(){setT({today:'today',later:'later',ideas:'idea'}[S.tab]);$('#ov').classList.add('open');setTimeout(()=>$('#inp').focus(),120)}
+function openSheet(){$('#inp').placeholder=S.tab==='shop'?'Co koupit?':'Co máš na mysli?…';$('#save').innerHTML=ic('check',20)+'Uložit';$('#ov').classList.add('open');setTimeout(()=>$('#inp').focus(),120)}
 function closeSheet(){$('#ov').classList.remove('open');$('#inp').blur()}
-function commit(){
-  const v=$('#inp').value.trim();if(!v){closeSheet();return}
-  if(tgt==='idea')S.ideas.unshift({id:uid(),text:v,ts:Date.now()});
-  else S.tasks.push({id:uid(),text:v,list:tgt,done:false,date:'',o:-Date.now()});
-  $('#inp').value='';S.tab=tgt==='idea'?'ideas':tgt;save();closeSheet();render();
-  toast('Zapsáno ✨');
-}
+function commit(){const v=$('#inp').value.trim();if(!v){closeSheet();return}
+  const K=S.tab==='shop'?'shop':'tasks';S[K].push({id:uid(),text:v,done:false,o:-Date.now()});if(K==='tasks')S.tab='tasks';
+  $('#inp').value='';save();closeSheet();render();toast('Zapsáno ✨')}
 $('#fab').innerHTML=ic('plus',30);
 $('#fab').onclick=()=>S.tab==='gifts'?openG():openSheet();
 $('#save').onclick=commit;$('#gsave').innerHTML=ic('check',20)+'Uložit';
-$('#seg').onclick=e=>{const b=e.target.closest('button');if(b)setT(b.dataset.k)};
 $('#ov').onclick=e=>{if(e.target.id==='ov')closeSheet()};
 $('#inp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();commit()}});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSheet();closeG()}});
