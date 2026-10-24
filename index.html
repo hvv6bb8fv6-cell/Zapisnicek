@@ -30,7 +30,7 @@ body{background:var(--bg);color:var(--txt);font:16px/1.4 -apple-system,BlinkMacS
 [data-theme=light] .blob{opacity:.4}
 @keyframes drift{to{transform:translate(60px,50px) scale(1.15)}}
 #app{position:relative;z-index:1;max-width:520px;margin:0 auto;height:100%;display:flex;flex-direction:column}
-header{padding:calc(env(safe-area-inset-top,0px) + 22px) 22px 8px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+header{padding:calc(max(env(safe-area-inset-top,0px),var(--sat,0px)) + 14px) 22px 8px;display:flex;align-items:center;justify-content:space-between;gap:12px}
 header h1{margin:0;font-size:28px;letter-spacing:-.5px}
 header p{margin:2px 0 0;color:var(--mut);font-size:14px}
 .ring{position:relative;width:54px;height:54px;flex:none}
@@ -277,7 +277,15 @@ function fit(){try{
   var p=document.createElement("div");p.style.cssText="position:absolute;visibility:hidden;height:100vh;width:1px;top:0";document.body.appendChild(p);
   var h=Math.max(window.innerHeight,p.offsetHeight);p.remove();
   document.documentElement.style.setProperty("--H",h+"px")}catch(e){}}
-fit();["resize","orientationchange","pageshow"].forEach(function(ev){window.addEventListener(ev,function(){setTimeout(fit,60)})});
+function top0(){try{if(document.activeElement&&/TEXTAREA|INPUT/.test(document.activeElement.tagName))return;window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0}catch(e){}}
+function sat(){try{if(!navigator.standalone)return;var p=document.createElement("div");p.style.cssText="position:absolute;visibility:hidden;padding-top:env(safe-area-inset-top,0px)";document.body.appendChild(p);var v=parseFloat(getComputedStyle(p).paddingTop)||0;p.remove();document.documentElement.style.setProperty("--sat",(v<20?(screen.height>=852?59:47):0)+"px")}catch(e){}}
+function sync(){fit();sat();top0()}
+sync();[100,400,1000].forEach(function(t){setTimeout(sync,t)});
+["resize","orientationchange","pageshow","focus"].forEach(function(ev){window.addEventListener(ev,function(){setTimeout(sync,60)})});
+document.addEventListener("visibilitychange",function(){setTimeout(sync,60)});
+document.addEventListener("focusout",function(){setTimeout(sync,350)});
+if(window.visualViewport){visualViewport.addEventListener("resize",function(){setTimeout(sync,60)});visualViewport.addEventListener("scroll",top0)}
+
 document.addEventListener("gesturestart",function(e){e.preventDefault()});
 render();
 </script>
