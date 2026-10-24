@@ -75,17 +75,17 @@ nav .t.on svg{color:var(--ac);transform:translateY(-2px) scale(1.12)}
 nav .t em{position:absolute;top:0;right:22%;background:var(--ac2);color:#fff;font:700 10px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-style:normal;min-width:16px;height:16px;border-radius:8px;display:grid;place-items:center;padding:0 4px}
 #fab{width:64px;height:64px;border-radius:50%;border:0;color:#fff;background:linear-gradient(135deg,var(--ac),var(--ac2));box-shadow:0 10px 28px rgba(139,123,255,.55);display:grid;place-items:center;margin:-34px auto 0;cursor:pointer;transition:transform .25s;border:4px solid var(--bg)}
 #fab:active{transform:scale(.88) rotate(90deg)}
-#ov{position:absolute;inset:0;background:rgba(5,5,20,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:20;opacity:0;pointer-events:none;transition:.3s;display:flex;align-items:flex-end;justify-content:center}
-#ov.open{opacity:1;pointer-events:auto}
-#sheet{width:min(520px,100%);padding:18px 18px calc(env(safe-area-inset-bottom,0px) + 18px);background:var(--nav);border:1px solid var(--bd);border-radius:28px 28px 0 0;transform:translateY(100%);transition:transform .4s cubic-bezier(.2,.9,.3,1.1)}
-#ov.open #sheet{transform:none}
+#ov,#gov{position:absolute;inset:0;background:rgba(5,5,20,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);z-index:20;opacity:0;pointer-events:none;transition:.3s;display:flex;align-items:flex-end;justify-content:center}
+#ov.open,#gov.open{opacity:1;pointer-events:auto}
+#sheet,#gsheet{width:min(520px,100%);padding:18px 18px calc(env(safe-area-inset-bottom,0px) + 18px);background:var(--nav);border:1px solid var(--bd);border-radius:28px 28px 0 0;transform:translateY(100%);transition:transform .4s cubic-bezier(.2,.9,.3,1.1)}
+#ov.open #sheet,#gov.open #gsheet{transform:none}
 #sheet textarea{width:100%;height:110px;resize:none;background:var(--glass);border:1px solid var(--bd);border-radius:16px;color:var(--txt);font:17px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:14px;outline:none}
 #sheet textarea:focus{border-color:var(--ac);box-shadow:0 0 0 4px rgba(139,123,255,.2)}
 .seg{display:flex;gap:6px;margin:12px 0}
 .seg button{flex:1;border:1px solid var(--bd);background:var(--glass);color:var(--mut);font:600 13px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:9px 4px;border-radius:12px;cursor:pointer;transition:.2s}
 .seg button.on{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-color:transparent}
-#save{width:100%;border:0;padding:14px;border-radius:16px;font:700 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#fff;background:linear-gradient(135deg,var(--ac),var(--ac2));cursor:pointer;display:flex;gap:8px;justify-content:center;align-items:center}
-#save:active{transform:scale(.97)}
+#save,#gsave{width:100%;border:0;padding:14px;border-radius:16px;font:700 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#fff;background:linear-gradient(135deg,var(--ac),var(--ac2));cursor:pointer;display:flex;gap:8px;justify-content:center;align-items:center}
+#save:active,#gsave:active{transform:scale(.97)}
 #toast{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 104px);transform:translate(-50%,20px);background:var(--nav);border:1px solid var(--bd);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:30;display:flex;gap:12px;align-items:center;white-space:nowrap}
 #toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 #toast button{background:none;border:0;color:var(--ac);font:700 14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;cursor:pointer;padding:0}
@@ -93,12 +93,44 @@ nav .t em{position:absolute;top:0;right:22%;background:var(--ac2);color:#fff;fon
 @keyframes cf{to{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
 .flash{animation:fl .6s}
 @keyframes fl{30%{box-shadow:0 0 0 3px var(--ok),0 0 30px var(--ok)}}
+
+.hr{display:flex;align-items:center;gap:4px}.ring:empty{display:none}
+.blob{transition:background 1s}
+body.xmas{--ac:#ff6b6b;--ac2:#4fd18b}
+.xmas .b1{background:#c92a3a}.xmas .b3{background:#1fa66a;opacity:.5}.xmas .b2{background:#e0a93b}
+.snow{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:0;display:none}
+.xmas:not(.nosnow) .snow{display:block}
+[hidden]{display:none!important}
+#snowbtn{font-size:20px;color:#bfe6ff;transition:opacity .3s}
+#snowbtn.off{opacity:.35;text-decoration:line-through}
+.snow i{position:absolute;top:-30px;font-style:normal;color:#fff;animation:fall linear infinite}
+@keyframes fall{to{transform:translate(40px,105vh) rotate(360deg)}}
+.cf.em{width:auto;height:auto;background:none;font-size:18px;font-style:normal;animation-duration:1.05s}
+.gsum{padding:16px;margin-bottom:6px;animation:in .4s both}
+.gbud{display:flex;justify-content:space-between;align-items:center;color:var(--mut);font-size:14px}
+.gbud div{display:flex;align-items:center;gap:6px}.gbud b{color:var(--txt)}
+.gbud input{width:120px;text-align:right;background:var(--glass);border:1px solid var(--bd);border-radius:12px;color:var(--txt);font:700 18px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:8px 10px;outline:none}
+.gbar{height:12px;border-radius:6px;background:rgba(128,128,160,.22);margin:14px 0;display:flex;overflow:hidden}
+.gbar i{display:block;height:100%;width:0;transition:width .9s cubic-bezier(.2,.9,.3,1)}
+#bsp{background:linear-gradient(90deg,#2fbf71,#5be3b0)}
+#bpl{background:repeating-linear-gradient(45deg,#ff6b81 0 6px,#ff8fa0 6px 12px)}
+.gst{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.gst small{display:block;color:var(--mut);font-size:11px}.gst b{font-size:15px;white-space:nowrap}
+.ok{color:var(--ok)}.pk{color:#ff8fa0}.gst .neg b{color:var(--warn)}
+#gnote{margin:12px 0 0;text-align:center;font-size:13px;color:var(--mut)}
+.gok{color:var(--ok)!important}
+h3 span{color:#ff8fa0;text-transform:none;letter-spacing:0;font-size:13px}
+#gsheet h2{margin:0 0 12px;font-size:19px}
+#gsheet input:not([type=checkbox]){width:100%;margin-bottom:10px;background:var(--glass);border:1px solid var(--bd);border-radius:14px;color:var(--txt);font:17px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:13px 14px;outline:none}
+#gsheet input:focus{border-color:var(--ac);box-shadow:0 0 0 4px rgba(255,107,107,.2)}
+.gb{display:flex;gap:10px;align-items:center;margin:2px 2px 14px;color:var(--mut)}
+.gb input{width:22px;height:22px;accent-color:#2fbf71}
 </style>
 </head>
 <body>
-<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+<div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="snow" id="snow"></div>
 <div id="app">
-  <header><div><h1 id="ttl"></h1><p id="sub"></p></div><div class="ring" id="ring"></div></header>
+  <header><div><h1 id="ttl"></h1><p id="sub"></p></div><div class="hr"><button id="snowbtn" class="ib" hidden aria-label="Sníh">❄</button><button id="theme" class="ib" aria-label="Motiv"></button><div class="ring" id="ring"></div></div></header>
   <main id="view"></main>
 </div>
 <nav id="nav">
@@ -106,7 +138,7 @@ nav .t em{position:absolute;top:0;right:22%;background:var(--ac2);color:#fff;fon
   <button class="t" data-t="later"></button>
   <button id="fab" aria-label="Rychlý zápis"></button>
   <button class="t" data-t="ideas"></button>
-  <button class="t" id="theme"></button>
+  <button class="t" data-t="gifts"></button>
 </nav>
 <div id="ov"><div id="sheet">
   <textarea id="inp" placeholder="Co máš na mysli?…" enterkeyhint="done"></textarea>
@@ -114,6 +146,15 @@ nav .t em{position:absolute;top:0;right:22%;background:var(--ac2);color:#fff;fon
     <button data-k="today">Dnes</button><button data-k="later">Někdy</button><button data-k="idea">Nápad</button>
   </div>
   <button id="save"></button>
+</div></div>
+<div id="gov"><div id="gsheet">
+  <h2 id="gt">Nový dárek 🎁</h2>
+  <input id="gn" type="text" placeholder="Pro koho? (např. Maminka)" autocomplete="off" list="gnames">
+  <datalist id="gnames"></datalist>
+  <input id="gg" type="text" placeholder="Co koupit? (např. Parfém)" autocomplete="off">
+  <input id="gp" type="number" inputmode="numeric" placeholder="Cena v Kč">
+  <label class="gb"><input type="checkbox" id="gb"> Už koupeno</label>
+  <button id="gsave"></button>
 </div></div>
 <div id="toast"><span id="tmsg"></span><button id="tund" hidden>Zpět</button></div>
 
@@ -131,13 +172,14 @@ const P={
  right:'<path d="M5 12h14M13 6l6 6-6 6"/>',
  left:'<path d="M19 12H5M11 6l-6 6 6 6"/>',
  x:'<path d="M18 6L6 18M6 6l12 12"/>',
+ gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v7a2 2 0 01-2 2H7a2 2 0 01-2-2v-7M7.5 8a2.5 2.5 0 010-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 010 5"/>',
  spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>'
 };
 const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${P[n]}</svg>`;
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const KEY='zapisnik.v1';
-let S={tasks:[],ideas:[],tab:'today',theme:'dark'};
+let S={tasks:[],ideas:[],gifts:[],budget:0,tab:'today',theme:'dark'};
 try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 
@@ -169,28 +211,28 @@ const empty=(t,s)=>`<div class="empty">${ic('spark',44)}<div><b>${t}</b></div><d
 
 function render(){
   const T=S.tab,now=new Date();
-  document.documentElement.dataset.theme=S.theme;
-  $('#theme').innerHTML=ic(S.theme==='dark'?'sun':'moon')+'<span>Motiv</span>';
-  const titles={today:'Dnes',later:'Někdy',ideas:'Nápady'};
+  document.documentElement.dataset.theme=S.theme;document.body.classList.toggle('xmas',S.tab==='gifts');document.body.classList.toggle('nosnow',S.snow===false);$('#snowbtn').hidden=S.tab!=='gifts';$('#snowbtn').classList.toggle('off',S.snow===false);
+  $('#theme').innerHTML=ic(S.theme==='dark'?'sun':'moon');
+  const titles={today:'Dnes',later:'Někdy',ideas:'Nápady',gifts:'Dárky 🎄'};
   $('#ttl').textContent=titles[T];
-  $('#sub').textContent=T==='today'?`${DN[now.getDay()]} ${now.getDate()}. ${MN[now.getMonth()]}`:T==='later'?'Bez spěchu, ale na očích':'Myšlenky k uschování';
+  $('#sub').textContent=T==='today'?`${DN[now.getDay()]} ${now.getDate()}. ${MN[now.getMonth()]}`:T==='later'?'Bez spěchu, ale na očích':T==='gifts'?xsub(now):'Myšlenky k uschování';
   // ring
   const all=S.tasks.filter(t=>t.list==='today'),dn=all.filter(t=>t.done).length,pc=T==='today'&&all.length?dn/all.length:0;
   $('#ring').innerHTML=T==='today'?`<svg width="54" height="54"><circle cx="27" cy="27" r="22" fill="none" stroke="var(--glass)" stroke-width="6"/><circle cx="27" cy="27" r="22" fill="none" stroke="url(#g)" stroke-width="6" stroke-linecap="round" stroke-dasharray="${138.2}" stroke-dashoffset="${138.2*(1-pc)}" style="transition:stroke-dashoffset .6s"/><defs><linearGradient id="g"><stop stop-color="#8b7bff"/><stop offset="1" stop-color="#5be3b0"/></linearGradient></defs></svg><b>${dn}/${all.length}</b>`:'';
   // nav
-  const cnt={today:sorted('today').length,later:sorted('later').length,ideas:S.ideas.length};
-  const lab={today:['sun','Dnes'],later:['layers','Někdy'],ideas:['bulb','Nápady']};
+  const cnt={today:sorted('today').length,later:sorted('later').length,ideas:S.ideas.length,gifts:S.gifts.filter(x=>!x.bought).length};
+  const lab={today:['sun','Dnes'],later:['layers','Někdy'],ideas:['bulb','Nápady'],gifts:['gift','Dárky']};
   document.querySelectorAll('nav .t[data-t]').forEach(b=>{const k=b.dataset.t;b.classList.toggle('on',k===T);b.innerHTML=ic(lab[k][0])+lab[k][1]+(cnt[k]?`<em>${cnt[k]}</em>`:'')});
   // view
   let h='';
-  if(T==='ideas'){
+  if(T==='gifts'){h=giftsHTML()}else if(T==='ideas'){
     h=S.ideas.length?S.ideas.map(i=>`<div class="idea glass" data-id="${i.id}"><p>${esc(i.text)}</p><div class="row"><time>${ago(i.ts)}</time><button class="pill" data-a="i2t">${ic('check',13)} Dnes</button><button class="pill" data-a="i2l">Někdy</button><button class="ib" data-a="irm">${ic('x',18)}</button></div></div>`).join(''):empty('Zatím žádné nápady','Klepni na + a zapiš cokoliv z hlavy.');
   }else{
     const open=sorted(T),done=S.tasks.filter(t=>t.list===T&&t.done);
     h=open.length?`<ul id="lst">${open.map(taskHTML).join('')}</ul>`:empty(T==='today'?(done.length?'Hotovo, jsi borec ✨':'Čistý stůl'):'Nic ve výhledu',T==='today'?'Klepni na + a přidej, co chceš stihnout.':'Sem patří věci bez termínu.');
     if(done.length)h+=`<h3>Hotovo (${done.length})<button data-a="clr">Smazat hotové</button></h3><ul>${done.map(taskHTML).join('')}</ul>`;
   }
-  $('#view').innerHTML=h;
+  $('#view').innerHTML=h;if(T==='gifts')giftsFX();
 }
 
 // ---- akce
@@ -248,13 +290,64 @@ $('#view').addEventListener('pointerdown',e=>{
 
 // ---- navigace
 document.querySelectorAll('nav .t[data-t]').forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;save();render();$('#view').scrollTop=0});
+$('#snowbtn').onclick=()=>{S.snow=S.snow===false;save();render();toast(S.snow===false?'Sníh vypnutý':'Sníh zapnutý ❄️')};
 $('#theme').onclick=()=>{S.theme=S.theme==='dark'?'light':'dark';document.querySelector('meta[name=theme-color]').content=S.theme==='dark'?'#0e0f23':'#f2f0ff';save();render()};
 let touchX=null;
 $('#view').addEventListener('touchstart',e=>{touchX=e.target.closest('.grip')?null:e.touches[0].clientX},{passive:true});
 $('#view').addEventListener('touchend',e=>{
   if(touchX===null)return;const d=e.changedTouches[0].clientX-touchX;if(Math.abs(d)<80)return;
-  const o=['today','later','ideas'],i=o.indexOf(S.tab)+(d<0?1:-1);if(o[i]){S.tab=o[i];save();render()}
+  const o=['today','later','ideas','gifts'],i=o.indexOf(S.tab)+(d<0?1:-1);if(o[i]){S.tab=o[i];save();render()}
 });
+
+
+// ---- dárky
+const kc=n=>Math.round(n).toLocaleString('cs-CZ')+'\u00a0Kč';
+function gcalc(){let sp=0,pl=0;S.gifts.forEach(g=>{if(g.bought)sp+=g.price;else pl+=g.price});const b=S.budget||0;return{b,sp,pl,left:b-sp-pl}}
+const lastG={sp:0,pl:0,left:0};
+function cu(el,to,k){const from=lastG[k],t0=performance.now();lastG[k]=to;(function f(t){const p=Math.min(1,(t-t0)/650),e=1-Math.pow(1-p,3);el.textContent=kc(from+(to-from)*e);if(p<1)requestAnimationFrame(f)})(t0)}
+function giftsSummary(){if(!$('#gsp'))return;const c=gcalc();
+  cu($('#gsp'),c.sp,'sp');cu($('#gpl'),c.pl,'pl');
+  if(c.b)cu($('#glf'),c.left,'left');else{$('#glf').textContent='—';lastG.left=0}
+  const den=Math.max(c.b,c.sp+c.pl,1);void $('#bsp').offsetWidth;
+  $('#bsp').style.width=c.sp/den*100+'%';$('#bpl').style.width=c.pl/den*100+'%';
+  $('#glf').parentElement.classList.toggle('neg',c.b>0&&c.left<0);
+  $('#gnote').textContent=!c.b?'Nastav si rozpočet a uvidíš, kolik ti zbývá.':c.left<0?'Přes rozpočet o '+kc(-c.left)+' 🙈':'Z rozpočtu '+kc(c.b)+' ti ještě zbývá '+kc(c.left)}
+const giftHTML=x=>`<li class="task glass ${x.bought?'done':''}" data-id="${x.id}"><button class="chk" data-g="tg" aria-label="Koupeno">${ic('check',16)}</button><div class="tx" data-g="ed">${esc(x.gift)}<small class="${x.bought?'gok':''}">${x.price?kc(x.price):'bez ceny'}${x.bought?' · koupeno ✓':''}</small></div><button class="ib" data-g="rm" aria-label="Smazat">${ic('x',18)}</button></li>`;
+function giftsHTML(){
+  let h=`<div class="gsum glass"><div class="gbud"><span>Rozpočet na dárky</span><div><input id="bud" type="number" inputmode="numeric" placeholder="0" value="${S.budget||''}"><b>Kč</b></div></div><div class="gbar"><i id="bsp"></i><i id="bpl"></i></div><div class="gst"><div><small>Utraceno</small><b id="gsp" class="ok"></b></div><div><small>Zbývá nakoupit</small><b id="gpl" class="pk"></b></div><div><small>Zbývá z rozpočtu</small><b id="glf"></b></div></div><p id="gnote"></p></div>`;
+  if(!S.gifts.length)return h+empty('Zatím žádné dárky','Klepni na + a přidej první jméno a nápad na dárek 🎄');
+  const gr=[];S.gifts.forEach(x=>{const k=x.name.trim().toLowerCase();let o=gr.find(y=>y.k===k);if(!o)gr.push(o={k,n:x.name.trim(),it:[]});o.it.push(x)});
+  gr.forEach(o=>{h+=`<h3>🎁 ${esc(o.n)}<span>${kc(o.it.reduce((s,x)=>s+x.price,0))}</span></h3><ul>${o.it.map(giftHTML).join('')}</ul>`});
+  return h}
+function giftsFX(){giftsSummary()}
+function xsub(now){const t0=new Date(now.getFullYear(),now.getMonth(),now.getDate()),xm=new Date(now.getFullYear(),11,24);if(t0>xm)xm.setFullYear(xm.getFullYear()+1);const d=Math.round((xm-t0)/864e5);return d===0?'Dnes je Štědrý den 🎅':d===1?'Zítra je Štědrý den 🎅':'Do Štědrého dne zbývá '+d+(d<5?' dny':' dní')}
+function xmas(el){const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,em=['🎄','⭐','❄️','🎁','🔔','✨'],cols=['#e8403f','#2fbf71','#ffd36b','#ffffff'];
+  for(let i=0;i<24;i++){const c=document.createElement('i'),a=Math.random()*6.28,d=50+Math.random()*85,e=i%3===0;c.className='cf'+(e?' em':'');if(e)c.textContent=em[(i/3|0)%6];
+    c.style.cssText=`left:${x}px;top:${y}px;--x:${Math.cos(a)*d}px;--y:${Math.sin(a)*d-25}px;--r:${Math.random()*360}deg;`+(e?'':`background:${cols[i%4]}`);document.body.appendChild(c);setTimeout(()=>c.remove(),1150)}
+  if(navigator.vibrate)navigator.vibrate([12,40,12])}
+(function(){const s=$('#snow');for(let i=0;i<16;i++){const f=document.createElement('i');f.textContent='❄';f.style.cssText=`left:${Math.random()*100}%;font-size:${10+Math.random()*14}px;animation-duration:${9+Math.random()*10}s;animation-delay:${-Math.random()*14}s;opacity:${.25+Math.random()*.4}`;s.appendChild(f)}})();
+$('#view').addEventListener('click',e=>{
+  const b=e.target.closest('[data-g]');if(!b)return;
+  const li=b.closest('[data-id]'),x=li&&S.gifts.find(y=>y.id===li.dataset.id);if(!x)return;const a=b.dataset.g;
+  if(a==='tg'){x.bought=!x.bought;save();if(x.bought){b.classList.add('on');li.classList.add('flash');xmas(b);toast('Dárek v pytli! 🎅')}setTimeout(render,x.bought?650:0)}
+  if(a==='ed')openG(x);
+  if(a==='rm'){const i=S.gifts.indexOf(x);li.classList.add('out');setTimeout(()=>{S.gifts.splice(i,1);save();render();toast('Dárek smazán',()=>{S.gifts.splice(i,0,x);save();render()})},300)}
+});
+$('#view').addEventListener('input',e=>{if(e.target.id==='bud'){S.budget=Math.max(0,+e.target.value||0);save();giftsSummary()}});
+let gEdit=null;
+function openG(x){gEdit=x||null;$('#gt').textContent=x?'Upravit dárek':'Nový dárek 🎁';
+  $('#gn').value=x?x.name:'';$('#gg').value=x?x.gift:'';$('#gp').value=x&&x.price?x.price:'';$('#gb').checked=!!(x&&x.bought);
+  $('#gnames').innerHTML=[...new Set(S.gifts.map(y=>y.name.trim()))].map(n=>`<option value="${esc(n)}">`).join('');
+  $('#gov').classList.add('open');setTimeout(()=>$(x?'#gg':'#gn').focus(),120)}
+function closeG(){$('#gov').classList.remove('open');if(document.activeElement)document.activeElement.blur()}
+function saveG(){const n=$('#gn').value.trim(),gi=$('#gg').value.trim(),p=Math.max(0,+$('#gp').value||0),bo=$('#gb').checked;
+  if(!n||!gi){toast('Doplň jméno a dárek');return}
+  if(gEdit)Object.assign(gEdit,{name:n,gift:gi,price:p,bought:bo});else S.gifts.push({id:uid(),name:n,gift:gi,price:p,bought:bo});
+  save();closeG();render();toast('Zapsáno 🎄')}
+$('#gsave').onclick=saveG;
+$('#gov').onclick=e=>{if(e.target.id==='gov')closeG()};
+[['#gn','#gg'],['#gg','#gp']].forEach(([a,b])=>$(a).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$(b).focus()}}));
+$('#gp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();saveG()}});
 
 // ---- rychlý zápis
 let tgt='idea';
@@ -270,12 +363,12 @@ function commit(){
   toast('Zapsáno ✨');
 }
 $('#fab').innerHTML=ic('plus',30);
-$('#fab').onclick=openSheet;
-$('#save').onclick=commit;
+$('#fab').onclick=()=>S.tab==='gifts'?openG():openSheet();
+$('#save').onclick=commit;$('#gsave').innerHTML=ic('check',20)+'Uložit';
 $('#seg').onclick=e=>{const b=e.target.closest('button');if(b)setT(b.dataset.k)};
 $('#ov').onclick=e=>{if(e.target.id==='ov')closeSheet()};
 $('#inp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();commit()}});
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeSheet()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSheet();closeG()}});
 function fit(){try{
   var d=Math.round(document.documentElement.getBoundingClientRect().top);if(!(d>0&&d<120))d=0;
   var T=navigator.standalone?Math.max(screen.height,window.innerHeight):window.innerHeight;
