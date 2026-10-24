@@ -374,51 +374,114 @@ const LBL={plant:['Semínko','Klíček','Poupě','Rozkvetlá'],animal:['Miminko'
 const face=(x,y,s=1,c='#3b2a4a')=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="-7" cy="-1" r="2.6" fill="${c}"/><circle cx="7" cy="-1" r="2.6" fill="${c}"/><circle cx="-6.2" cy="-1.9" r=".9" fill="#fff"/><circle cx="7.8" cy="-1.9" r=".9" fill="#fff"/><path d="M-3.5 3q3.5 3.5 7 0" stroke="${c}" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="-12" cy="4" r="3" fill="#ff8fa3" opacity=".55"/><circle cx="12" cy="4" r="3" fill="#ff8fa3" opacity=".55"/></g>`;
 const leaf=(x,y,r,s)=>`<path d="M0 0C-9-8-9-22 0-30 9-22 9-8 0 0z" fill="#5fcf80" transform="translate(${x} ${y}) rotate(${r}) scale(${s})"/>`;
 const PL={
- rose:{n:'Růže',h:1,b:'#ff5d7a',f:()=>`<circle r="27" fill="#ff5d7a"/><circle r="21" fill="#ff7d96"/><circle r="15" fill="#ff5d7a"/><path d="M-13 -6a14 14 0 0126 0" stroke="#d93a5c" stroke-width="2.4" fill="none" stroke-linecap="round"/>`+face(0,4,.8)},
- sun:{n:'Slunečnice',h:1.18,b:'#ffc83d',f:()=>[...Array(14)].map((_,i)=>`<ellipse cy="-31" rx="7.5" ry="15" fill="#ffc83d" transform="rotate(${i*360/14})"/>`).join('')+`<circle r="21" fill="#8a5a2b"/>`+face(0,3,.85,'#ffe9b8')},
- tulip:{n:'Tulipán',h:.88,b:'#ff6f9f',f:()=>`<path d="M-22 -2C-24 -28 -10 -36 0 -48C10 -36 24 -28 22 -2C20 16 -18 16 -22 -2z" fill="#ff6f9f"/><path d="M-22 -2C-25 -26 -14 -36 -6 -44C-4 -24 -8 -4 2 12C-14 14 -21 8 -22 -2z" fill="#ff94b9"/><path d="M22 -2C25 -26 14 -36 6 -44C4 -24 8 -4 -2 12C14 14 21 8 22 -2z" fill="#ff94b9" opacity=".85"/>`+face(0,-10,.8)},
- orch:{n:'Orchidej',h:.96,b:'#c58bff',f:()=>[0,1,2,3,4].map(i=>`<ellipse cy="-24" rx="13" ry="26" fill="${i%2?'#d9a8ff':'#f1dcff'}" transform="rotate(${i*72})"/>`).join('')+`<circle r="14" fill="#ff7ac8"/>`+face(0,1,.75,'#fff')}
+ rose:{n:'Růže',h:1,v:[{a:'#ff5d7a',b:'#ff7d96',d:'#d93a5c'},{a:'#ffc93d',b:'#ffdc6e',d:'#e0a20f'},{a:'#f2eaf6',b:'#ffffff',d:'#cdb9d9'},{a:'#ff8a5c',b:'#ffa985',d:'#e0602f'}],f:p=>`<circle r="27" fill="${p.a}"/><circle r="21" fill="${p.b}"/><circle r="15" fill="${p.a}"/><path d="M-13 -6a14 14 0 0126 0" stroke="${p.d}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`+face(0,4,.8)},
+ sun:{n:'Slunečnice',h:1.18,v:[{a:'#ffc83d',d:'#8a5a2b'},{a:'#ff9a3d',d:'#6b3d1f'},{a:'#e8583a',d:'#4a2a1a'},{a:'#ffe27a',d:'#a8742f'}],f:p=>[...Array(14)].map((_,i)=>`<ellipse cy="-31" rx="7.5" ry="15" fill="${p.a}" transform="rotate(${i*360/14})"/>`).join('')+`<circle r="21" fill="${p.d}"/>`+face(0,3,.85,'#ffe9b8')},
+ tulip:{n:'Tulipán',h:.88,v:[{a:'#ff6f9f',b:'#ff94b9'},{a:'#ff5d5d',b:'#ff8585'},{a:'#ffc93d',b:'#ffdc6e'},{a:'#a78bff',b:'#c4b0ff'},{a:'#f2eaf6',b:'#ffffff'}],f:p=>`<path d="M-22 -2C-24 -28 -10 -36 0 -48C10 -36 24 -28 22 -2C20 16 -18 16 -22 -2z" fill="${p.a}"/><path d="M-22 -2C-25 -26 -14 -36 -6 -44C-4 -24 -8 -4 2 12C-14 14 -21 8 -22 -2z" fill="${p.b}"/><path d="M22 -2C25 -26 14 -36 6 -44C4 -24 8 -4 -2 12C14 14 21 8 22 -2z" fill="${p.b}" opacity=".85"/>`+face(0,-10,.8)},
+ orch:{n:'Orchidej',h:.96,v:[{a:'#d9a8ff',b:'#f1dcff',c:'#ff7ac8'},{a:'#ffd6e6',b:'#ffffff',c:'#ff5d9a'},{a:'#ffd36b',b:'#fff0b8',c:'#ff8a3d'},{a:'#8fc7ff',b:'#d6ebff',c:'#7a8cff'}],f:p=>[0,1,2,3,4].map(i=>`<ellipse cy="-24" rx="13" ry="26" fill="${i%2?p.a:p.b}" transform="rotate(${i*72})"/>`).join('')+`<circle r="14" fill="${p.c}"/>`+face(0,1,.75,'#fff')},
+ cactus:{n:'Kaktus',h:1,v:[{a:'#ff7ac8',b:'#ffb3dc',g:'#5fcf80',g2:'#3fae66'},{a:'#ffc93d',b:'#ffe27a',g:'#5fcf80',g2:'#3fae66'},{a:'#ff5d5d',b:'#ff8585',g:'#6fcfae',g2:'#3fae96'},{a:'#c4b0ff',b:'#e2d8ff',g:'#7cc4b0',g2:'#4aa08c'}]}
 };
-function plantSVG(sp,st){
-  const P0=PL[sp],H=[0,28,56,80][st]*P0.h,top=143-H;
+const potSVG=()=>`<path d="M62 150h76l-9 36a6 6 0 01-6 4H77a6 6 0 01-6-4z" fill="#e58d6b"/><rect x="58" y="142" width="84" height="14" rx="7" fill="#f2a583"/><ellipse cx="100" cy="143" rx="36" ry="4.5" fill="#7a4a3a"/>`+face(100,172,.9);
+function cactusSVG(p,st){
+  const h=[0,34,62,86][st],w=[0,26,29,32][st];let g=`<ellipse cx="100" cy="190" rx="48" ry="7" fill="rgba(0,0,0,.16)"/>`;
+  if(st===0)g+=potSVG()+`<path d="M100 141q-7-2-7-9a7 7 0 0114 0q0 7-7 9z" fill="${p.g}"/><circle cx="92" cy="139" r="1.6" fill="#fff" opacity=".7"/>`;
+  else{
+    const arm=(s,y)=>`<path d="M${100+s*(w/2-2)} ${143-h*y}h${s*14}q${s*8} 0 ${s*8}-8v-${[0,0,14,22][st]}" stroke="${p.g}" stroke-width="12" fill="none" stroke-linecap="round"/>`;
+    if(st>=2)g+=arm(1,.45);if(st>=3)g+=arm(-1,.3);
+    g+=`<rect x="${100-w/2}" y="${143-h}" width="${w}" height="${h+4}" rx="${w/2}" fill="${p.g}"/><path d="M100 ${146-h}v${h}" stroke="${p.g2}" stroke-width="2.4" opacity=".6"/>`;
+    for(let i=0;i<st*2;i++){const y=143-h*(i+.5)/(st*2);g+=`<path d="M${100-w/2+3} ${y}l-3-2M${100+w/2-3} ${y+4}l3-2" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".8"/>`}
+    g+=potSVG()+face(100,143-h*.5,.7);
+    if(st===2)g+=`<ellipse cx="100" cy="${143-h-4}" rx="5" ry="7" fill="${p.a}"/>`;
+    if(st===3)g+=`<g transform="translate(100 ${143-h-8})"><g class="bloom">${[0,1,2,3,4].map(i=>`<ellipse cy="-9" rx="5.5" ry="10" fill="${i%2?p.a:p.b}" transform="rotate(${i*72})"/>`).join('')}<circle r="4.5" fill="#ffd36b"/></g></g>`}
+  return `<svg viewBox="0 -25 200 225">${g}</svg>`}
+function plantSVG(sp,st,vi){
+  const P0=PL[sp],p=P0.v[(vi||0)%P0.v.length];if(sp==='cactus')return cactusSVG(p,st);
+  const H=[0,28,56,80][st]*P0.h,top=143-H;
   let g=`<ellipse cx="100" cy="190" rx="48" ry="7" fill="rgba(0,0,0,.16)"/>`;
   if(st>0)g+=`<path d="M100 143Q97 ${143-H/2} 100 ${top}" stroke="#4fbf73" stroke-width="6" fill="none" stroke-linecap="round"/>`;
   if(st>=1)g+=leaf(100,143-H*.35,-60,.7+st*.12)+leaf(100,143-H*.5,60,.7+st*.12);
   if(st>=2)g+=leaf(100,143-H*.2,-80,.9)+leaf(100,143-H*.62,75,.8);
-  g+=`<path d="M62 150h76l-9 36a6 6 0 01-6 4H77a6 6 0 01-6-4z" fill="#e58d6b"/><rect x="58" y="142" width="84" height="14" rx="7" fill="#f2a583"/><ellipse cx="100" cy="143" rx="36" ry="4.5" fill="#7a4a3a"/>`+face(100,172,.9);
+  g+=potSVG();
   if(st===0)g+=`<path d="M100 141q-3-10-13-13 1 10 13 13zM100 141q3-10 13-13-1 10-13 13z" fill="#6fd08c"/>`;
-  else if(st===1)g+=`<ellipse cx="100" cy="${top-8}" rx="8" ry="11" fill="${P0.b}"/>`;
-  else if(st===2)g+=`<g transform="translate(100 ${top-14})"><ellipse rx="15" ry="19" fill="${P0.b}"/><path d="M-15 0Q0 14 15 0" fill="rgba(255,255,255,.35)"/></g>`;
-  else g+=`<g transform="translate(100 ${top-16})"><g class="bloom">${P0.f()}</g></g>`;
+  else if(st===1)g+=`<ellipse cx="100" cy="${top-8}" rx="8" ry="11" fill="${p.a}"/>`;
+  else if(st===2)g+=`<g transform="translate(100 ${top-14})"><ellipse rx="15" ry="19" fill="${p.a}"/><path d="M-15 0Q0 14 15 0" fill="rgba(255,255,255,.35)"/></g>`;
+  else g+=`<g transform="translate(100 ${top-16})"><g class="bloom">${P0.f(p)}</g></g>`;
   return `<svg viewBox="0 -25 200 225">${g}</svg>`}
-const AN={cat:{n:'Koťátko',c:'#ffb36b',b:'#fff1dc',i:'#ffb3c1',s:'Mňau'},dog:{n:'Štěňátko',c:'#e0aa7d',b:'#fff1dc',i:'#a56b44',s:'Haf haf'},hare:{n:'Zajíček',c:'#b8a698',b:'#f4ece4',i:'#ffb3c1',s:'Žuch'},rab:{n:'Králíček',c:'#ffffff',b:'#ffe1ea',i:'#ffd0dd',s:'Fňuk'},gp:{n:'Morčátko',c:'#f0a86a',b:'#fff3e0',i:'#ffb3c1',s:'Kvík kvík'}};
-function animalSVG(sp,st){
-  const A=AN[sp],sc=[.6,.76,.9,1][st],hs=[1.3,1.16,1.07,1][st],es=[.5,.8,.95,1][st],tl=[0,.55,.85,1][st],er=[5.8,5.1,4.7,4.4][st],bw=(sp==='gp'?52:44)*[.72,.86,.95,1][st],bh=[28,31,33,34][st],bl=[20,23,26,27][st];
+const AN={
+ cat:{n:'Koťátko',s:'Mňau',c:'#ffb36b',b:'#fff1dc',i:'#ffb3c1',m:'#e08a3c',v:[{},{c:'#a9b0bd',b:'#eef0f4',m:'#7d8594'},{c:'#4a4558',b:'#8f8aa0',m:'#2f2b3b',ec:'#ffe27a'},{c:'#fffaf5',b:'#ffffff',m:'#e3d5c4'}]},
+ dog:{n:'Štěňátko',s:'Haf haf',c:'#e0aa7d',b:'#fff1dc',i:'#a56b44',m:'#a56b44',v:[{},{c:'#5a5566',b:'#e9e6ef',i:'#3a3644',m:'#3a3644',ec:'#ffe27a'},{c:'#fffaf5',i:'#e8cdb0',m:'#e8cdb0'},{c:'#b9835a',i:'#7a4a2a',m:'#7a4a2a'}]},
+ hare:{n:'Zajíček',s:'Žuch',c:'#b8a698',b:'#f4ece4',i:'#ffb3c1',v:[{},{c:'#d9c2a0',b:'#f6efe3'},{c:'#8a6a52',b:'#e8dccd',ec:'#fff3c4'},{c:'#aab0b8',b:'#eef0f2'}]},
+ rab:{n:'Králíček',s:'Fňuk',c:'#ffffff',b:'#ffe1ea',i:'#ffd0dd',e:'#ffd9e3',v:[{},{c:'#c9ccd4',b:'#f1f2f6',e:'#b6bac6'},{c:'#d8a77c',b:'#f6e2cf',e:'#c58f63'},{c:'#f6e8d8',b:'#fff3e6',e:'#f0c9b0'}]},
+ gp:{n:'Morčátko',s:'Kvík kvík',c:'#f0a86a',b:'#fff3e0',i:'#ffb3c1',v:[{},{c:'#a8744f',b:'#f3e3cf'},{c:'#5d5668',b:'#f5f2f8',ec:'#ffe27a'},{c:'#f6e0b8',b:'#fffaf0'}]},
+ llama:{n:'Lamička',s:'Mrr',c:'#f1dcc0',b:'#fff7ea',i:'#ffb3c1',v:[{},{c:'#b98960',b:'#e9d3b8'},{c:'#fffaf5',b:'#ffffff'},{c:'#b8b4c2',b:'#ece9f1'}]},
+ capy:{n:'Kapybara',s:'Prr prr',c:'#deb887',b:'#efd4ad',i:'#b08558',v:[{},{c:'#c99a6a',b:'#e3c29a',i:'#9a6f45'},{c:'#ecc98f',b:'#f6e0b8',i:'#c49a5e'},{c:'#bdb0a0',b:'#e3dacd',i:'#968878'}]}
+};
+function llamaSVG(A,st){
+  const sc=[.62,.78,.9,1][st],hy=[122,106,92,80][st],er=[5.4,4.9,4.5,4.2][st],ea=[7,10,13,15][st],ec=A.ec||'#3b2a4a',tk=[6,8,9,10][st];
+  let g=`<ellipse cx="100" cy="190" rx="${50*sc}" ry="7" fill="rgba(0,0,0,.16)"/><g transform="translate(100 188) scale(${sc}) translate(-100 -188)">`;
+  if(st>=1)g+=`<circle cx="58" cy="152" r="${[0,5,6,7][st]}" fill="${A.b}"/>`;
+  g+=[72,84,108,120].map(x=>`<rect x="${x-4}" y="170" width="9" height="18" rx="4.5" fill="${A.c}"/>`).join('')
+   +`<ellipse cx="96" cy="160" rx="${[32,36,39,41][st]}" ry="${[24,26,28,29][st]}" fill="${A.c}"/>`
+   +[0,1,2,3,4].map(i=>`<circle cx="${70+i*13}" cy="${141+Math.abs(i-2)*3}" r="9" fill="${A.b}"/>`).join('');
+  if(st>=2)g+=`<path d="M68 144q28-10 56 0v20q-28 8-56 0z" fill="#ff7aa8"/><path d="M68 152q28-8 56 0M68 159q28-8 56 0" stroke="#ffd36b" stroke-width="3" fill="none"/>`;
+  g+=`<path d="M110 150Q116 ${(150+hy)/2} 118 ${hy+6}" stroke="${A.c}" stroke-width="${[20,20,19,18][st]}" fill="none" stroke-linecap="round"/><circle cx="110" cy="146" r="11" fill="${A.b}"/>`
+   +`<ellipse cx="108" cy="${hy-16}" rx="4.6" ry="${ea}" fill="${A.c}" transform="rotate(-12 108 ${hy-16})"/><ellipse cx="132" cy="${hy-16}" rx="4.6" ry="${ea}" fill="${A.c}" transform="rotate(12 132 ${hy-16})"/>`
+   +`<ellipse cx="120" cy="${hy}" rx="18" ry="15" fill="${A.c}"/><circle cx="120" cy="${hy-15}" r="${tk}" fill="${A.b}"/><ellipse cx="120" cy="${hy+7}" rx="11" ry="8" fill="${A.b}"/>`
+   +`<circle cx="112" cy="${hy-2}" r="${er}" fill="${ec}"/><circle cx="128" cy="${hy-2}" r="${er}" fill="${ec}"/><circle cx="113.2" cy="${hy-3.2}" r="${er*.32}" fill="#fff"/><circle cx="129.2" cy="${hy-3.2}" r="${er*.32}" fill="#fff"/>`
+   +`<circle cx="104" cy="${hy+5}" r="4" fill="#ff8fa3" opacity=".5"/><circle cx="136" cy="${hy+5}" r="4" fill="#ff8fa3" opacity=".5"/><ellipse cx="120" cy="${hy+4}" rx="3.2" ry="2.4" fill="#e7708a"/><path d="M116 ${hy+9}q4 3.5 8 0" stroke="#3b2a4a" stroke-width="1.5" fill="none" stroke-linecap="round"/>`;
+  if(st===3)g+=`<path d="M108 ${hy-26}l3-12 7 6 2-10 2 10 7-6 3 12z" fill="#ffd36b" stroke="#f2a93b" stroke-width="2" stroke-linejoin="round"/>`;
+  return `<svg viewBox="0 -25 200 225">${g}</g></svg>`}
+function capySVG(A,st,x){
+  if(x===undefined)x=1;
+  const ol='#2b1d14',sc=[.62,.78,.9,1][st],bw=[.82,.9,.96,1][st],bh=[.62,.78,.9,1][st],hd=86*(1-bh),hs=[1.14,1.08,1.03,1][st];
+  const body='M52 170C44 140 60 112 82 104H118C140 112 156 140 148 170C146 184 130 190 100 190S54 184 52 170Z',head='M52 98C48 70 66 52 100 52S152 70 148 98C146 116 128 124 100 124S54 116 52 98Z';
+  const bT=`translate(100 190) scale(${bw} ${bh}) translate(-100 -190)`,hT=`translate(0 ${hd}) translate(100 110) scale(${hs}) translate(-100 -110)`;
+  const shapes=(f,s)=>`<g ${f} ${s}><g transform="${bT}"><path d="${body}"/><ellipse cx="74" cy="184" rx="17" ry="10"/><ellipse cx="126" cy="184" rx="17" ry="10"/></g><g transform="${hT}"><circle cx="65" cy="60" r="12"/><circle cx="135" cy="60" r="12"/><path d="${head}"/></g></g>`;
+  const tea=st===3&&x===1,yz=st===3&&x===0;
+  let g=`<ellipse cx="100" cy="195" rx="${62*sc}" ry="7" fill="rgba(0,0,0,.16)"/><g transform="translate(100 190) scale(${sc}) translate(-100 -190)">`
+   +shapes(`fill="${ol}"`,`stroke="${ol}" stroke-width="7" stroke-linejoin="round"`)+shapes(`fill="${A.c}"`,'')
+   +`<g transform="${bT}"><ellipse cx="100" cy="162" rx="27" ry="22" fill="${A.b}" opacity=".6"/><path d="M62 186a12 8 0 0124 0zM114 186a12 8 0 0124 0z" fill="${A.i}" opacity=".7"/></g>`
+   +`<g transform="${hT}"><path d="M59 60q6-7 12 0M129 60q6-7 12 0" stroke="${ol}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`
+   +`<ellipse cx="100" cy="96" rx="21" ry="25" fill="${A.i}"/><ellipse cx="92" cy="84" rx="2.4" ry="2" fill="${ol}"/><ellipse cx="108" cy="84" rx="2.4" ry="2" fill="${ol}"/>`
+   +`<path d="M100 86v13M89 100q5.5 7 11 0q5.5 7 11 0" stroke="${ol}" stroke-width="3" fill="none" stroke-linecap="round"/>`
+   +(st===0?`<circle cx="76" cy="80" r="5.2" fill="${ol}"/><circle cx="124" cy="80" r="5.2" fill="${ol}"/><circle cx="77.6" cy="78.2" r="1.8" fill="#fff"/><circle cx="125.6" cy="78.2" r="1.8" fill="#fff"/>`:`<path d="M66 82q10-9 20 0M114 82q10-9 20 0" stroke="${ol}" stroke-width="3.6" fill="none" stroke-linecap="round"/>`)
+   +`<ellipse cx="65" cy="100" rx="11" ry="9" fill="#ff9fae" opacity=".7"/><ellipse cx="135" cy="100" rx="11" ry="9" fill="#ff9fae" opacity=".7"/><path d="M60 97h8M132 97h8" stroke="#fff" stroke-width="2" stroke-linecap="round"/>`;
+  if(st===2&&x===0)g+=`<circle cx="100" cy="46" r="10" fill="#ffc83d" stroke="${ol}" stroke-width="3"/><path d="M100 36q5-6 10-3q-2 6-10 3z" fill="#5fcf80" stroke="${ol}" stroke-width="2"/>`;
+  if(yz)g+=`<path d="M84 54l4-16 9 8 3-14 3 14 9-8 4 16z" fill="#ffd36b" stroke="#f2a93b" stroke-width="2.4" stroke-linejoin="round"/>`;
+  g+=`</g>`;
+  const paws=(a,b)=>`<ellipse cx="${a}" cy="150" rx="8" ry="9" fill="${A.i}" stroke="${ol}" stroke-width="3"/><ellipse cx="${b}" cy="150" rx="8" ry="9" fill="${A.i}" stroke="${ol}" stroke-width="3"/>`;
+  if(tea)g+=`<g transform="translate(100 150)"><path d="M-14 -16h28l-4 34q-1 5-6 5h-8q-5 0-6-5z" fill="#eab08a" stroke="${ol}" stroke-width="3" stroke-linejoin="round"/><rect x="-17" y="-23" width="34" height="8" rx="4" fill="#fff" stroke="${ol}" stroke-width="3"/>${[[-6,17],[1,19.5],[8,17],[-2,12.5],[5,12.5]].map(c=>`<circle cx="${c[0]}" cy="${c[1]}" r="3.3" fill="#6b3a2a"/>`).join('')}<rect x="-2" y="-62" width="6" height="42" rx="3" fill="#9b6bc2" stroke="${ol}" stroke-width="2" transform="rotate(-4)"/></g>`+paws(82,118);
+  else if(yz)g+=`<g transform="translate(100 152)"><circle r="15" fill="#ffc83d" stroke="${ol}" stroke-width="3"/><path d="M-3 -14q6-8 12-4q-3 8-12 4z" fill="#5fcf80" stroke="${ol}" stroke-width="2"/><path d="M-7 -4a8 8 0 018-5" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8"/></g>`+paws(83,117);
+  else if(st>=1)g+=paws(62,138);
+  return `<svg viewBox="0 -25 200 225">${g}</g></svg>`}
+function animalSVG(sp,st,vi,x){
+  const A0=AN[sp],A={...A0,...A0.v[(vi||0)%A0.v.length]},ec=A.ec||'#3b2a4a';
+  if(sp==='llama')return llamaSVG(A,st);if(sp==='capy')return capySVG(A,st,x);
+  const sc=[.6,.76,.9,1][st],hs=[1.3,1.16,1.07,1][st],es=[.5,.8,.95,1][st],tl=[0,.55,.85,1][st],er=[5.8,5.1,4.7,4.4][st],bw=(sp==='gp'?52:44)*[.72,.86,.95,1][st],bh=[28,31,33,34][st],bl=[20,23,26,27][st];
   const E=x=>`<g transform="translate(0 ${92*(1-es)}) scale(1 ${es})">${x}</g>`,T=x=>st?`<g transform="translate(138 164) scale(${tl}) translate(-138 -164)">${x}</g>`:'';
   let ears='',tail='',mark='',acc='',hacc='';
   if(sp==='cat'){ears=E(`<path d="M64 92L68 56L94 78z" fill="${A.c}"/><path d="M136 92L132 56L106 78z" fill="${A.c}"/><path d="M70 82L71 66L84 77z" fill="${A.i}"/><path d="M130 82L129 66L116 77z" fill="${A.i}"/>`);
     tail=T(`<path d="M138 164q34-2 24-40" stroke="${A.c}" stroke-width="10" fill="none" stroke-linecap="round" class="wag"/>`);
-    if(st>=1)mark=`<path d="M92 76q0 8-3 12M100 74v10M108 76q0 8 3 12" stroke="#e08a3c" stroke-width="3" fill="none" stroke-linecap="round"/>`+(st>=2?`<path d="M62 106q8 2 10 8M138 106q-8 2-10 8" stroke="#e08a3c" stroke-width="3" fill="none" stroke-linecap="round"/>`:'');
+    if(st>=1)mark=`<path d="M92 76q0 8-3 12M100 74v10M108 76q0 8 3 12" stroke="${A.m}" stroke-width="3" fill="none" stroke-linecap="round"/>`+(st>=2?`<path d="M62 106q8 2 10 8M138 106q-8 2-10 8" stroke="${A.m}" stroke-width="3" fill="none" stroke-linecap="round"/>`:'');
     if(st>=2)acc=`<path d="M76 142q24 16 48 0" stroke="#ff6b8b" stroke-width="7" fill="none" stroke-linecap="round"/>`+(st>=3?`<circle cx="100" cy="153" r="5.5" fill="#ffd36b" stroke="#e0a93b"/>`:'')}
   if(sp==='dog'){ears=E(`<ellipse cx="62" cy="110" rx="13" ry="27" fill="${A.i}" transform="rotate(14 62 110)"/><ellipse cx="138" cy="110" rx="13" ry="27" fill="${A.i}" transform="rotate(-14 138 110)"/>`);
     tail=T(`<path d="M140 156q24-6 20-28" stroke="${A.c}" stroke-width="9" fill="none" stroke-linecap="round" class="wag"/>`);
-    if(st>=1)mark=`<ellipse cx="84" cy="104" rx="14" ry="13" fill="#a56b44" opacity=".75"/>`;
+    if(st>=1)mark=`<ellipse cx="84" cy="104" rx="14" ry="13" fill="${A.m}" opacity=".75"/>`;
     if(st>=2)acc=`<path d="M76 142q24 16 48 0" stroke="#4aa8ff" stroke-width="7" fill="none" stroke-linecap="round"/>`+(st>=3?`<circle cx="100" cy="154" r="5.5" fill="#ffd36b" stroke="#e0a93b"/>`:'')}
   if(sp==='hare'){ears=E(`<ellipse cx="80" cy="52" rx="10" ry="34" fill="${A.c}" transform="rotate(-8 80 52)"/><ellipse cx="80" cy="54" rx="5" ry="25" fill="${A.i}" transform="rotate(-8 80 52)"/><ellipse cx="120" cy="52" rx="10" ry="34" fill="${A.c}" transform="rotate(8 120 52)"/><ellipse cx="120" cy="54" rx="5" ry="25" fill="${A.i}" transform="rotate(8 120 52)"/>`+(st>=2?`<ellipse cx="77" cy="22" rx="8" ry="6" fill="#4a3f3a" transform="rotate(-8 80 52)"/><ellipse cx="123" cy="22" rx="8" ry="6" fill="#4a3f3a" transform="rotate(8 120 52)"/>`:''));
     tail=T(`<circle cx="146" cy="168" r="11" fill="#fff"/>`);
     if(st>=3)acc=`<path d="M76 140h48l-24 24z" fill="#ff9f43"/>`}
-  if(sp==='rab'){ears=E(`<ellipse cx="64" cy="114" rx="12" ry="29" fill="#ffd9e3" transform="rotate(16 64 114)"/><ellipse cx="136" cy="114" rx="12" ry="29" fill="#ffd9e3" transform="rotate(-16 136 114)"/>`);
-    tail=T(`<circle cx="146" cy="168" r="11" fill="#ffe1ea"/>`);
+  if(sp==='rab'){ears=E(`<ellipse cx="64" cy="114" rx="12" ry="29" fill="${A.e}" transform="rotate(16 64 114)"/><ellipse cx="136" cy="114" rx="12" ry="29" fill="${A.e}" transform="rotate(-16 136 114)"/>`);
+    tail=T(`<circle cx="146" cy="168" r="11" fill="${A.b}"/>`);
     if(st>=2)acc=`<path d="M100 148l-17-10v20zM100 148l17-10v20z" fill="#ff7aa8"/><circle cx="100" cy="148" r="4.5" fill="#ff5d8a"/>`}
   if(sp==='gp'){ears=`<circle cx="66" cy="88" r="9" fill="${A.i}"/><circle cx="134" cy="88" r="9" fill="${A.i}"/>`;
-    if(st>=1)mark=`<ellipse cx="122" cy="94" rx="20" ry="17" fill="#fff3e0"/>`;
+    if(st>=1)mark=`<ellipse cx="122" cy="94" rx="20" ry="17" fill="${A.b}"/>`;
     if(st>=2)hacc=`<circle cx="76" cy="80" r="8" fill="#ff7aa8"/><circle cx="76" cy="80" r="3.4" fill="#ffd36b"/>`;
-    if(st>=2)mark+=`<ellipse cx="70" cy="150" rx="18" ry="16" fill="#fff3e0" opacity=".9"/>`}
+    if(st>=2)mark+=`<ellipse cx="70" cy="150" rx="18" ry="16" fill="${A.b}" opacity=".9"/>`}
   const whisk=sp==='dog'||sp==='gp'?'':`<path d="M72 122l-22-4M72 126l-22 4M128 122l22-4M128 126l22 4" stroke="#8a6a5a" stroke-width="1.6" stroke-linecap="round"/>`;
   const crown=st===3?`<path d="M82 74l4-16 10 9 4-14 4 14 10-9 4 16z" fill="#ffd36b" stroke="#f2a93b" stroke-width="2" stroke-linejoin="round"/><circle cx="100" cy="62" r="2.6" fill="#ff6b8b"/>`:'';
-  const g=`<ellipse cx="100" cy="190" rx="${52*sc}" ry="7" fill="rgba(0,0,0,.16)"/><g transform="translate(100 188) scale(${sc}) translate(-100 -188)">${tail}<ellipse cx="100" cy="156" rx="${bw}" ry="${bh}" fill="${A.c}"/>${sp==='gp'&&st<2?`<ellipse cx="70" cy="150" rx="18" ry="16" fill="#fff3e0" opacity=".9"/>`:''}<ellipse cx="100" cy="166" rx="${bl}" ry="22" fill="${A.b}"/><ellipse cx="78" cy="186" rx="14" ry="8" fill="${A.b}"/><ellipse cx="122" cy="186" rx="14" ry="8" fill="${A.b}"/><g transform="translate(100 112) scale(${hs}) translate(-100 -112)">${ears}<ellipse cx="100" cy="108" rx="42" ry="35" fill="${A.c}"/>${mark}<ellipse cx="100" cy="122" rx="17" ry="11" fill="${A.b}"/><circle cx="84" cy="106" r="${er}" fill="#3b2a4a"/><circle cx="116" cy="106" r="${er}" fill="#3b2a4a"/><circle cx="${85.6-er*.1}" cy="${104.6-er*.1}" r="${er*.32}" fill="#fff"/><circle cx="${117.6-er*.1}" cy="${104.6-er*.1}" r="${er*.32}" fill="#fff"/><circle cx="74" cy="118" r="5" fill="#ff8fa3" opacity=".5"/><circle cx="126" cy="118" r="5" fill="#ff8fa3" opacity=".5"/><ellipse cx="100" cy="115" rx="4.6" ry="3.3" fill="#e7708a"/><path d="M100 118v3M94 123q6 5 6 0q0 5 6 0" stroke="#3b2a4a" stroke-width="1.6" fill="none" stroke-linecap="round"/>${sp==='dog'?'<path d="M97 126q3 9 6 0z" fill="#ff7a93"/>':''}${whisk}${hacc}${crown}</g>${acc}</g>`;
+  const g=`<ellipse cx="100" cy="190" rx="${52*sc}" ry="7" fill="rgba(0,0,0,.16)"/><g transform="translate(100 188) scale(${sc}) translate(-100 -188)">${tail}<ellipse cx="100" cy="156" rx="${bw}" ry="${bh}" fill="${A.c}"/>${sp==='gp'&&st<2?`<ellipse cx="70" cy="150" rx="18" ry="16" fill="${A.b}" opacity=".9"/>`:''}<ellipse cx="100" cy="166" rx="${bl}" ry="22" fill="${A.b}"/><ellipse cx="78" cy="186" rx="14" ry="8" fill="${A.b}"/><ellipse cx="122" cy="186" rx="14" ry="8" fill="${A.b}"/><g transform="translate(100 112) scale(${hs}) translate(-100 -112)">${ears}<ellipse cx="100" cy="108" rx="42" ry="35" fill="${A.c}"/>${mark}<ellipse cx="100" cy="122" rx="17" ry="11" fill="${A.b}"/><circle cx="84" cy="106" r="${er}" fill="${ec}"/><circle cx="116" cy="106" r="${er}" fill="${ec}"/><circle cx="${85.6-er*.1}" cy="${104.6-er*.1}" r="${er*.32}" fill="#fff"/><circle cx="${117.6-er*.1}" cy="${104.6-er*.1}" r="${er*.32}" fill="#fff"/><circle cx="74" cy="118" r="5" fill="#ff8fa3" opacity=".5"/><circle cx="126" cy="118" r="5" fill="#ff8fa3" opacity=".5"/><ellipse cx="100" cy="115" rx="4.6" ry="3.3" fill="#e7708a"/><path d="M100 118v3M94 123q6 5 6 0q0 5 6 0" stroke="#3b2a4a" stroke-width="1.6" fill="none" stroke-linecap="round"/>${sp==='dog'?'<path d="M97 126q3 9 6 0z" fill="#ff7a93"/>':''}${whisk}${hacc}${crown}</g>${acc}</g>`;
   return `<svg viewBox="0 -25 200 225">${g}</svg>`}
-const petSVG=(p,st)=>p.kind==='plant'?plantSVG(p.sp,st):animalSVG(p.sp,st);
+const petSVG=(p,st)=>p.kind==='plant'?plantSVG(p.sp,st,p.v):animalSVG(p.sp,st,p.v,p.x);
 const pname=p=>(p.kind==='plant'?PL:AN)[p.sp].n;
 function pxp(p){const st=stOf(p.xp);if(st>=3)return{pct:100,tx:'Plně vyrostlo! 🎉'};const a=STAGES[st],b=STAGES[st+1];return{pct:(p.xp-a)/(b-a)*100,tx:`${p.xp-a} / ${b-a} XP do fáze „${LBL[p.kind][st+1]}“`}}
 function petHTML(){const p=S.pet,st=stOf(p.xp),x=pxp(p),pl=p.kind==='plant';
@@ -452,7 +515,7 @@ function fx(type){const st=$('#stage');if(!st)return;
   pf(st,['😊','🥰','😍','🤗','😻','😄'][Math.random()*6|0],'rise',true);
   const pe=$('#pet');pe.classList.remove('hop');void pe.offsetWidth;pe.classList.add('hop')}
 function addXp(n){const p=S.pet;if(!p||p.done)return null;const before=stOf(p.xp);p.xp=Math.min(150,p.xp+n);const after=stOf(p.xp);
-  if(p.xp>=150){p.done=true;S.coll.push({kind:p.kind,sp:p.sp,ts:Date.now()})}return{before,after,done:!!p.done}}
+  if(p.xp>=150){p.done=true;S.coll.push({kind:p.kind,sp:p.sp,v:p.v||0,x:p.x,ts:Date.now()})}return{before,after,done:!!p.done}}
 function care(a){const p=S.pet;if(!p||p.done)return;let res=null;
   if(a==='prem'){if(S.drops<1){toast('Zlaté kapky získáš za úkoly a nákupy 💧');return}S.drops--;res=addXp(45);fx('prem');say(pickMsg('prem'))}
   else{const t=Date.now();if(t-(p.last||0)>12000){p.last=t;res=addXp(3)}fx(a);say(pickMsg(a==='free'?'plant':a))}
@@ -462,7 +525,7 @@ function care(a){const p=S.pet;if(!p||p.done)return;let res=null;
   if(res&&res.after>res.before){$('#pet').innerHTML=petSVG(p,res.after);$('#plbl').textContent=LBL[p.kind][res.after];const s=$('#stage');confetti(s);for(let i=0;i<16;i++)pf(s,['⭐','✨','🎉'][i%3],'rise');toast('Nová fáze: '+LBL[p.kind][res.after]+' 🎉')}
   if(res&&res.done){const s=$('#stage');setTimeout(()=>confetti(s),400);setTimeout(()=>confetti(s),900);toast('Hurá! Uloženo do sbírky 🏆');setTimeout(render,2400)}}
 $('#view').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(!b)return;const a=b.dataset.p;
-  if(a==='pick'){S.pet={kind:b.dataset.k,sp:b.dataset.sp,xp:0,last:0};save();render();setTimeout(()=>{say('Ahoj! 👋 Jsem tvůj nový kamarád!');fx('prem')},150)}
+  if(a==='pick'){S.pet={kind:b.dataset.k,sp:b.dataset.sp,xp:0,last:0,v:Math.random()*(b.dataset.k==='plant'?PL:AN)[b.dataset.sp].v.length|0,x:Math.random()<.5?1:0};save();render();setTimeout(()=>{say('Ahoj! 👋 Jsem tvůj nový kamarád!');fx('prem')},150)}
   else if(a==='new'){S.pet=null;save();render()}
   else if(a==='peek'){const n=((+b.dataset.st)+1)%4,o={kind:b.dataset.k,sp:b.dataset.sp};b.dataset.st=n;b.querySelector('div').innerHTML=petSVG(o,n);b.querySelector('small').textContent='Fáze: '+LBL[o.kind][n]}
   else care(a)});
