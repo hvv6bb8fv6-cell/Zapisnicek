@@ -25,7 +25,7 @@ input,textarea,select{font-size:16px}
 label.ib{overflow:hidden;flex:none}
 .ib input{min-width:0;max-width:100%;-webkit-appearance:none;appearance:none}
 .pill{position:relative;z-index:2}
-body{background:var(--bg);color:var(--txt);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow:hidden;transition:background .4s}
+body{background:var(--bg);color:var(--txt);font:16px/1.4 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;overflow:hidden;transition:background-color .12s ease}
 .blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.55;z-index:0;animation:drift 18s ease-in-out infinite alternate}
 .b1{width:300px;height:300px;background:#6a5cff;top:-80px;left:-80px}
 .b2{width:280px;height:280px;background:#ff5fa8;bottom:80px;right:-100px;animation-delay:-6s}
@@ -68,7 +68,7 @@ h3 button{background:none;border:0;color:var(--warn);font:inherit;font-size:12px
 .empty{text-align:center;color:var(--mut);padding:50px 20px;animation:in .5s both}
 .empty svg{color:var(--ac);margin-bottom:8px;animation:float 3s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-8px) rotate(8deg)}}
-nav{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 12px);width:min(496px,calc(100% - 24px));display:grid;grid-template-columns:1fr 1fr 78px 1fr 1fr;align-items:center;padding:8px 6px;background:var(--nav);border:1px solid var(--bd);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-radius:28px;box-shadow:0 12px 36px rgba(0,0,0,.35);z-index:10}
+nav{position:absolute;left:50%;transform:translateX(-50%);bottom:max(env(safe-area-inset-bottom,0px),12px);width:min(496px,calc(100% - 24px));display:grid;grid-template-columns:1fr 1fr 78px 1fr 1fr;align-items:center;padding:8px 6px;background:var(--nav);border:1px solid var(--bd);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-radius:28px;box-shadow:0 12px 36px rgba(0,0,0,.35);z-index:10}
 nav .t{background:none;border:0;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:2px;font:600 11px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:6px 0;cursor:pointer;transition:.25s;position:relative}
 nav .t.on{color:var(--txt)}
 nav .t.on svg{color:var(--ac);transform:translateY(-2px) scale(1.12)}
@@ -86,7 +86,7 @@ nav .t em{position:absolute;top:0;right:22%;background:var(--ac2);color:#fff;fon
 .seg button.on{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-color:transparent}
 #save,#gsave,#rsave{width:100%;border:0;padding:14px;border-radius:16px;font:700 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#fff;background:linear-gradient(135deg,var(--ac),var(--ac2));cursor:pointer;display:flex;gap:8px;justify-content:center;align-items:center}
 #save:active,#gsave:active,#rsave:active{transform:scale(.97)}
-#toast{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 104px);transform:translate(-50%,20px);background:var(--nav);border:1px solid var(--bd);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:30;display:flex;gap:12px;align-items:center;white-space:nowrap}
+#toast{position:absolute;left:50%;bottom:calc(max(env(safe-area-inset-bottom,0px),12px) + 92px);transform:translate(-50%,20px);background:var(--nav);border:1px solid var(--bd);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:30;display:flex;gap:12px;align-items:center;white-space:nowrap}
 #toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 #toast button{background:none;border:0;color:var(--ac);font:700 14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;cursor:pointer;padding:0}
 .cf{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:40;animation:cf .8s cubic-bezier(.2,.8,.3,1) forwards}
@@ -235,7 +235,7 @@ h3 span{color:#ff8fa0;text-transform:none;letter-spacing:0;font-size:13px}
 .prow .pbtn:last-child:nth-child(odd){grid-column:1/-1}
 .pet.sway svg{animation:tsway 1.2s ease-in-out}@keyframes tsway{20%{transform:rotate(-7deg) translateX(-6px)}50%{transform:rotate(7deg) translateX(6px)}80%{transform:rotate(-3deg)}}
 
-*,*::before,*::after{transition:background-color .35s ease,border-color .35s ease,color .35s ease}
+*,*::before,*::after{transition:background-color .12s ease,border-color .12s ease,color .07s ease}
 button{touch-action:manipulation}
 .lockov{position:absolute;top:0;left:0;width:100%;height:100%;z-index:9999;overflow-y:auto;-webkit-overflow-scrolling:touch;opacity:0;visibility:hidden;transition:opacity .18s,visibility 0s .18s;background:radial-gradient(circle at 20% 0%,rgba(106,92,255,.35),transparent 55%),radial-gradient(circle at 90% 100%,rgba(255,95,168,.25),transparent 50%),var(--bg)}
 .lockov.show{opacity:1;visibility:visible;transition:none}
@@ -266,6 +266,32 @@ nav{z-index:10000}#toast{z-index:10001}
 
 /* OPRAVA: zadávací pole vytlačeno nad spodní lištu s ikonami */
 #sheet{padding-bottom:calc(env(safe-area-inset-bottom,0px) + 100px)}
+
+#sheet textarea{display:block}
+#save{margin-top:14px}
+.bkfix{position:absolute;left:0;right:0;bottom:calc(max(env(safe-area-inset-bottom,0px),12px) + 74px);display:flex;justify-content:space-between;padding:0 14px;z-index:15;opacity:.3;pointer-events:none}
+.bkfix .bkb{pointer-events:auto;background:none;border:0;color:var(--txt);font:600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:10px 6px;min-height:44px;cursor:pointer}
+
+.stage.night{background:linear-gradient(#0f1538,#2a2358 62%,#1c3b3e 62%)}
+.stage.night::before{opacity:0}.stage.night::after{background:#24494a}
+.stars{position:absolute;inset:0;opacity:0;transition:opacity .6s;pointer-events:none}
+.night .stars{opacity:1}
+.stars i{position:absolute;width:3px;height:3px;border-radius:50%;background:#fff;box-shadow:0 0 6px 1px rgba(255,255,255,.8);animation:tw 2.6s ease-in-out infinite}
+@keyframes tw{50%{opacity:.25;transform:scale(.6)}}
+.moon{position:absolute;right:14px;top:10px;font-size:26px;opacity:0;transition:opacity .6s;z-index:1}
+.night .moon{opacity:.95}
+.night .pet svg{filter:brightness(.8) drop-shadow(0 2px 3px rgba(0,0,0,.4));animation:zbreath 4s ease-in-out infinite}
+@keyframes zbreath{50%{transform:scale(1.02,.985)}}
+.zzz{position:absolute;left:56%;top:70px;z-index:7;pointer-events:none}
+.zzz i{position:absolute;left:0;top:0;font-style:normal;font-weight:800;color:#d9e0ff;opacity:0;animation:zz 3.2s ease-in infinite}
+.zzz i:nth-child(1){font-size:22px}.zzz i:nth-child(2){font-size:17px;animation-delay:1s}.zzz i:nth-child(3){font-size:13px;animation-delay:2s}
+@keyframes zz{0%{opacity:0;transform:translate(0,12px)}25%{opacity:1}100%{opacity:0;transform:translate(26px,-34px)}}
+.bub.sleepy{background:#dfe5ff;color:#3a3a6a;animation:popb .35s cubic-bezier(.2,1.6,.4,1)}
+.bub.sleepy::after{background:#dfe5ff}
+.pet{transform:translateX(var(--wx,0px));transition:transform var(--wd,0s) ease-in-out}
+.pet .sa{transform:translateX(calc(var(--wx,0px)*-.915));transition:transform var(--wd,0s) ease-in-out}
+.pet.walking svg{animation:step .5s ease-in-out infinite}
+@keyframes step{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
 </style>
 </head>
 <body>
@@ -275,6 +301,7 @@ nav{z-index:10000}#toast{z-index:10001}
   <main id="view"></main>
 </div>
 <div class="lockov" id="lockov"></div>
+<div class="bkfix" id="bkfix"><button class="bkb" data-bk="exp">⬇ Zálohovat data</button><button class="bkb" data-bk="imp">⬆ Obnovit data</button><input type="file" id="bkf" accept=".json,application/json" hidden></div>
 <nav id="nav">
   <button class="t" data-t="tasks"></button>
   <button class="t" data-t="shop"></button>
@@ -372,8 +399,10 @@ function render(){
   const cnt={tasks:op.length,shop:S.shop.filter(t=>!t.done).length,gifts:gUnlocked?S.gifts.filter(x=>!x.bought).length:0,garden:S.pet&&!S.pet.done?S.drops:0};
   const lab={tasks:['check','Úkoly'],shop:['cart','Nákupy'],gifts:['gift','Dárky'],garden:['sprout','Zahrada']};
   document.querySelectorAll('nav .t[data-t]').forEach(b=>{const k=b.dataset.t;b.classList.toggle('on',k===T);b.innerHTML=ic(lab[k][0])+lab[k][1]+(cnt[k]?`<em>${cnt[k]}</em>`:'')});
+  $('#bkfix').hidden=T!=='tasks';
   $('#view').innerHTML=T==='gifts'?(gUnlocked&&lockMode!=='setup'?giftsHTML()+lockLinks():''):T==='garden'?gardenHTML():listHTML(T)+(T==='tasks'?bkHTML():'');
   if(T==='gifts'&&gUnlocked&&lockMode!=='setup')giftsFX();
+  if(T==='garden')startWalk();else clearTimeout(walkT);
 }
 $('#view').addEventListener('click',e=>{
   const b=e.target.closest('[data-a]');if(!b)return;
@@ -461,7 +490,7 @@ $('#gp').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();s
 // ---- zahrádka
 const STAGES=[0,30,80,150],stOf=x=>x>=150?3:x>=80?2:x>=30?1:0;
 const LBL={plant:['Semínko','Klíček','Poupě','Rozkvetlá'],animal:['Miminko','Mládě','Skoro dospělé','Dospělé']};
-const face=(x,y,s=1,c='#3b2a4a')=>`<g transform="translate(${x} ${y}) scale(${s})"><circle cx="-7" cy="-1" r="2.6" fill="${c}"/><circle cx="7" cy="-1" r="2.6" fill="${c}"/><circle cx="-6.2" cy="-1.9" r=".9" fill="#fff"/><circle cx="7.8" cy="-1.9" r=".9" fill="#fff"/><path d="M-3.5 3q3.5 3.5 7 0" stroke="${c}" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="-12" cy="4" r="3" fill="#ff8fa3" opacity=".55"/><circle cx="12" cy="4" r="3" fill="#ff8fa3" opacity=".55"/></g>`;
+const face=(x,y,s=1,c='#3b2a4a')=>`<g transform="translate(${x} ${y}) scale(${s})">${ZZ?`<path d="M-10 -1q3 3.5 6 0M4 -1q3 3.5 6 0" stroke="${c}" stroke-width="1.7" fill="none" stroke-linecap="round"/>`:`<circle cx="-7" cy="-1" r="2.6" fill="${c}"/><circle cx="7" cy="-1" r="2.6" fill="${c}"/><circle cx="-6.2" cy="-1.9" r=".9" fill="#fff"/><circle cx="7.8" cy="-1.9" r=".9" fill="#fff"/>`}<path d="M-3.5 3q3.5 3.5 7 0" stroke="${c}" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="-12" cy="4" r="3" fill="#ff8fa3" opacity=".55"/><circle cx="12" cy="4" r="3" fill="#ff8fa3" opacity=".55"/></g>`;
 const leaf=(x,y,r,s)=>`<path d="M0 0C-9-8-9-22 0-30 9-22 9-8 0 0z" fill="#5fcf80" transform="translate(${x} ${y}) rotate(${r}) scale(${s})"/>`;
 const PL={
  rose:{n:'Růže',h:1,v:[{a:'#ff5d7a',b:'#ff7d96',d:'#d93a5c'},{a:'#ffc93d',b:'#ffdc6e',d:'#e0a20f'},{a:'#f2eaf6',b:'#ffffff',d:'#cdb9d9'},{a:'#ff8a5c',b:'#ffa985',d:'#e0602f'}],f:p=>`<circle r="27" fill="${p.a}"/><circle r="21" fill="${p.b}"/><circle r="15" fill="${p.a}"/><path d="M-13 -6a14 14 0 0126 0" stroke="${p.d}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`+face(0,4,.8)},
@@ -519,7 +548,7 @@ function llamaSVG(A,st){
   g+=`<ellipse cx="57" cy="${hy-17}" rx="7" ry="17" fill="${A.i}" transform="rotate(-14 57 ${hy-17})"/><ellipse cx="103" cy="${hy-17}" rx="7" ry="17" fill="${A.i}" transform="rotate(14 103 ${hy-17})"/>`
    +`<g fill="${W}">${H}<circle cx="80" cy="${hy}" r="25"/></g>`
    +`<ellipse cx="80" cy="${hy+8}" rx="15" ry="12" fill="${A.b}"/><path d="M75 ${hy+5}h10l-5 5z" fill="#26212f"/><path d="M72 ${hy+12}q4 6 8 0q4 6 8 0" stroke="#26212f" stroke-width="1.8" fill="none" stroke-linecap="round"/>`
-   +`<circle cx="66" cy="${hy-4}" r="${er}" fill="${ec}"/><circle cx="94" cy="${hy-4}" r="${er}" fill="${ec}"/><circle cx="67.6" cy="${hy-5.8}" r="${er*.32}" fill="#fff"/><circle cx="95.6" cy="${hy-5.8}" r="${er*.32}" fill="#fff"/>`
+   +`${ZZ?`<path d="M60 ${hy-3}q6 5 12 0M88 ${hy-3}q6 5 12 0" stroke="${A.ec?'#fbf7ff':'#26212f'}" stroke-width="3" fill="none" stroke-linecap="round"/>`:`<circle cx="66" cy="${hy-4}" r="${er}" fill="${ec}"/><circle cx="94" cy="${hy-4}" r="${er}" fill="${ec}"/><circle cx="67.6" cy="${hy-5.8}" r="${er*.32}" fill="#fff"/><circle cx="95.6" cy="${hy-5.8}" r="${er*.32}" fill="#fff"/>`}`
    +`<circle cx="58" cy="${hy+10}" r="7" fill="#ffb3c1" opacity=".6"/><circle cx="102" cy="${hy+10}" r="7" fill="#ffb3c1" opacity=".6"/>`;
   if(st===3)g+=`<path d="M64 ${hy-38}l4-14 8 8 4-12 4 12 8-8 4 14z" fill="#ffd36b" stroke="#f2a93b" stroke-width="2" stroke-linejoin="round"/>`;
   return `<svg viewBox="0 -25 200 225">${g}</g></svg>`}
@@ -536,7 +565,7 @@ function capySVG(A,st,x){
    +`<g transform="${hT}"><path d="M59 60q6-7 12 0M129 60q6-7 12 0" stroke="${ol}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`
    +`<ellipse cx="100" cy="96" rx="21" ry="25" fill="${A.i}"/><ellipse cx="92" cy="84" rx="2.4" ry="2" fill="${ol}"/><ellipse cx="108" cy="84" rx="2.4" ry="2" fill="${ol}"/>`
    +`<path d="M100 86v13M89 100q5.5 7 11 0q5.5 7 11 0" stroke="${ol}" stroke-width="3" fill="none" stroke-linecap="round"/>`
-   +(st===0?`<circle cx="76" cy="80" r="5.2" fill="${ol}"/><circle cx="124" cy="80" r="5.2" fill="${ol}"/><circle cx="77.6" cy="78.2" r="1.8" fill="#fff"/><circle cx="125.6" cy="78.2" r="1.8" fill="#fff"/>`:`<path d="M66 82q10-9 20 0M114 82q10-9 20 0" stroke="${ol}" stroke-width="3.6" fill="none" stroke-linecap="round"/>`)
+   +(ZZ?`<path d="M74 81q6 6 12 0M114 81q6 6 12 0" stroke="${ol}" stroke-width="3.4" fill="none" stroke-linecap="round"/>`:st===0?`<circle cx="76" cy="80" r="5.2" fill="${ol}"/><circle cx="124" cy="80" r="5.2" fill="${ol}"/><circle cx="77.6" cy="78.2" r="1.8" fill="#fff"/><circle cx="125.6" cy="78.2" r="1.8" fill="#fff"/>`:`<path d="M66 82q10-9 20 0M114 82q10-9 20 0" stroke="${ol}" stroke-width="3.6" fill="none" stroke-linecap="round"/>`)
    +`<ellipse cx="65" cy="100" rx="11" ry="9" fill="#ff9fae" opacity=".7"/><ellipse cx="135" cy="100" rx="11" ry="9" fill="#ff9fae" opacity=".7"/><path d="M60 97h8M132 97h8" stroke="#fff" stroke-width="2" stroke-linecap="round"/>`;
   if(st===2&&x===0)g+=`<circle cx="100" cy="46" r="10" fill="#ffc83d" stroke="${ol}" stroke-width="3"/><path d="M100 36q5-6 10-3q-2 6-10 3z" fill="#5fcf80" stroke="${ol}" stroke-width="2"/>`;
   if(yz)g+=`<path d="M84 54l4-16 9 8 3-14 3 14 9-8 4 16z" fill="#ffd36b" stroke="#f2a93b" stroke-width="2.4" stroke-linejoin="round"/>`;
@@ -572,13 +601,13 @@ function animalSVG(sp,st,vi,x){
     if(st>=2)mark+=`<ellipse cx="70" cy="150" rx="18" ry="16" fill="${A.b}" opacity=".9"/>`}
   const whisk=sp==='dog'||sp==='gp'?'':`<path d="M72 122l-22-4M72 126l-22 4M128 122l22-4M128 126l22 4" stroke="#8a6a5a" stroke-width="1.6" stroke-linecap="round"/>`;
   const crown=st===3?`<path d="M82 74l4-16 10 9 4-14 4 14 10-9 4 16z" fill="#ffd36b" stroke="#f2a93b" stroke-width="2" stroke-linejoin="round"/><circle cx="100" cy="62" r="2.6" fill="#ff6b8b"/>`:'';
-  const g=`<ellipse cx="100" cy="190" rx="${52*sc}" ry="7" fill="rgba(0,0,0,.16)"/><g transform="translate(100 188) scale(${sc}) translate(-100 -188)">${tail}<ellipse cx="100" cy="156" rx="${bw}" ry="${bh}" fill="${A.c}"/>${sp==='gp'&&st<2?`<ellipse cx="70" cy="150" rx="18" ry="16" fill="${A.b}" opacity=".9"/>`:''}<ellipse cx="100" cy="166" rx="${bl}" ry="22" fill="${A.b}"/><ellipse cx="78" cy="186" rx="14" ry="8" fill="${A.b}"/><ellipse cx="122" cy="186" rx="14" ry="8" fill="${A.b}"/><g transform="translate(100 112) scale(${hs}) translate(-100 -112)">${ears}<ellipse cx="100" cy="108" rx="42" ry="35" fill="${A.c}"/>${mark}<ellipse cx="100" cy="122" rx="17" ry="11" fill="${A.b}"/>${A.ec?`<circle cx="84" cy="106" r="${er+3.2}" fill="#fbf7ff"/><circle cx="116" cy="106" r="${er+3.2}" fill="#fbf7ff"/>`:''}<circle cx="84" cy="106" r="${er}" fill="${ec}"/><circle cx="116" cy="106" r="${er}" fill="${ec}"/><circle cx="${85.6-er*.1}" cy="${104.6-er*.1}" r="${er*.32}" fill="#fff"/><circle cx="${117.6-er*.1}" cy="${104.6-er*.1}" r="${er*.32}" fill="#fff"/><circle cx="${82.4+er*.2}" cy="${107+er*.4}" r="${er*.15}" fill="#fff" opacity=".85"/><circle cx="${114.4+er*.2}" cy="${107+er*.4}" r="${er*.15}" fill="#fff" opacity=".85"/><circle cx="74" cy="118" r="5" fill="#ff8fa3" opacity=".5"/><circle cx="126" cy="118" r="5" fill="#ff8fa3" opacity=".5"/><ellipse cx="100" cy="115" rx="4.6" ry="3.3" fill="#e7708a"/><path d="M100 118v3M94 123q6 5 6 0q0 5 6 0" stroke="#3b2a4a" stroke-width="1.6" fill="none" stroke-linecap="round"/>${sp==='dog'?'<path d="M97 126q3 9 6 0z" fill="#ff7a93"/>':''}${whisk}${hacc}${crown}</g>${acc}</g>`;
+  const g=`<ellipse cx="100" cy="190" rx="${52*sc}" ry="7" fill="rgba(0,0,0,.16)"/><g transform="translate(100 188) scale(${sc}) translate(-100 -188)">${tail}<ellipse cx="100" cy="156" rx="${bw}" ry="${bh}" fill="${A.c}"/>${sp==='gp'&&st<2?`<ellipse cx="70" cy="150" rx="18" ry="16" fill="${A.b}" opacity=".9"/>`:''}<ellipse cx="100" cy="166" rx="${bl}" ry="22" fill="${A.b}"/><ellipse cx="78" cy="186" rx="14" ry="8" fill="${A.b}"/><ellipse cx="122" cy="186" rx="14" ry="8" fill="${A.b}"/><g transform="translate(100 112) scale(${hs}) translate(-100 -112)">${ears}<ellipse cx="100" cy="108" rx="42" ry="35" fill="${A.c}"/>${mark}<ellipse cx="100" cy="122" rx="17" ry="11" fill="${A.b}"/>${ZZ?`<path d="M77 107q7 6 14 0M109 107q7 6 14 0" stroke="${A.ec?'#fbf7ff':'#3b2a4a'}" stroke-width="3" fill="none" stroke-linecap="round"/>`:`${A.ec?`<circle cx="84" cy="106" r="${er+3.2}" fill="#fbf7ff"/><circle cx="116" cy="106" r="${er+3.2}" fill="#fbf7ff"/>`:''}<circle cx="84" cy="106" r="${er}" fill="${ec}"/><circle cx="116" cy="106" r="${er}" fill="${ec}"/><circle cx="${85.6-er*.1}" cy="${104.6-er*.1}" r="${er*.32}" fill="#fff"/><circle cx="${117.6-er*.1}" cy="${104.6-er*.1}" r="${er*.32}" fill="#fff"/><circle cx="${82.4+er*.2}" cy="${107+er*.4}" r="${er*.15}" fill="#fff" opacity=".85"/><circle cx="${114.4+er*.2}" cy="${107+er*.4}" r="${er*.15}" fill="#fff" opacity=".85"/>`}<circle cx="74" cy="118" r="5" fill="#ff8fa3" opacity=".5"/><circle cx="126" cy="118" r="5" fill="#ff8fa3" opacity=".5"/><ellipse cx="100" cy="115" rx="4.6" ry="3.3" fill="#e7708a"/><path d="M100 118v3M94 123q6 5 6 0q0 5 6 0" stroke="#3b2a4a" stroke-width="1.6" fill="none" stroke-linecap="round"/>${sp==='dog'?'<path d="M97 126q3 9 6 0z" fill="#ff7a93"/>':''}${whisk}${hacc}${crown}</g>${acc}</g>`;
   return `<svg viewBox="0 -25 200 225">${g}</svg>`}
 
 const pname=p=>(p.kind==='plant'?PL:AN)[p.sp].n;
 function pxp(p){const st=stOf(p.xp);if(st>=3)return{pct:100,tx:'Plně vyrostlo! 🎉'};const a=STAGES[st],b=STAGES[st+1];return{pct:(p.xp-a)/(b-a)*100,tx:`${p.xp-a} / ${b-a} XP do fáze „${LBL[p.kind][st+1]}“`}}
-function petHTML(){const p=S.pet,st=stOf(p.xp),x=pxp(p),pl=p.kind==='plant';
-  return `<div class="pcard glass"><div class="pname"><b>${pname(p)}</b><span id="plbl">${LBL[p.kind][st]}</span></div><div class="stage" id="stage"><div class="pet" id="pet">${petSVG(p,st)}</div><div class="bub" id="bub" hidden></div></div><div class="xpbar"><i id="xpb" style="width:${x.pct}%"></i></div><div class="xptx" id="xptx">${x.tx}</div>`+
+function petHTML(){const p=S.pet,st=stOf(p.xp),x=pxp(p),pl=p.kind==='plant',slp=isSleeping();
+  return `<div class="pcard glass"><div class="pname"><b>${pname(p)}</b><span id="plbl">${LBL[p.kind][st]}</span></div><div class="stage${slp?' night':''}" id="stage"><div class="stars">${[...Array(16)].map((_,i)=>`<i style="left:${(i*37+11)%92+2}%;top:${(i*23+7)%58+3}%;animation-delay:${(i%5)*.5}s"></i>`).join('')}</div><span class="moon">🌙</span><div class="pet" id="pet">${petSVG(p,st)}</div><div class="zzz" id="zzz"${slp?'':' hidden'}><i>Z</i><i>z</i><i>z</i></div><div class="bub${slp?' sleepy':''}" id="bub"${slp?'':' hidden'}>${slp?'ššš spinkám 💤':''}</div></div><div class="xpbar"><i id="xpb" style="width:${x.pct}%"></i></div><div class="xptx" id="xptx">${x.tx}</div>`+
   (p.done?`<div class="pdone">Uloženo do sbírky 🏆</div><button class="pbtn gold" data-p="new">${pl?'🌱 Zasadit novou kytičku':'🐾 Adoptovat nové zvířátko'}</button>`
   :`<div class="prow">${pl?'<button class="pbtn" data-p="free">💦 Zalít jen tak</button><button class="pbtn" data-p="stroke">👋 Pohladit</button>':'<button class="pbtn" data-p="pet">🤗 Podrbat</button><button class="pbtn" data-p="feed">🍪 Nakrmit</button><button class="pbtn" data-p="kiss">💋 Dát pusu</button>'}</div><button class="pbtn gold" data-p="prem">${drop(20)} Prémiová péče <em id="pcnt">${S.drops}</em></button><div class="phint">Péče pro radost je zdarma a dává trochu XP. Zlaté kapky získáš za splněné úkoly a nákupy.</div>`)+wardHTML()+`</div>`}
 function chooserHTML(){const c=(k,sp,svg,n)=>`<button class="pick glass" data-p="pick" data-k="${k}" data-sp="${sp}"><div>${svg}</div><b>${n}</b></button>`;
@@ -614,8 +643,8 @@ function fx(type){const st=$('#stage');if(!st)return;
 function addXp(n){const p=S.pet;if(!p||p.done)return null;const before=stOf(p.xp);p.xp=Math.min(150,p.xp+n);const after=stOf(p.xp);
   if(p.xp>=150){p.done=true;S.coll.push({kind:p.kind,sp:p.sp,v:p.v||0,x:p.x,w:{...S.worn},ts:Date.now()})}return{before,after,done:!!p.done}}
 function care(a){const p=S.pet;if(!p||p.done)return;let res=null;
-  if(a==='prem'){if(S.drops<1){toast('Zlaté kapky získáš za úkoly a nákupy 💧');return}S.drops--;res=addXp(45);fx('prem');sfx('prem');say(pickMsg('prem'))}
-  else{const t=Date.now();if(t-(p.last||0)>12000){p.last=t;res=addXp(3)}fx(a);a==='free'?sfx('water'):a==='feed'?sfx('feed'):a==='kiss'?sfx('kiss'):a==='stroke'?sfx('stroke'):critter(p.sp);say(pickMsg(a==='free'?'plant':a))}
+  if(a==='prem'){if(S.drops<1){toast('Zlaté kapky získáš za úkoly a nákupy 💧');return}wk();S.drops--;res=addXp(45);fx('prem');sfx('prem');say(pickMsg('prem'))}
+  else{wk();const t=Date.now();if(t-(p.last||0)>12000){p.last=t;res=addXp(3)}fx(a);a==='free'?sfx('water'):a==='feed'?sfx('feed'):a==='kiss'?sfx('kiss'):a==='stroke'?sfx('stroke'):critter(p.sp);say(pickMsg(a==='free'?'plant':a))}
   save();chip(a==='prem');
   if($('#pcnt'))$('#pcnt').textContent=S.drops;
   const x=pxp(p);$('#xpb').style.width=x.pct+'%';$('#xptx').textContent=x.tx;
@@ -701,13 +730,13 @@ function anchor(p,st){
 function accSVG(p,st,w){
   const a=anchor(p,st);let o='';const k=a.r/40,L=id=>ACCL.find(x=>x.id===id);
   for(const slot of ['neck','side','head','face']){const A=L(w[slot]);if(!A)continue;
-    if(slot==='side'){o+=`<g transform="translate(26 192) scale(.95)">${A.svg({fy:0,ew:10})}</g>`;continue}
+    if(slot==='side'){o+=`<g transform="translate(26 192) scale(.95)"><g class="sa">${A.svg({fy:0,ew:10})}</g></g>`;continue}
     const F=slot==='face'&&a.fa?a.fa:a;
     if(slot==='face'?(F===a&&!a.face):!a.ok)continue;
     const kk=F.r/40;
     o+=`<g transform="translate(${F.x} ${slot==='neck'?F.ny:F.y}) scale(${kk})">${A.svg({fy:(F.fy-F.y)/kk,ew:F.ew/kk})}</g>`}
   return o}
-const petSVG=(p,st)=>{const s=p.kind==='plant'?plantSVG(p.sp,st,p.v):animalSVG(p.sp,st,p.v,p.x),w=p===S.pet?S.worn:p.w;return w?s.replace('</svg>',accSVG(p,st,w)+'</svg>'):s};
+const petSVG=(p,st)=>{ZZ=p===S.pet&&isSleeping();const s=p.kind==='plant'?plantSVG(p.sp,st,p.v):animalSVG(p.sp,st,p.v,p.x),w=p===S.pet?S.worn:p.w;ZZ=false;return w?s.replace('</svg>',accSVG(p,st,w)+'</svg>'):s};
 function syncUnlocks(){if(!S.pet)return[];const st=stOf(S.pet.xp),nu=[];ACCL.forEach(a=>{if(a.lvl<=st&&!S.unl[a.id]){S.unl[a.id]=1;if(a.lvl>0)nu.push(a.n)}});if(nu.length)save();return nu}
 let wopen=false,wf='all';
 const curSea=()=>{const m=new Date().getMonth()+1;return m===12?'xmas':m===10?'hallo':m>=9&&m<=11?'autumn':m>=3&&m<=5?'spring':m>=6&&m<=8?'summer':'winter'};
@@ -732,7 +761,7 @@ const TRK={
  s3animal:[['flip','Zadní salto! 🤸','⭐']]
 };
 function bag(k,L){if(!BAGS[k]||!BAGS[k].length)BAGS[k]=[...L].sort(()=>Math.random()-.5);return BAGS[k].pop()}
-function trick(){const p=S.pet;if(!p||trickBusy||!$('#pet'))return;const st=stOf(p.xp),K=p.kind==='plant'?'plant':'animal',sp=TRK['s'+st+K]||[];
+function trick(){const p=S.pet;if(!p||trickBusy||!$('#pet'))return;if(isSleeping()){const b=$('#bub');if(b){b.classList.remove('show');void b.offsetWidth;b.classList.add('show')}return}const st=stOf(p.xp),K=p.kind==='plant'?'plant':'animal',sp=TRK['s'+st+K]||[];
   const pool=[...TRK.any,...TRK[K],...sp,...sp],t=bag('trk'+K+st,pool),pe=$('#pet'),sg=$('#stage');
   pe.className='pet t-'+t[0];trickBusy=true;setTimeout(()=>{pe.className='pet';trickBusy=false},1150);
   say(t[1]);for(let i=0;i<10;i++)pf(sg,t[2],'rise');pf(sg,['😊','🥰','😍','🤗','😻','😄'][Math.random()*6|0],'rise',true);
@@ -807,19 +836,36 @@ function wake(){try{if(S.snd===false&&!AC)return;const a=au();if(!a)return;if(a.
 ['touchstart','pointerdown','click','keydown'].forEach(ev=>document.addEventListener(ev,wake,{capture:true,passive:true}));
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&AC&&AC.state!=='running')try{AC.resume()}catch(e){}});
 const bkHTML0=()=>`<div class="bk"><button class="chip" data-bk="exp">⬇ Zálohovat data</button><button class="chip" data-bk="imp">⬆ Obnovit data</button><input type="file" id="bkf" accept=".json,application/json" hidden></div><div class="whint">Záloha obsahuje všechna data aplikace včetně PIN k dárkům, ulož si ji na bezpečné místo.</div>`;
-$('#view').addEventListener('click',async e=>{const b=e.target.closest('[data-bk]');if(!b)return;
+$('#bkfix').addEventListener('click',async e=>{const b=e.target.closest('[data-bk]');if(!b)return;
   if(b.dataset.bk==='exp'){const txt=JSON.stringify({app:'zapisnik',v:1,exported:new Date().toISOString(),data:S},null,1),name='zapisnik-zaloha-'+iso(new Date())+'.json';
     try{const f=new File([txt],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Záloha Zápisníku'});toast('Záloha připravena ✓');return}}catch(er){if(er&&er.name==='AbortError')return}
     const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();a.remove();toast('Záloha stažena ✓')}
   else $('#bkf').click()});
-$('#view').addEventListener('change',e=>{if(e.target.id!=='bkf')return;const f=e.target.files[0];if(!f)return;const r=new FileReader();
+$('#bkfix').addEventListener('change',e=>{if(e.target.id!=='bkf')return;const f=e.target.files[0];if(!f)return;const r=new FileReader();
   r.onload=()=>{try{let d=JSON.parse(r.result);if(d&&d.data)d=d.data;if(!d||typeof d!=='object'||!Array.isArray(d.tasks)||!Array.isArray(d.gifts))throw 0;
     if(!confirm('Obnovit data ze zálohy? Současná data v tomto telefonu budou nahrazena.'))return;
     localStorage.setItem(KEY+'.bak',localStorage.getItem(KEY)||'');localStorage.setItem(KEY,JSON.stringify(d));RST=true;toast('Data obnovena ✓');setTimeout(()=>location.reload(),600)}catch(er){toast('Tohle není platná záloha 😕')}};
   r.readAsText(f);e.target.value=''});
 
 const critter=sp=>{if(['cat','dog','llama','capy'].includes(sp)){sfx('tick');return}sfx(sp==='hare'?'rab':sp)};
-const bkHTML=()=>bkHTML0();
+const bkHTML=()=>'';
+
+// ---- spánek (21–6 h) a procházky po scéně
+let ZZ=false,wx=0,walkT,lastZ=false;
+const isNight=d=>{const h=(d||new Date()).getHours();return h>=21||h<6};
+const isSleeping=()=>!!S.pet&&isNight()&&!(S.pet.wake>Date.now());
+function applySleep(){const st=$('#stage');if(!st||!S.pet)return;const z=isSleeping();lastZ=z;st.classList.toggle('night',z);repaint();const zz=$('#zzz');if(zz)zz.hidden=!z;
+  const b=$('#bub');if(b){if(z){b.textContent=Math.random()<.5?'Zzz… 💤':'ššš spinkám 💤';b.hidden=false;b.classList.add('sleepy')}else{if(b.classList.contains('sleepy'))b.hidden=true;b.classList.remove('sleepy')}}
+  const pe=$('#pet');if(pe&&z){pe.classList.remove('walking');pe.style.setProperty('--wd','.6s');pe.style.setProperty('--wx','0px');wx=0}}
+function wk(){if(!isSleeping())return;S.pet.wake=Date.now()+600000;applySleep();const b=$('#bub');if(b){b.classList.remove('sleepy');b.hidden=true}}
+setInterval(()=>{if(S.tab==='garden'&&S.pet&&isSleeping()!==lastZ)applySleep()},15000);
+function walkStep(){clearTimeout(walkT);const pe=$('#pet');
+  if(pe&&S.tab==='garden'&&S.pet&&S.pet.kind==='animal'&&!isSleeping()&&!trickBusy&&!document.hidden){
+    let nx;do{nx=Math.round((Math.random()*2-1)*60)}while(Math.abs(nx-wx)<30);
+    const dur=Math.max(1.2,Math.abs(nx-wx)/26);pe.classList.remove('hop','sway');pe.style.setProperty('--wd',dur+'s');pe.style.setProperty('--wx',nx+'px');pe.classList.add('walking');wx=nx;
+    setTimeout(()=>{const q=$('#pet');if(q)q.classList.remove('walking')},dur*1000)}
+  walkT=setTimeout(walkStep,3500+Math.random()*4500)}
+function startWalk(){clearTimeout(walkT);wx=0;lastZ=isSleeping();if(S.tab==='garden'&&S.pet&&S.pet.kind==='animal')walkT=setTimeout(walkStep,2500+Math.random()*2500)}
 // ---- rychlý zápis
 let editing=null;
 function openSheet(ed){editing=ed||null;$('#sht').textContent=ed?'Upravit':(S.tab==='shop'?'Nová položka 🛒':'Nový zápis ✨');$('#inp').value=ed?ed.t.text:'';$('#inp').placeholder=S.tab==='shop'?'Co koupit?':'Co máš na mysli?…';$('#save').innerHTML=ic('check',20)+(ed?'Uložit změny':'Uložit');$('#ov').classList.add('open');setTimeout(()=>{const i=$('#inp');i.focus();const l=i.value.length;try{i.setSelectionRange(l,l)}catch(e){}},120)}
