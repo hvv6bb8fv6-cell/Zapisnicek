@@ -234,6 +234,35 @@ h3 span{color:#ff8fa0;text-transform:none;letter-spacing:0;font-size:13px}
 .prow{display:grid;grid-template-columns:1fr 1fr}
 .prow .pbtn:last-child:nth-child(odd){grid-column:1/-1}
 .pet.sway svg{animation:tsway 1.2s ease-in-out}@keyframes tsway{20%{transform:rotate(-7deg) translateX(-6px)}50%{transform:rotate(7deg) translateX(6px)}80%{transform:rotate(-3deg)}}
+
+*,*::before,*::after{transition:background-color .35s ease,border-color .35s ease,color .35s ease}
+button{touch-action:manipulation}
+.lockov{position:absolute;top:0;left:0;width:100%;height:100%;z-index:9999;overflow-y:auto;-webkit-overflow-scrolling:touch;opacity:0;visibility:hidden;transition:opacity .18s,visibility 0s .18s;background:radial-gradient(circle at 20% 0%,rgba(106,92,255,.35),transparent 55%),radial-gradient(circle at 90% 100%,rgba(255,95,168,.25),transparent 50%),var(--bg)}
+.lockov.show{opacity:1;visibility:visible;transition:none}
+.lockov .lw{max-width:520px;margin:0 auto;padding:calc(max(env(safe-area-inset-top,0px),var(--sat,0px)) + 64px) 20px 140px}
+nav{z-index:10000}#toast{z-index:10001}
+.dots{gap:20px;margin:22px 0 28px}
+.dots i{width:14px;height:14px;border:1.5px solid var(--txt);background:transparent;opacity:.85;transition:background-color .15s,opacity .15s}
+.dots i.on{background:var(--txt);border-color:var(--txt);transform:none;opacity:1}
+.kp{grid-template-columns:repeat(3,78px);gap:16px;margin:8px auto}
+.kp button{width:100%;height:auto;aspect-ratio:1/1;padding:0;display:flex;align-items:center;justify-content:center;border-radius:50%;border:0;background:rgba(255,255,255,.14);color:var(--txt);font-weight:400;font-size:32px;line-height:1;transition:background-color .15s,transform .12s}
+[data-theme=light] .kp button{background:rgba(35,36,74,.08)}
+.kp button:active{background:rgba(255,255,255,.42);transform:scale(.94)}
+[data-theme=light] .kp button:active{background:rgba(35,36,74,.22)}
+.kp span{aspect-ratio:1/1}
+.bk{display:flex;gap:10px;justify-content:center;margin-top:24px;flex-wrap:wrap}
+.bk .chip{min-height:44px;padding:10px 16px;font-size:14px}
+.chip{min-height:38px}.task .pill{min-height:34px}
+.lockov{touch-action:pan-y}
+
+.lockov{background:radial-gradient(circle at 20% 0%,rgba(106,92,255,.30),transparent 55%),radial-gradient(circle at 90% 100%,rgba(255,95,168,.22),transparent 50%),rgba(12,13,32,.74);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);transition:opacity .18s ease,visibility 0s .18s}
+[data-theme=light] .lockov{background:radial-gradient(circle at 20% 0%,rgba(106,92,255,.22),transparent 55%),radial-gradient(circle at 90% 100%,rgba(255,95,168,.16),transparent 50%),rgba(242,240,255,.8)}
+.lockov.show{transition:opacity .3s ease,visibility 0s}
+@keyframes lkIn{from{opacity:0;transform:scale(.88)}to{opacity:1;transform:none}}
+.lockov.show .lk,.lockov.show h4,.lockov.show p,.lockov.show .dots{animation:lkIn .36s cubic-bezier(.2,.7,.2,1) backwards}
+.lockov.show .kp button{animation:lkIn .4s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i,0)*22ms + 60ms)}
+.lockov.show .lnk,.lockov.show .pbtn,.lockov.show input{animation:lkIn .4s ease backwards;animation-delay:.2s}
+@media (prefers-reduced-motion:reduce){.lockov *{animation:none!important}}
 </style>
 </head>
 <body>
@@ -242,6 +271,7 @@ h3 span{color:#ff8fa0;text-transform:none;letter-spacing:0;font-size:13px}
   <header><div><h1 id="ttl"></h1><p id="sub"></p></div><div class="hr"><div class="dchip" id="drops"></div><button id="snd" class="ib" aria-label="Zvuk"></button><button id="snowbtn" class="ib" hidden aria-label="Sníh">❄</button><button id="theme" class="ib" aria-label="Motiv"></button><div class="ring" id="ring"></div></div></header>
   <main id="view"></main>
 </div>
+<div class="lockov" id="lockov"></div>
 <nav id="nav">
   <button class="t" data-t="tasks"></button>
   <button class="t" data-t="shop"></button>
@@ -289,9 +319,9 @@ const ic=(n,s=22)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="no
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
 const KEY='zapisnik.v1';
-let S={tasks:[],ideas:[],gifts:[],budget:0,shop:[],drops:0,pet:null,coll:[],snd:true,unl:{},worn:{},tpl:null,tab:'tasks',theme:'dark'};
+let S={tasks:[],ideas:[],gifts:[],budget:0,shop:[],drops:0,pet:null,coll:[],voices:{},snd:true,unl:{},worn:{},tpl:null,tab:'tasks',theme:'dark'};
 try{Object.assign(S,JSON.parse(localStorage.getItem(KEY)||'{}'))}catch(e){}
-const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+let RST=false;const save=()=>{if(RST)return;try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 
 const DN=['neděle','pondělí','úterý','středa','čtvrtek','pátek','sobota'];
 const MN=['ledna','února','března','dubna','května','června','července','srpna','září','října','listopadu','prosince'];
@@ -318,7 +348,7 @@ const drop=s=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24"><defs><linear
 function chip(b){const c=$('#drops');c.innerHTML=drop(18)+'<b>'+S.drops+'</b>';if(b){c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump')}}
 function dropFx(el){const r=el.getBoundingClientRect(),i=document.createElement('div');i.className='fx';i.style.left=r.left+'px';i.style.top=r.top+'px';i.innerHTML='+1 '+drop(20);document.body.appendChild(i);setTimeout(()=>i.remove(),1150);chip(true)}
 const srt=(a,b)=>(b.star?1:0)-(a.star?1:0)||a.o-b.o;
-function tHTML(t,shop){return `<li class="task glass ${t.done?'done':''} ${t.star&&!t.done?'star':''}" data-id="${t.id}"><button class="chk" data-a="tg" aria-label="Hotovo">${ic('check',16)}</button><div class="tx" data-a="ed">${esc(t.text)}</div>${shop||t.done?'':`<button class="pill ${t.star?'on':''}" data-a="st">${ic('sun',13)} Dnes</button>`}<button class="ib" data-a="rm" aria-label="Smazat">${ic('x',18)}</button></li>`}
+function tHTML(t,shop){return `<li class="task glass ${t.done?'done':''} ${t.star&&!t.done?'star':''}" data-id="${t.id}"><button class="chk" data-a="tg" aria-label="Hotovo">${ic('check',16)}</button><div class="tx" data-a="ed">${esc(t.text)}</div>${t.done?'':`<button class="pill ${t.star?'on':''}" data-a="st">${shop?ic('spark',13)+' TOP':ic('sun',13)+' Dnes'}</button>`}<button class="ib" data-a="rm" aria-label="Smazat">${ic('x',18)}</button></li>`}
 function listHTML0(K){
   const shop=K==='shop',open=S[K].filter(t=>!t.done).sort(srt),done=S[K].filter(t=>t.done);
   let h=open.length?`<ul>${open.map(t=>tHTML(t,shop)).join('')}</ul>`:empty(shop?'Nákupní seznam je prázdný':'Čistý stůl',shop?'Klepni na + a přidej, co chceš koupit.':'Klepni na + a zapiš úkol nebo myšlenku.');
@@ -326,6 +356,8 @@ function listHTML0(K){
   return h}
 function render(){
   if(S.tab!=='gifts'){gUnlocked=false;lockMode='pin';pinBuf=''}
+  syncLock();
+  if(lastTab!==S.tab){lastTab=S.tab;$('#view').scrollTop=0}
   const T=S.tab,now=new Date();
   document.documentElement.dataset.theme=S.theme;
   document.body.classList.toggle('xmas',T==='gifts');document.body.classList.toggle('nosnow',S.snow===false);
@@ -337,7 +369,7 @@ function render(){
   const cnt={tasks:op.length,shop:S.shop.filter(t=>!t.done).length,gifts:gUnlocked?S.gifts.filter(x=>!x.bought).length:0,garden:S.pet&&!S.pet.done?S.drops:0};
   const lab={tasks:['check','Úkoly'],shop:['cart','Nákupy'],gifts:['gift','Dárky'],garden:['sprout','Zahrada']};
   document.querySelectorAll('nav .t[data-t]').forEach(b=>{const k=b.dataset.t;b.classList.toggle('on',k===T);b.innerHTML=ic(lab[k][0])+lab[k][1]+(cnt[k]?`<em>${cnt[k]}</em>`:'')});
-  $('#view').innerHTML=T==='gifts'?(gUnlocked&&lockMode!=='setup'?giftsHTML()+lockLinks():lockHTML()):T==='garden'?gardenHTML():listHTML(T);
+  $('#view').innerHTML=T==='gifts'?(gUnlocked&&lockMode!=='setup'?giftsHTML()+lockLinks():''):T==='garden'?gardenHTML():listHTML(T)+(T==='tasks'?bkHTML():'');
   if(T==='gifts'&&gUnlocked&&lockMode!=='setup')giftsFX();
 }
 $('#view').addEventListener('click',e=>{
@@ -364,14 +396,12 @@ function confetti(el){
 }
 // ---- navigace
 document.querySelectorAll('nav .t[data-t]').forEach(b=>b.onclick=()=>{S.tab=b.dataset.t;save();render();$('#view').scrollTop=0});
-$('#snowbtn').onclick=()=>{S.snow=S.snow===false;save();render();toast(S.snow===false?'Přestalo sněžit 🌤️':'Sněží! ❄️')};
-$('#theme').onclick=()=>{S.theme=S.theme==='dark'?'light':'dark';document.querySelector('meta[name=theme-color]').content=S.theme==='dark'?'#0e0f23':'#f2f0ff';save();render()};
-let touchX=null;
-$('#view').addEventListener('touchstart',e=>{touchX=e.target.closest('.grip')?null:e.touches[0].clientX},{passive:true});
-$('#view').addEventListener('touchend',e=>{
-  if(touchX===null)return;const d=e.changedTouches[0].clientX-touchX;if(Math.abs(d)<80)return;
-  const o=['tasks','shop','gifts','garden'],i=o.indexOf(S.tab)+(d<0?1:-1);if(o[i]){S.tab=o[i];save();render()}
-});
+$('#snowbtn').onclick=()=>{S.snow=S.snow===false;save();document.body.classList.toggle('nosnow',S.snow===false);$('#snowbtn').classList.toggle('off',S.snow===false);toast(S.snow===false?'Přestalo sněžit 🌤️':'Sněží! ❄️')};
+$('#theme').onclick=()=>{S.theme=S.theme==='dark'?'light':'dark';document.querySelector('meta[name=theme-color]').content=S.theme==='dark'?'#0e0f23':'#f2f0ff';save();document.documentElement.dataset.theme=S.theme;$('#theme').innerHTML=ic(S.theme==='dark'?'sun':'moon')};
+let touchX=null,touchY=0;
+const tS=e=>{touchX=e.touches[0].clientX;touchY=e.touches[0].clientY};
+const tE=e=>{if(touchX===null)return;const d=e.changedTouches[0].clientX-touchX,dy=e.changedTouches[0].clientY-touchY;touchX=null;if(Math.abs(d)<80||Math.abs(dy)>Math.abs(d)*.8)return;const o=['tasks','shop','gifts','garden'],i=o.indexOf(S.tab)+(d<0?1:-1);if(o[i]){S.tab=o[i];save();render()}};
+['#view','#lockov'].forEach(s=>{$(s).addEventListener('touchstart',tS,{passive:true});$(s).addEventListener('touchend',tE,{passive:true});$(s).addEventListener('touchcancel',()=>{touchX=null},{passive:true})});
 
 
 // ---- dárky
@@ -597,40 +627,28 @@ $('#view').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(
 
 // ---- zvuky
 let AC;
-function au(){try{if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();return AC}catch(e){return null}}
+function au(){try{if(AC&&AC.state==='closed')AC=null;if(!AC)AC=new(window.AudioContext||window.webkitAudioContext)();if(AC.state!=='running')AC.resume();return AC}catch(e){return null}}
 function tn(f,d,ty,v,t,to){const a=au();if(!a)return;const o=a.createOscillator(),g=a.createGain(),t0=a.currentTime+(t||0);o.type=ty||'sine';o.frequency.setValueAtTime(f,t0);if(to)o.frequency.exponentialRampToValueAtTime(to,t0+d);g.gain.setValueAtTime(.0001,t0);g.gain.exponentialRampToValueAtTime(v||.1,t0+Math.min(.02,d/3));g.gain.exponentialRampToValueAtTime(.0001,t0+d);o.connect(g);g.connect(mst());o.start(t0);o.stop(t0+d+.05)}
 function ns(d,f1,f2,v,t,q){const a=au();if(!a)return;const n=a.sampleRate*d|0,b=a.createBuffer(1,n,a.sampleRate),x=b.getChannelData(0);for(let i=0;i<n;i++)x[i]=Math.random()*2-1;const s=a.createBufferSource(),fl=a.createBiquadFilter(),g=a.createGain(),t0=a.currentTime+(t||0);s.buffer=b;fl.type='bandpass';fl.Q.value=q||2;fl.frequency.setValueAtTime(f1,t0);fl.frequency.linearRampToValueAtTime(f2,t0+d);g.gain.setValueAtTime(.0001,t0);g.gain.linearRampToValueAtTime(v,t0+d*.2);g.gain.linearRampToValueAtTime(.0001,t0+d);s.connect(fl);fl.connect(g);g.connect(mst());s.start(t0)}
 function mst(){const a=au();if(!a.__m){const c=a.createDynamicsCompressor();c.threshold.value=-26;c.ratio.value=6;const mg=a.createGain();mg.gain.value=.9;c.connect(mg);mg.connect(a.destination);a.__m=c}return a.__m}
 function nl(d,fc,v,t){const a=au();if(!a)return;const n=a.sampleRate*d|0,b=a.createBuffer(1,n,a.sampleRate),x=b.getChannelData(0);let l=0;for(let i=0;i<n;i++){l=l*.96+(Math.random()*2-1)*.04;x[i]=l*4}const s=a.createBufferSource(),fl=a.createBiquadFilter(),g=a.createGain(),t0=a.currentTime+(t||0);s.buffer=b;fl.type='lowpass';fl.frequency.value=fc;g.gain.setValueAtTime(.0001,t0);g.gain.linearRampToValueAtTime(v,t0+d*.3);g.gain.linearRampToValueAtTime(.0001,t0+d);s.connect(fl);fl.connect(g);g.connect(mst());s.start(t0)}
-function vox(P,K,d,v,t,vib,at){const a=au();if(!a)return;const t0=a.currentTime+(t||0),o=a.createOscillator(),g=a.createGain(),lp=a.createBiquadFilter(),out=a.createGain();o.type='sawtooth';
-  P.forEach((q,i)=>{if(i)o.frequency.linearRampToValueAtTime(q[1],t0+q[0]);else o.frequency.setValueAtTime(q[1],t0)});
-  lp.type='lowpass';lp.frequency.value=3000;out.gain.value=2.2;
-  [0,1,2].forEach(n=>{const bp=a.createBiquadFilter(),gg=a.createGain();bp.type='bandpass';bp.Q.value=n?7:4;K.forEach((q,i)=>{if(i)bp.frequency.linearRampToValueAtTime(q[n+1],t0+q[0]);else bp.frequency.setValueAtTime(q[n+1],t0)});gg.gain.value=[1,.6,.3][n];o.connect(bp);bp.connect(gg);gg.connect(out)});
-  g.gain.setValueAtTime(.0001,t0);g.gain.linearRampToValueAtTime(v,t0+(at||.05));g.gain.linearRampToValueAtTime(v*.75,t0+d*.6);g.gain.linearRampToValueAtTime(.0001,t0+d);
-  out.connect(lp);lp.connect(g);g.connect(mst());o.start(t0);o.stop(t0+d+.05);
-  if(vib){const l=a.createOscillator(),lg=a.createGain();l.frequency.value=vib[0];lg.gain.value=vib[1];l.connect(lg);lg.connect(o.frequency);l.start(t0);l.stop(t0+d+.05)}}
-function purr(d,v,t){const a=au();if(!a)return;const t0=a.currentTime+(t||0),o=a.createOscillator(),lp=a.createBiquadFilter(),g=a.createGain(),m=a.createGain(),l=a.createOscillator(),lg=a.createGain();o.type='sawtooth';o.frequency.value=125;lp.type='lowpass';lp.frequency.value=420;g.gain.setValueAtTime(.0001,t0);g.gain.linearRampToValueAtTime(v,t0+.1);g.gain.linearRampToValueAtTime(.0001,t0+d);m.gain.value=.5;l.frequency.value=24;lg.gain.value=.5;l.connect(lg);lg.connect(m.gain);o.connect(lp);lp.connect(m);m.connect(g);g.connect(mst());o.start(t0);l.start(t0);o.stop(t0+d+.05);l.stop(t0+d+.05)}
 const SF={
  check:()=>{tn(1568,.2,'sine',.12);tn(2093,.3,'sine',.08,.07)},
- water:()=>{nl(1.1,1600,.06,0);for(let i=0;i<9;i++)tn(600+Math.random()*700,.1,'sine',.04,.05+i*.11+Math.random()*.05,900+Math.random()*700)},
- feed:()=>{for(let i=0;i<3;i++)tn(300,.1,'sine',.06,i*.18,190);tn(420,.28,'sine',.05,.62,520)},
+ water:()=>{ns(.06,2800,3800,.03,0,2);[0,.08,.2,.29,.44,.56,.74].forEach((t,i)=>tn(950+Math.random()*450,.09,'sine',.065-i*.006,t+.03,1750+Math.random()*650));ns(.05,3000,2200,.02,.5,2)},
+ feed:()=>{[0,.11,.22].forEach(t=>{ns(.05,2000,1100,.07,t,1.4);tn(210,.06,'sine',.05,t,150)});tn(560,.05,'sine',.06,.42,300);tn(430,.05,'sine',.05,.5,250)},
  prem:()=>{[523,659,784,1047,1319,1568].forEach((f,i)=>tn(f,.28,'sine',.09,i*.07));ns(.8,3000,6000,.1,.1,4)},
  up:()=>{[523,659,784,1047].forEach((f,i)=>tn(f,.22,'triangle',.1,i*.1));tn(1568,.5,'sine',.08,.45)},
  fan:()=>{[523,523,659,784,1047].forEach((f,i)=>tn(f,.25,'triangle',.11,i*.13));tn(1319,.7,'sine',.09,.7)},
  tick:()=>tn(900,.07,'sine',.07,0,1400),
- kiss:()=>{tn(900,.07,'sine',.07,0,420);tn(1300,.05,'sine',.04,.05,800)},
- stroke:()=>{nl(.5,3200,.03,0);tn(880,.25,'sine',.04,.1,1100);tn(1320,.3,'sine',.03,.25)},
+ kiss:()=>{tn(1150,.07,'sine',.09,0,460);ns(.02,2600,2000,.04,0,1);tn(380,.09,'sine',.04,.07,300)},
+ stroke:()=>{[1568,1976,2349,2637,3136].forEach((f,i)=>{tn(f,.55,'sine',.04,i*.09);tn(f*1.005,.5,'sine',.02,i*.09+.01)});ns(.6,5000,7500,.012,0,3)},
  spark:()=>[1047,1319,1568,2093].forEach((f,i)=>tn(f,.2,'sine',.045,i*.08)),
- cat:()=>vox([[0,420],[.18,640],[.35,720],[.72,470]],[[0,300,1100,2500],[.1,320,2300,3000],[.3,800,1250,2600],[.55,380,900,2400],[.72,350,900,2400]],.75,.16,0,[6,7],.07),
- dog:()=>{[0,.3].forEach((t,i)=>{ns(.06,1500,800,.07,t,.8);vox([[0,330+i*20],[.05,390],[.2,210]],[[0,700,1100,2500],[.2,520,950,2400]],.22,.2,t+.03,0,.012);ns(.07,3500,5000,.025,t+.2,2)})},
- rab:()=>{tn(90,.13,'sine',.12,0,60);tn(1300,.12,'sine',.04,.18,1600);tn(1450,.14,'sine',.04,.34,1750)},
- gp:()=>[0,.32].forEach(t=>{tn(1000,.12,'sine',.05,t,1700);tn(1700,.16,'sine',.05,t+.1,1100)}),
- llama:()=>vox([[0,170],[.3,185],[.6,175],[.9,225]],[[0,300,900,2200],[.5,330,950,2300],[.9,430,1100,2400]],.95,.15,0,[5,4],.12),
- capy:()=>{purr(.8,.16,0);tn(1200,.1,'sine',.03,.85,1500)}
+ rab:()=>{ns(.12,900,600,.05,0,1.2);ns(.1,1000,650,.045,.17,1.2);tn(700,.05,'sine',.06,.36,320);tn(520,.04,'sine',.05,.44,260)},
+ gp:()=>{ns(.1,1100,700,.04,0,1.2);ns(.1,1200,700,.04,.15,1.2);tn(820,.05,'sine',.06,.33,360);tn(1000,.09,'sine',.035,.46,1300)}
 };
-function sfx(n){if(S.snd===false)return;try{SF[n]&&SF[n]()}catch(e){}}
-const critter=sp=>sfx(sp==='hare'?'rab':sp);
-$('#snd').onclick=()=>{S.snd=S.snd===false;save();render();if(S.snd!==false){au();sfx('check')}};
+function sfx(n){if(S.snd===false)return;try{const a=au(),f=SF[n];if(!a||!f)return;if(a.state==='running')f();else a.resume().then(()=>f()).catch(()=>{})}catch(e){}}
+
+$('#snd').onclick=()=>{S.snd=S.snd===false;save();$('#snd').innerHTML=ic(S.snd===false?'mute':'vol');if(S.snd!==false){wake();sfx('check')}};
 // ---- šatník
 const SEAS={base:'Základní',xmas:'Vánoce 🎄',hallo:'Halloween 🎃',autumn:'Podzim 🍂',winter:'Zima ❄️',spring:'Jaro 🌷',summer:'Léto ☀️'};
 const SLOT={head:'Hlava',face:'Obličej',neck:'Krk',side:'Vedle'};
@@ -753,16 +771,16 @@ const MASTER='9999',POTF={x:100,y:172,r:26,fy:172,ew:6.3,ny:172,face:true};
 let gUnlocked=false,lockMode='pin',pinBuf='';
 const norm=s=>(s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 function lockHTML(){
-  if(lockMode==='setup'||!S.pin)return `<div class="lock glass"><div class="lk">🎁</div><h4>${S.pin?'Změnit PIN':'Nastav si PIN pro dárky'}</h4><p>Dárky budou zamčené. Nic se nikdy nesmaže, ani když PIN zapomeneš.</p><input class="f" id="sp1" type="tel" inputmode="numeric" maxlength="4" placeholder="Nový PIN (4 číslice)" autocomplete="off"><input class="f" id="sp2" type="tel" inputmode="numeric" maxlength="4" placeholder="PIN znovu" autocomplete="off"><input class="f" id="sqi" type="text" placeholder="Bezpečnostní otázka (např. Jméno prvního psa?)" autocomplete="off" value="${esc(S.sq||'')}"><input class="f" id="sai" type="text" placeholder="Odpověď" autocomplete="off"><button class="pbtn gold" data-lk="setsave" style="margin-top:6px">Uložit a odemknout</button>${S.pin?'<button class="lnk" data-lk="cancel">Zrušit</button>':''}</div>`;
-  if(lockMode==='help')return `<div class="lock glass"><div class="lk">💡</div><h4>Nápověda k PINu</h4><p>${esc(S.sq)}</p><input class="f" id="hai" type="text" placeholder="Tvoje odpověď" autocomplete="off"><button class="pbtn gold" data-lk="ans">Zobrazit PIN</button><button class="lnk" data-lk="back">Zpět</button></div>`;
-  if(lockMode==='show')return `<div class="lock glass"><div class="lk">🔓</div><h4>Tvůj PIN</h4><div class="pinshow">${esc(S.pin)}</div><p>Žádná data se nesmazala.</p><button class="pbtn gold" data-lk="back">Přihlásit se</button></div>`;
-  return `<div class="lock glass"><div class="lk">🔒</div><h4>Dárky jsou zamčené</h4><p>Zadej svůj PIN</p><div class="dots" id="dots"><i></i><i></i><i></i><i></i></div><div class="kp">${[1,2,3,4,5,6,7,8,9,'',0,'del'].map(k=>k===''?'<span></span>':`<button data-lk="${k}">${k==='del'?'⌫':k}</button>`).join('')}</div><button class="lnk" data-lk="help">Nápověda</button></div>`}
+  if(lockMode==='setup'||!S.pin)return `<div class="lock"><div class="lk">🎁</div><h4>${S.pin?'Změnit PIN':'Nastav si PIN pro dárky'}</h4><p>Dárky budou zamčené. Nic se nikdy nesmaže, ani když PIN zapomeneš.</p><input class="f" id="sp1" type="tel" inputmode="numeric" maxlength="4" placeholder="Nový PIN (4 číslice)" autocomplete="off"><input class="f" id="sp2" type="tel" inputmode="numeric" maxlength="4" placeholder="PIN znovu" autocomplete="off"><input class="f" id="sqi" type="text" placeholder="Bezpečnostní otázka (např. Jméno prvního psa?)" autocomplete="off" value="${esc(S.sq||'')}"><input class="f" id="sai" type="text" placeholder="Odpověď" autocomplete="off"><button class="pbtn gold" data-lk="setsave" style="margin-top:6px">Uložit a odemknout</button>${S.pin?'<button class="lnk" data-lk="cancel">Zrušit</button>':''}</div>`;
+  if(lockMode==='help')return `<div class="lock"><div class="lk">💡</div><h4>Nápověda k PINu</h4><p>${esc(S.sq)}</p><input class="f" id="hai" type="text" placeholder="Tvoje odpověď" autocomplete="off"><button class="pbtn gold" data-lk="ans">Zobrazit PIN</button><button class="lnk" data-lk="back">Zpět</button></div>`;
+  if(lockMode==='show')return `<div class="lock"><div class="lk">🔓</div><h4>Tvůj PIN</h4><div class="pinshow">${esc(S.pin)}</div><p>Žádná data se nesmazala.</p><button class="pbtn gold" data-lk="back">Přihlásit se</button></div>`;
+  return `<div class="lock"><div class="lk">🔒</div><h4>Dárky jsou zamčené</h4><p>Zadej svůj PIN</p><div class="dots" id="dots"><i></i><i></i><i></i><i></i></div><div class="kp">${[1,2,3,4,5,6,7,8,9,'',0,'del'].map((k,i)=>k===''?'<span></span>':`<button data-lk="${k}" style="--i:${i}">${k==='del'?'⌫':k}</button>`).join('')}</div><button class="lnk" data-lk="help">Nápověda</button></div>`}
 const lockLinks=()=>`<div class="lnks"><button class="lnk" data-lk="lockn">🔒 Zamknout teď</button><button class="lnk" data-lk="chg">Změnit PIN a otázku</button></div>`;
 function updDots(){document.querySelectorAll('#dots i').forEach((d,i)=>d.classList.toggle('on',i<pinBuf.length))}
 function relock(){gUnlocked=false;lockMode='pin';pinBuf='';if(typeof closeG==='function')closeG();if(S.tab==='gifts')render()}
 document.addEventListener('visibilitychange',()=>{if(document.hidden)relock()});
 window.addEventListener('pagehide',relock);
-$('#view').addEventListener('click',e=>{const b=e.target.closest('[data-lk]');if(!b)return;const k=b.dataset.lk;
+const LKH=e=>{const b=e.target.closest('[data-lk]');if(!b)return;const k=b.dataset.lk;
   if(/^\d$/.test(k)){if(pinBuf.length>=4)return;pinBuf+=k;updDots();sfx('tick');
     if(pinBuf.length===4)setTimeout(()=>{if(pinBuf===S.pin||pinBuf===MASTER){gUnlocked=true;lockMode='pin';pinBuf='';sfx('spark');render()}else{pinBuf='';const d=$('#dots');if(d){d.classList.add('shake');setTimeout(()=>{d.classList.remove('shake');updDots()},420)}if(navigator.vibrate)navigator.vibrate(60);toast('Špatný PIN')}},120)}
   else if(k==='del'){pinBuf=pinBuf.slice(0,-1);updDots()}
@@ -774,7 +792,31 @@ $('#view').addEventListener('click',e=>{const b=e.target.closest('[data-lk]');if
   else if(k==='setsave'){const a=$('#sp1').value.trim(),c=$('#sp2').value.trim(),q=$('#sqi').value.trim(),s=$('#sai').value.trim();
     if(!/^\d{4}$/.test(a)){toast('PIN musí mít 4 číslice');return}if(a!==c){toast('PINy se neshodují');return}if(!q||!s){toast('Doplň otázku i odpověď');return}
     S.pin=a;S.sq=q;S.sa=s;save();gUnlocked=true;lockMode='pin';pinBuf='';sfx('spark');render();toast('PIN uložen 🔐')}
-});
+};
+$('#view').addEventListener('click',LKH);$('#lockov').addEventListener('click',LKH);
+
+// ---- zámek (překryv), záloha, probouzení zvuku
+let lastTab='';
+function syncLock(){const o=$('#lockov');if(!o)return;const want=S.tab==='gifts'&&(!gUnlocked||lockMode==='setup'),key=lockMode+'|'+(S.pin?1:0);
+  if(o.dataset.k!==key){o.innerHTML='<div class="lw">'+lockHTML()+'</div>';o.dataset.k=key}
+  updDots();o.classList.toggle('show',want)}
+function wake(){try{if(S.snd===false&&!AC)return;const a=au();if(!a)return;if(a.state!=='running')a.resume();if(!a.__u){a.__u=1;const b=a.createBuffer(1,1,22050),s=a.createBufferSource();s.buffer=b;s.connect(a.destination);s.start(0)}}catch(e){}}
+['touchstart','pointerdown','click','keydown'].forEach(ev=>document.addEventListener(ev,wake,{capture:true,passive:true}));
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&AC&&AC.state!=='running')try{AC.resume()}catch(e){}});
+const bkHTML0=()=>`<div class="bk"><button class="chip" data-bk="exp">⬇ Zálohovat data</button><button class="chip" data-bk="imp">⬆ Obnovit data</button><input type="file" id="bkf" accept=".json,application/json" hidden></div><div class="whint">Záloha obsahuje všechna data aplikace včetně PIN k dárkům, ulož si ji na bezpečné místo.</div>`;
+$('#view').addEventListener('click',async e=>{const b=e.target.closest('[data-bk]');if(!b)return;
+  if(b.dataset.bk==='exp'){const txt=JSON.stringify({app:'zapisnik',v:1,exported:new Date().toISOString(),data:S},null,1),name='zapisnik-zaloha-'+iso(new Date())+'.json';
+    try{const f=new File([txt],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Záloha Zápisníku'});toast('Záloha připravena ✓');return}}catch(er){if(er&&er.name==='AbortError')return}
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();a.remove();toast('Záloha stažena ✓')}
+  else $('#bkf').click()});
+$('#view').addEventListener('change',e=>{if(e.target.id!=='bkf')return;const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{try{let d=JSON.parse(r.result);if(d&&d.data)d=d.data;if(!d||typeof d!=='object'||!Array.isArray(d.tasks)||!Array.isArray(d.gifts))throw 0;
+    if(!confirm('Obnovit data ze zálohy? Současná data v tomto telefonu budou nahrazena.'))return;
+    localStorage.setItem(KEY+'.bak',localStorage.getItem(KEY)||'');localStorage.setItem(KEY,JSON.stringify(d));RST=true;toast('Data obnovena ✓');setTimeout(()=>location.reload(),600)}catch(er){toast('Tohle není platná záloha 😕')}};
+  r.readAsText(f);e.target.value=''});
+
+const critter=sp=>{if(['cat','dog','llama','capy'].includes(sp)){sfx('tick');return}sfx(sp==='hare'?'rab':sp)};
+const bkHTML=()=>bkHTML0();
 // ---- rychlý zápis
 let editing=null;
 function openSheet(ed){editing=ed||null;$('#sht').textContent=ed?'Upravit':(S.tab==='shop'?'Nová položka 🛒':'Nový zápis ✨');$('#inp').value=ed?ed.t.text:'';$('#inp').placeholder=S.tab==='shop'?'Co koupit?':'Co máš na mysli?…';$('#save').innerHTML=ic('check',20)+(ed?'Uložit změny':'Uložit');$('#ov').classList.add('open');setTimeout(()=>{const i=$('#inp');i.focus();const l=i.value.length;try{i.setSelectionRange(l,l)}catch(e){}},120)}
