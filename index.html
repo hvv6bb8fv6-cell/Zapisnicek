@@ -213,6 +213,27 @@ h3 span{color:#ff8fa0;text-transform:none;letter-spacing:0;font-size:13px}
 .tnew{display:flex;gap:6px;align-items:center;padding-bottom:12px}
 .tnew input{flex:1;min-width:0;background:var(--glass);border:1px solid var(--bd);border-radius:14px;color:var(--txt);font:17px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:10px 12px;outline:none}
 .chip{-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+
+.lock{padding:22px 16px;text-align:center;animation:in .4s both}
+.lock h4{margin:6px 0 4px;font-size:19px}.lock p{margin:0 0 12px;color:var(--mut);font-size:14px}
+.lk{font-size:40px}
+.dots{display:flex;gap:14px;justify-content:center;margin:16px 0}
+.dots i{width:16px;height:16px;border-radius:50%;border:2px solid var(--mut);transition:.2s}
+.dots i.on{background:linear-gradient(135deg,var(--ac),var(--ac2));border-color:transparent;transform:scale(1.15)}
+.dots.shake{animation:shk .4s}@keyframes shk{20%,60%{transform:translateX(-10px)}40%,80%{transform:translateX(10px)}}
+.kp{display:grid;grid-template-columns:repeat(3,72px);gap:12px;justify-content:center;margin:8px 0}
+.kp button{height:64px;border-radius:50%;border:1px solid var(--bd);background:var(--glass);color:var(--txt);font:600 24px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;cursor:pointer;transition:transform .15s}
+.kp button:active{transform:scale(.9);background:var(--ac);color:#fff}
+.lnk{background:none;border:0;color:var(--ac);font:600 14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:10px;cursor:pointer}
+.lnks{display:flex;justify-content:center;gap:6px;margin-top:14px;flex-wrap:wrap}
+.lock input.f{display:block;width:100%;margin-bottom:10px;background:var(--glass);border:1px solid var(--bd);border-radius:14px;color:var(--txt);font:17px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:13px 14px;outline:none}
+.lock input.f:focus{border-color:var(--ac)}
+#sp1,#sp2{-webkit-text-security:disc}
+.pinshow{font-size:42px;letter-spacing:10px;font-weight:800;margin:12px 0;color:#ffd36b}
+.sht{font-weight:700;font-size:18px;margin:0 2px 10px}
+.prow{display:grid;grid-template-columns:1fr 1fr}
+.prow .pbtn:last-child:nth-child(odd){grid-column:1/-1}
+.pet.sway svg{animation:tsway 1.2s ease-in-out}@keyframes tsway{20%{transform:rotate(-7deg) translateX(-6px)}50%{transform:rotate(7deg) translateX(6px)}80%{transform:rotate(-3deg)}}
 </style>
 </head>
 <body>
@@ -228,7 +249,7 @@ h3 span{color:#ff8fa0;text-transform:none;letter-spacing:0;font-size:13px}
   <button class="t" data-t="gifts"></button>
   <button class="t" data-t="garden"></button>
 </nav>
-<div id="ov"><div id="sheet">
+<div id="ov"><div id="sheet"><div class="sht" id="sht"></div>
   <textarea id="inp" placeholder="Co máš na mysli?…" enterkeyhint="done"></textarea>
   <button id="save"></button>
 </div></div>
@@ -304,19 +325,20 @@ function listHTML0(K){
   if(done.length)h+=`<h3>${shop?'V košíku':'Hotovo'} (${done.length})<button data-a="clr">${shop?'Vysypat košík':'Smazat hotové'}</button></h3><ul>${done.map(t=>tHTML(t,shop)).join('')}</ul>`;
   return h}
 function render(){
+  if(S.tab!=='gifts'){gUnlocked=false;lockMode='pin';pinBuf=''}
   const T=S.tab,now=new Date();
   document.documentElement.dataset.theme=S.theme;
   document.body.classList.toggle('xmas',T==='gifts');document.body.classList.toggle('nosnow',S.snow===false);
-  $('#snowbtn').hidden=T!=='gifts';$('#snowbtn').classList.toggle('off',S.snow===false);
+  $('#snowbtn').hidden=T!=='gifts'||!gUnlocked||lockMode==='setup';$('#snowbtn').classList.toggle('off',S.snow===false);
   $('#theme').innerHTML=ic(S.theme==='dark'?'sun':'moon');chip();$('#ring').innerHTML='';$('#snd').innerHTML=ic(S.snd===false?'mute':'vol');syncUnlocks();
   const op=S.tasks.filter(t=>!t.done),ns=op.filter(t=>t.star).length;
   $('#ttl').textContent={tasks:'Úkoly & Myšlenky',shop:'Nákupy',gifts:'Dárky 🎄',garden:'Zahrádka 🌷'}[T];
   $('#sub').textContent=T==='tasks'?`Otevřeno: ${op.length}${ns?' · Dnes: '+ns:''}`:T==='shop'?'Odškrtni a získej zlatou kapku 💧':T==='gifts'?xsub(now):'Pečuj o svého kamaráda';
-  const cnt={tasks:op.length,shop:S.shop.filter(t=>!t.done).length,gifts:S.gifts.filter(x=>!x.bought).length,garden:S.pet&&!S.pet.done?S.drops:0};
+  const cnt={tasks:op.length,shop:S.shop.filter(t=>!t.done).length,gifts:gUnlocked?S.gifts.filter(x=>!x.bought).length:0,garden:S.pet&&!S.pet.done?S.drops:0};
   const lab={tasks:['check','Úkoly'],shop:['cart','Nákupy'],gifts:['gift','Dárky'],garden:['sprout','Zahrada']};
   document.querySelectorAll('nav .t[data-t]').forEach(b=>{const k=b.dataset.t;b.classList.toggle('on',k===T);b.innerHTML=ic(lab[k][0])+lab[k][1]+(cnt[k]?`<em>${cnt[k]}</em>`:'')});
-  $('#view').innerHTML=T==='gifts'?giftsHTML():T==='garden'?gardenHTML():listHTML(T);
-  if(T==='gifts')giftsFX();
+  $('#view').innerHTML=T==='gifts'?(gUnlocked&&lockMode!=='setup'?giftsHTML()+lockLinks():lockHTML()):T==='garden'?gardenHTML():listHTML(T);
+  if(T==='gifts'&&gUnlocked&&lockMode!=='setup')giftsFX();
 }
 $('#view').addEventListener('click',e=>{
   const b=e.target.closest('[data-a]');if(!b)return;
@@ -325,7 +347,7 @@ $('#view').addEventListener('click',e=>{
     if(t.done){t.star=false;if(!t.paid){t.paid=true;S.drops++;dropFx(b)}save();sfx('check');li.classList.add('done','flash');b.classList.add('on');confetti(b);setTimeout(()=>li.classList.add('out'),350);setTimeout(render,700)}
     else{save();render()}}
   if(a==='st'&&t){t.star=!t.star;t.o=-Date.now();save();li.classList.add('flash');setTimeout(render,260)}
-  if(a==='ed'&&t&&!t.done){const v=prompt('Upravit',t.text);if(v&&v.trim()){t.text=v.trim();save();render()}}
+  if(a==='ed'&&t&&!t.done)openSheet({t,K});
   if(a==='rm'&&t){const i=arr.indexOf(t);li.classList.add('out');setTimeout(()=>{arr.splice(i,1);save();render();toast('Smazáno',()=>{arr.splice(i,0,t);save();render()})},300)}
   if(a==='clr'){const old=arr.slice();S[K]=arr.filter(x=>!x.done);save();render();toast(K==='shop'?'Košík vysypán 🛒':'Hotové smazány',()=>{S[K]=old;save();render()})}
 });
@@ -381,7 +403,7 @@ function xmas(el){const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+
 $('#view').addEventListener('click',e=>{
   const b=e.target.closest('[data-g]');if(!b)return;
   const li=b.closest('[data-id]'),x=li&&S.gifts.find(y=>y.id===li.dataset.id);if(!x)return;const a=b.dataset.g;
-  if(a==='tg'){x.bought=!x.bought;save();if(x.bought){b.classList.add('on');li.classList.add('flash');xmas(b);toast('Dárek v pytli! 🎅')}setTimeout(render,x.bought?650:0)}
+  if(a==='tg'){x.bought=!x.bought;if(x.bought&&!x.paid){x.paid=true;S.drops++;dropFx(b)}save();if(x.bought){sfx('check');b.classList.add('on');li.classList.add('flash');xmas(b);toast('Dárek v pytli! 🎅')}setTimeout(render,x.bought?650:0)}
   if(a==='ed')openG(x);
   if(a==='rm'){const i=S.gifts.indexOf(x);li.classList.add('out');setTimeout(()=>{S.gifts.splice(i,1);save();render();toast('Dárek smazán',()=>{S.gifts.splice(i,0,x);save();render()})},300)}
 });
@@ -395,7 +417,7 @@ function closeG(){$('#gov').classList.remove('open');if(document.activeElement)d
 function saveG(){const n=$('#gn').value.trim(),gi=$('#gg').value.trim(),p=Math.max(0,+$('#gp').value||0),bo=$('#gb').checked;
   if(!n||!gi){toast('Doplň jméno a dárek');return}
   if(gEdit)Object.assign(gEdit,{name:n,gift:gi,price:p,bought:bo});else S.gifts.push({id:uid(),name:n,gift:gi,price:p,bought:bo});
-  save();closeG();render();toast('Zapsáno 🎄')}
+  const gg=gEdit||S.gifts[S.gifts.length-1];if(gg&&gg.bought&&!gg.paid){gg.paid=true;S.drops++;chip(true);sfx('check')}save();closeG();render();toast('Zapsáno 🎄')}
 $('#gsave').onclick=saveG;
 $('#gov').onclick=e=>{if(e.target.id==='gov')closeG()};
 [['#gn','#gg'],['#gg','#gp']].forEach(([a,b])=>$(a).addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();$(b).focus()}}));
@@ -517,7 +539,7 @@ function animalSVG(sp,st,vi,x){
     if(st>=2)mark+=`<ellipse cx="70" cy="150" rx="18" ry="16" fill="${A.b}" opacity=".9"/>`}
   const whisk=sp==='dog'||sp==='gp'?'':`<path d="M72 122l-22-4M72 126l-22 4M128 122l22-4M128 126l22 4" stroke="#8a6a5a" stroke-width="1.6" stroke-linecap="round"/>`;
   const crown=st===3?`<path d="M82 74l4-16 10 9 4-14 4 14 10-9 4 16z" fill="#ffd36b" stroke="#f2a93b" stroke-width="2" stroke-linejoin="round"/><circle cx="100" cy="62" r="2.6" fill="#ff6b8b"/>`:'';
-  const g=`<ellipse cx="100" cy="190" rx="${52*sc}" ry="7" fill="rgba(0,0,0,.16)"/><g transform="translate(100 188) scale(${sc}) translate(-100 -188)">${tail}<ellipse cx="100" cy="156" rx="${bw}" ry="${bh}" fill="${A.c}"/>${sp==='gp'&&st<2?`<ellipse cx="70" cy="150" rx="18" ry="16" fill="${A.b}" opacity=".9"/>`:''}<ellipse cx="100" cy="166" rx="${bl}" ry="22" fill="${A.b}"/><ellipse cx="78" cy="186" rx="14" ry="8" fill="${A.b}"/><ellipse cx="122" cy="186" rx="14" ry="8" fill="${A.b}"/><g transform="translate(100 112) scale(${hs}) translate(-100 -112)">${ears}<ellipse cx="100" cy="108" rx="42" ry="35" fill="${A.c}"/>${mark}<ellipse cx="100" cy="122" rx="17" ry="11" fill="${A.b}"/>${A.ec?`<circle cx="84" cy="106" r="${er+3.2}" fill="#fbf7ff"/><circle cx="116" cy="106" r="${er+3.2}" fill="#fbf7ff"/>`:''}<circle cx="84" cy="106" r="${er}" fill="${ec}"/><circle cx="116" cy="106" r="${er}" fill="${ec}"/><circle cx="${85.6-er*.1}" cy="${104.6-er*.1}" r="${er*.32}" fill="#fff"/><circle cx="${117.6-er*.1}" cy="${104.6-er*.1}" r="${er*.32}" fill="#fff"/><circle cx="74" cy="118" r="5" fill="#ff8fa3" opacity=".5"/><circle cx="126" cy="118" r="5" fill="#ff8fa3" opacity=".5"/><ellipse cx="100" cy="115" rx="4.6" ry="3.3" fill="#e7708a"/><path d="M100 118v3M94 123q6 5 6 0q0 5 6 0" stroke="#3b2a4a" stroke-width="1.6" fill="none" stroke-linecap="round"/>${sp==='dog'?'<path d="M97 126q3 9 6 0z" fill="#ff7a93"/>':''}${whisk}${hacc}${crown}</g>${acc}</g>`;
+  const g=`<ellipse cx="100" cy="190" rx="${52*sc}" ry="7" fill="rgba(0,0,0,.16)"/><g transform="translate(100 188) scale(${sc}) translate(-100 -188)">${tail}<ellipse cx="100" cy="156" rx="${bw}" ry="${bh}" fill="${A.c}"/>${sp==='gp'&&st<2?`<ellipse cx="70" cy="150" rx="18" ry="16" fill="${A.b}" opacity=".9"/>`:''}<ellipse cx="100" cy="166" rx="${bl}" ry="22" fill="${A.b}"/><ellipse cx="78" cy="186" rx="14" ry="8" fill="${A.b}"/><ellipse cx="122" cy="186" rx="14" ry="8" fill="${A.b}"/><g transform="translate(100 112) scale(${hs}) translate(-100 -112)">${ears}<ellipse cx="100" cy="108" rx="42" ry="35" fill="${A.c}"/>${mark}<ellipse cx="100" cy="122" rx="17" ry="11" fill="${A.b}"/>${A.ec?`<circle cx="84" cy="106" r="${er+3.2}" fill="#fbf7ff"/><circle cx="116" cy="106" r="${er+3.2}" fill="#fbf7ff"/>`:''}<circle cx="84" cy="106" r="${er}" fill="${ec}"/><circle cx="116" cy="106" r="${er}" fill="${ec}"/><circle cx="${85.6-er*.1}" cy="${104.6-er*.1}" r="${er*.32}" fill="#fff"/><circle cx="${117.6-er*.1}" cy="${104.6-er*.1}" r="${er*.32}" fill="#fff"/><circle cx="${82.4+er*.2}" cy="${107+er*.4}" r="${er*.15}" fill="#fff" opacity=".85"/><circle cx="${114.4+er*.2}" cy="${107+er*.4}" r="${er*.15}" fill="#fff" opacity=".85"/><circle cx="74" cy="118" r="5" fill="#ff8fa3" opacity=".5"/><circle cx="126" cy="118" r="5" fill="#ff8fa3" opacity=".5"/><ellipse cx="100" cy="115" rx="4.6" ry="3.3" fill="#e7708a"/><path d="M100 118v3M94 123q6 5 6 0q0 5 6 0" stroke="#3b2a4a" stroke-width="1.6" fill="none" stroke-linecap="round"/>${sp==='dog'?'<path d="M97 126q3 9 6 0z" fill="#ff7a93"/>':''}${whisk}${hacc}${crown}</g>${acc}</g>`;
   return `<svg viewBox="0 -25 200 225">${g}</svg>`}
 
 const pname=p=>(p.kind==='plant'?PL:AN)[p.sp].n;
@@ -525,7 +547,7 @@ function pxp(p){const st=stOf(p.xp);if(st>=3)return{pct:100,tx:'Plně vyrostlo! 
 function petHTML(){const p=S.pet,st=stOf(p.xp),x=pxp(p),pl=p.kind==='plant';
   return `<div class="pcard glass"><div class="pname"><b>${pname(p)}</b><span id="plbl">${LBL[p.kind][st]}</span></div><div class="stage" id="stage"><div class="pet" id="pet">${petSVG(p,st)}</div><div class="bub" id="bub" hidden></div></div><div class="xpbar"><i id="xpb" style="width:${x.pct}%"></i></div><div class="xptx" id="xptx">${x.tx}</div>`+
   (p.done?`<div class="pdone">Uloženo do sbírky 🏆</div><button class="pbtn gold" data-p="new">${pl?'🌱 Zasadit novou kytičku':'🐾 Adoptovat nové zvířátko'}</button>`
-  :`<div class="prow">${pl?'<button class="pbtn" data-p="free">💦 Zalít jen tak</button>':'<button class="pbtn" data-p="pet">🤗 Podrbat</button><button class="pbtn" data-p="feed">🍪 Nakrmit</button>'}</div><button class="pbtn gold" data-p="prem">${drop(20)} Prémiová péče <em id="pcnt">${S.drops}</em></button><div class="phint">Péče pro radost je zdarma a dává trochu XP. Zlaté kapky získáš za splněné úkoly a nákupy.</div>`)+wardHTML()+`</div>`}
+  :`<div class="prow">${pl?'<button class="pbtn" data-p="free">💦 Zalít jen tak</button><button class="pbtn" data-p="stroke">👋 Pohladit</button>':'<button class="pbtn" data-p="pet">🤗 Podrbat</button><button class="pbtn" data-p="feed">🍪 Nakrmit</button><button class="pbtn" data-p="kiss">💋 Dát pusu</button>'}</div><button class="pbtn gold" data-p="prem">${drop(20)} Prémiová péče <em id="pcnt">${S.drops}</em></button><div class="phint">Péče pro radost je zdarma a dává trochu XP. Zlaté kapky získáš za splněné úkoly a nákupy.</div>`)+wardHTML()+`</div>`}
 function chooserHTML(){const c=(k,sp,svg,n)=>`<button class="pick glass" data-p="pick" data-k="${k}" data-sp="${sp}"><div>${svg}</div><b>${n}</b></button>`;
   return `<div class="pcard glass"><h4>Koho chceš pěstovat? 💛</h4><p>Vyber si kytičku nebo zvířátko, o které se budeš starat.</p></div><h3>Kytičky</h3><div class="pgrid">${Object.keys(PL).map(s=>c('plant',s,plantSVG(s,3),PL[s].n)).join('')}</div><h3>Zvířátka</h3><div class="pgrid">${Object.keys(AN).map(s=>c('animal',s,animalSVG(s,3),AN[s].n)).join('')}</div>`}
 function galleryHTML(){const c=(k,sp,n)=>`<div class="pick glass lock" data-p="peek" data-k="${k}" data-sp="${sp}" data-st="3"><div>${petSVG({kind:k,sp},3)}</div><b>${n}</b><small>ťukni a uvidíš růst</small></div>`;
@@ -538,6 +560,8 @@ function gardenHTML(){
 const MSG={plant:["Mám tě rád! 🥰","Dneska ti to moc sluší! ✨","Ach, to je osvěžení! 💦","Cítím, jak rostu! 🌱","Jsi nejlepší zahradnice! 🌷","Sluníčko a ty, dokonalá dvojka ☀️","Šimrá to, hihi! 😆","Díky, že na mě myslíš 💕","Dneska je krásný den! 🌈","Ještě trochu a rozkvetu! 🌸","S tebou se mi roste skvěle! 💚","Máš zlatou ruku! 🏅"],
  pet:["Mám tě rád! 🥰","{s}, to je příjemné! 🐾","Ty jsi nejlepší! 💖","Ještě kousek za uchem! 😻","Dneska ti to moc sluší! ✨","Hřeješ jako sluníčko ☀️","Jsem nejšťastnější na světě! 🌟","Pojď si se mnou hrát! 🎾","Tolik tě mám rád! 💕","Mazlení je moje oblíbené! 🤗"],
  feed:["{s}, to bylo dobré! 🐾","Mňam mňam! 😋","Dobrou chuť nám oběma! 🍽️","Přesně to jsem chtěl! 😍","Ještě jedno sousto? 🥕","Bříško je spokojené! 😊","Nejlepší kuchařka široko daleko! 👩‍🍳","Děkuju, jsem sytý a šťastný! 💛"],
+ kiss:["Mmmuah! 💋","To zalechtilo! 😘","Jé, pusinka! 🥰","Červenám se... 😳","Ještě jednu! 💕","Teď jsem nejšťastnější! 💖","Mlask! 😚","Ty jsi tak sladká! 🍬"],
+ stroke:["Ach, to je hezké! 🥰","Takové jemné pohlazení... 🌿","Mám z toho listy do růžova! 🌸","Děkuju, kamarádko! 💚","Šimrá to příjemně! ✨","Teď mi roste ještě líp! 🌱","To je tak uklidňující 😌","Cítím se milovaná! 💕"],
  prem:["Wow, to je nejlepší dárek! 🌟","Cítím se úplně nový! ✨","Zlatá péče, to je luxus! 👑","Rostu jako z vody! 🚀","Děkuju z celého srdce! 💛"]};
 const BAGS={};let bt;
 function pickMsg(k){if(!BAGS[k]||!BAGS[k].length)BAGS[k]=[...MSG[k]].sort(()=>Math.random()-.5);return BAGS[k].pop().replace('{s}',S.pet&&S.pet.kind==='animal'?AN[S.pet.sp].s:'Hurá')}
@@ -549,22 +573,24 @@ function fx(type){const st=$('#stage');if(!st)return;
   if(type==='free')for(let i=0;i<12;i++)pf(st,'💧','fall');
   else if(type==='pet')for(let i=0;i<9;i++)pf(st,'❤️','rise');
   else if(type==='feed')for(let i=0;i<8;i++)pf(st,['🍪','🥕','🍓'][i%3],'fall');
+  else if(type==='kiss'){for(let i=0;i<9;i++)pf(st,i%2?'💋':'❤️','rise')}
+  else if(type==='stroke'){for(let i=0;i<9;i++)pf(st,['🌿','✨','💚'][i%3],'rise')}
   else{for(let i=0;i<14;i++)pf(st,['✨','⭐','💛','🌟'][i%4],'rise');for(let i=0;i<10;i++)pf(st,'💧','fall');st.classList.remove('glow');void st.offsetWidth;st.classList.add('glow')}
   pf(st,['😊','🥰','😍','🤗','😻','😄'][Math.random()*6|0],'rise',true);
-  const pe=$('#pet');pe.classList.remove('hop');void pe.offsetWidth;pe.classList.add('hop')}
+  const pe=$('#pet');pe.classList.remove('hop','sway');void pe.offsetWidth;pe.classList.add(type==='stroke'?'sway':'hop')}
 function addXp(n){const p=S.pet;if(!p||p.done)return null;const before=stOf(p.xp);p.xp=Math.min(150,p.xp+n);const after=stOf(p.xp);
   if(p.xp>=150){p.done=true;S.coll.push({kind:p.kind,sp:p.sp,v:p.v||0,x:p.x,w:{...S.worn},ts:Date.now()})}return{before,after,done:!!p.done}}
 function care(a){const p=S.pet;if(!p||p.done)return;let res=null;
   if(a==='prem'){if(S.drops<1){toast('Zlaté kapky získáš za úkoly a nákupy 💧');return}S.drops--;res=addXp(45);fx('prem');sfx('prem');say(pickMsg('prem'))}
-  else{const t=Date.now();if(t-(p.last||0)>12000){p.last=t;res=addXp(3)}fx(a);a==='free'?sfx('water'):a==='feed'?sfx('feed'):critter(p.sp);say(pickMsg(a==='free'?'plant':a))}
+  else{const t=Date.now();if(t-(p.last||0)>12000){p.last=t;res=addXp(3)}fx(a);a==='free'?sfx('water'):a==='feed'?sfx('feed'):a==='kiss'?sfx('kiss'):a==='stroke'?sfx('stroke'):critter(p.sp);say(pickMsg(a==='free'?'plant':a))}
   save();chip(a==='prem');
   if($('#pcnt'))$('#pcnt').textContent=S.drops;
   const x=pxp(p);$('#xpb').style.width=x.pct+'%';$('#xptx').textContent=x.tx;
   if(res&&res.after>res.before){$('#pet').innerHTML=petSVG(p,res.after);$('#plbl').textContent=LBL[p.kind][res.after];const s=$('#stage');confetti(s);for(let i=0;i<16;i++)pf(s,['⭐','✨','🎉'][i%3],'rise');{const nu=syncUnlocks();sfx('up');toast('Nová fáze: '+LBL[p.kind][res.after]+' 🎉'+(nu.length?' · odemčeno: '+nu.join(', '):''));if(wopen)refreshW()}}
   if(res&&res.done){const s=$('#stage');setTimeout(()=>confetti(s),400);setTimeout(()=>confetti(s),900);toast('Hurá! Uloženo do sbírky 🏆');setTimeout(()=>sfx('fan'),700);setTimeout(render,2400)}}
 $('#view').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(!b)return;const a=b.dataset.p;
-  if(a==='pick'){S.pet={kind:b.dataset.k,sp:b.dataset.sp,xp:0,last:0,v:Math.random()*(b.dataset.k==='plant'?PL:AN)[b.dataset.sp].v.length|0,x:Math.random()<.5?1:0};save();render();sfx('spark');setTimeout(()=>{say('Ahoj! 👋 Jsem tvůj nový kamarád!');fx('prem')},150)}
-  else if(a==='new'){S.pet=null;save();render()}
+  if(a==='pick'){S.pet={kind:b.dataset.k,sp:b.dataset.sp,xp:0,last:0,v:Math.random()*(b.dataset.k==='plant'?PL:AN)[b.dataset.sp].v.length|0,x:Math.random()<.5?1:0};S.worn={};save();render();sfx('spark');setTimeout(()=>{say('Ahoj! 👋 Jsem tvůj nový kamarád!');fx('prem')},150)}
+  else if(a==='new'){S.pet=null;S.worn={};save();render()}
   else if(a==='peek'){const n=((+b.dataset.st)+1)%4,o={kind:b.dataset.k,sp:b.dataset.sp};b.dataset.st=n;b.querySelector('div').innerHTML=petSVG(o,n);b.querySelector('small').textContent='Fáze: '+LBL[o.kind][n]}
   else care(a)});
 
@@ -592,6 +618,8 @@ const SF={
  up:()=>{[523,659,784,1047].forEach((f,i)=>tn(f,.22,'triangle',.1,i*.1));tn(1568,.5,'sine',.08,.45)},
  fan:()=>{[523,523,659,784,1047].forEach((f,i)=>tn(f,.25,'triangle',.11,i*.13));tn(1319,.7,'sine',.09,.7)},
  tick:()=>tn(900,.07,'sine',.07,0,1400),
+ kiss:()=>{tn(900,.07,'sine',.07,0,420);tn(1300,.05,'sine',.04,.05,800)},
+ stroke:()=>{nl(.5,3200,.03,0);tn(880,.25,'sine',.04,.1,1100);tn(1320,.3,'sine',.03,.25)},
  spark:()=>[1047,1319,1568,2093].forEach((f,i)=>tn(f,.2,'sine',.045,i*.08)),
  cat:()=>vox([[0,420],[.18,640],[.35,720],[.72,470]],[[0,300,1100,2500],[.1,320,2300,3000],[.3,800,1250,2600],[.55,380,900,2400],[.72,350,900,2400]],.75,.16,0,[6,7],.07),
  dog:()=>{[0,.3].forEach((t,i)=>{ns(.06,1500,800,.07,t,.8);vox([[0,330+i*20],[.05,390],[.2,210]],[[0,700,1100,2500],[.2,520,950,2400]],.22,.2,t+.03,0,.012);ns(.07,3500,5000,.025,t+.2,2)})},
@@ -642,9 +670,9 @@ const cost=a=>a.lvl?a.lvl+1:0;
 function anchor(p,st){
   const sp=p.sp;
   if(p.kind==='plant'){
-    if(sp==='cactus'){const h=[0,34,62,86][st];return{x:100,y:143-h*.5,r:[0,20,33,44][st],fy:143-h*.5,ew:5,ny:143-h*.15,face:st>0,ok:st>0}}
+    if(sp==='cactus'){const h=[0,34,62,86][st];return{x:100,y:143-h*.5,r:[0,20,33,44][st],fy:143-h*.5,ew:5,ny:143-h*.15,face:st>0,ok:st>0,fa:st>0?null:POTF}}
     const P0=PL[sp],H=[0,28,56,80][st]*P0.h,top=143-H,rr={rose:28,sun:34,tulip:26,orch:34}[sp],fyo={rose:4,sun:3,tulip:-10,orch:1}[sp],y=[135,top-8,top-14,top-16][st];
-    return{x:100,y,r:[8,11,18,rr][st],fy:y+(st===3?fyo:0),ew:6,ny:143-H*.4,face:st===3,ok:true}}
+    return{x:100,y,r:[8,11,18,rr][st],fy:y+(st===3?fyo:0),ew:6,ny:143-H*.4,face:st===3,ok:true,fa:st===3?null:POTF}}
   if(sp==='llama'){const sc=[.62,.78,.9,1][st],nk=[.55,.7,.85,1][st],hy=170-100*nk-18,X=x=>100+(x-100)*sc,Y=y=>188+(y-188)*sc;return{x:X(80),y:Y(hy),r:28*sc,fy:Y(hy-4),ew:14*sc,ny:Y(hy+32),face:true,ok:true}}
   if(sp==='capy'){const sc=[.62,.78,.9,1][st],bh=[.62,.78,.9,1][st],hd=86*(1-bh),hs=[1.14,1.08,1.03,1][st],Y=y=>190+((110+(y-110)*hs+hd)-190)*sc;return{x:100,y:Y(88),r:44*hs*sc,fy:Y(82),ew:24*hs*sc,ny:Y(124),face:true,ok:true}}
   const sc=[.6,.76,.9,1][st],hs=[1.3,1.16,1.07,1][st],Y=y=>188+((112+(y-112)*hs)-188)*sc;
@@ -653,8 +681,10 @@ function accSVG(p,st,w){
   const a=anchor(p,st);let o='';const k=a.r/40,L=id=>ACCL.find(x=>x.id===id);
   for(const slot of ['neck','side','head','face']){const A=L(w[slot]);if(!A)continue;
     if(slot==='side'){o+=`<g transform="translate(26 192) scale(.95)">${A.svg({fy:0,ew:10})}</g>`;continue}
-    if(!a.ok||(slot==='face'&&!a.face))continue;
-    o+=`<g transform="translate(${a.x} ${slot==='neck'?a.ny:a.y}) scale(${k})">${A.svg({fy:(a.fy-a.y)/k,ew:a.ew/k})}</g>`}
+    const F=slot==='face'&&a.fa?a.fa:a;
+    if(slot==='face'?(F===a&&!a.face):!a.ok)continue;
+    const kk=F.r/40;
+    o+=`<g transform="translate(${F.x} ${slot==='neck'?F.ny:F.y}) scale(${kk})">${A.svg({fy:(F.fy-F.y)/kk,ew:F.ew/kk})}</g>`}
   return o}
 const petSVG=(p,st)=>{const s=p.kind==='plant'?plantSVG(p.sp,st,p.v):animalSVG(p.sp,st,p.v,p.x),w=p===S.pet?S.worn:p.w;return w?s.replace('</svg>',accSVG(p,st,w)+'</svg>'):s};
 function syncUnlocks(){if(!S.pet)return[];const st=stOf(S.pet.xp),nu=[];ACCL.forEach(a=>{if(a.lvl<=st&&!S.unl[a.id]){S.unl[a.id]=1;if(a.lvl>0)nu.push(a.n)}});if(nu.length)save();return nu}
@@ -717,14 +747,44 @@ let lpT,lpFired=false;
 $('#view').addEventListener('pointerdown',e=>{const b=e.target.closest('[data-q="ta"]');if(!b)return;lpFired=false;clearTimeout(lpT);lpT=setTimeout(()=>{lpFired=true;const i=+b.dataset.i,t=S.tpl[i];if(navigator.vibrate)navigator.vibrate(15);if(confirm('Odebrat „'+t+'“ z častých nákupů?')){keep(()=>{S.tpl.splice(i,1);save()});toast('Odebráno z častých: '+t)}},650)});
 ['pointerup','pointercancel','pointerleave'].forEach(ev=>$('#view').addEventListener(ev,()=>{clearTimeout(lpT);if(lpFired)setTimeout(()=>{lpFired=false},400)}));
 
+
+// ---- zámek dárků
+const MASTER='9999',POTF={x:100,y:172,r:26,fy:172,ew:6.3,ny:172,face:true};
+let gUnlocked=false,lockMode='pin',pinBuf='';
+const norm=s=>(s||'').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+function lockHTML(){
+  if(lockMode==='setup'||!S.pin)return `<div class="lock glass"><div class="lk">🎁</div><h4>${S.pin?'Změnit PIN':'Nastav si PIN pro dárky'}</h4><p>Dárky budou zamčené. Nic se nikdy nesmaže, ani když PIN zapomeneš.</p><input class="f" id="sp1" type="tel" inputmode="numeric" maxlength="4" placeholder="Nový PIN (4 číslice)" autocomplete="off"><input class="f" id="sp2" type="tel" inputmode="numeric" maxlength="4" placeholder="PIN znovu" autocomplete="off"><input class="f" id="sqi" type="text" placeholder="Bezpečnostní otázka (např. Jméno prvního psa?)" autocomplete="off" value="${esc(S.sq||'')}"><input class="f" id="sai" type="text" placeholder="Odpověď" autocomplete="off"><button class="pbtn gold" data-lk="setsave" style="margin-top:6px">Uložit a odemknout</button>${S.pin?'<button class="lnk" data-lk="cancel">Zrušit</button>':''}</div>`;
+  if(lockMode==='help')return `<div class="lock glass"><div class="lk">💡</div><h4>Nápověda k PINu</h4><p>${esc(S.sq)}</p><input class="f" id="hai" type="text" placeholder="Tvoje odpověď" autocomplete="off"><button class="pbtn gold" data-lk="ans">Zobrazit PIN</button><button class="lnk" data-lk="back">Zpět</button></div>`;
+  if(lockMode==='show')return `<div class="lock glass"><div class="lk">🔓</div><h4>Tvůj PIN</h4><div class="pinshow">${esc(S.pin)}</div><p>Žádná data se nesmazala.</p><button class="pbtn gold" data-lk="back">Přihlásit se</button></div>`;
+  return `<div class="lock glass"><div class="lk">🔒</div><h4>Dárky jsou zamčené</h4><p>Zadej svůj PIN</p><div class="dots" id="dots"><i></i><i></i><i></i><i></i></div><div class="kp">${[1,2,3,4,5,6,7,8,9,'',0,'del'].map(k=>k===''?'<span></span>':`<button data-lk="${k}">${k==='del'?'⌫':k}</button>`).join('')}</div><button class="lnk" data-lk="help">Nápověda</button></div>`}
+const lockLinks=()=>`<div class="lnks"><button class="lnk" data-lk="lockn">🔒 Zamknout teď</button><button class="lnk" data-lk="chg">Změnit PIN a otázku</button></div>`;
+function updDots(){document.querySelectorAll('#dots i').forEach((d,i)=>d.classList.toggle('on',i<pinBuf.length))}
+function relock(){gUnlocked=false;lockMode='pin';pinBuf='';if(typeof closeG==='function')closeG();if(S.tab==='gifts')render()}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)relock()});
+window.addEventListener('pagehide',relock);
+$('#view').addEventListener('click',e=>{const b=e.target.closest('[data-lk]');if(!b)return;const k=b.dataset.lk;
+  if(/^\d$/.test(k)){if(pinBuf.length>=4)return;pinBuf+=k;updDots();sfx('tick');
+    if(pinBuf.length===4)setTimeout(()=>{if(pinBuf===S.pin||pinBuf===MASTER){gUnlocked=true;lockMode='pin';pinBuf='';sfx('spark');render()}else{pinBuf='';const d=$('#dots');if(d){d.classList.add('shake');setTimeout(()=>{d.classList.remove('shake');updDots()},420)}if(navigator.vibrate)navigator.vibrate(60);toast('Špatný PIN')}},120)}
+  else if(k==='del'){pinBuf=pinBuf.slice(0,-1);updDots()}
+  else if(k==='help'){if(!S.pin)return;lockMode='help';render()}
+  else if(k==='back'||k==='cancel'){lockMode='pin';pinBuf='';render()}
+  else if(k==='ans'){const v=norm($('#hai').value);if(v&&v===norm(S.sa)){lockMode='show';render()}else{toast('Odpověď nesedí, zkus to znovu');if(navigator.vibrate)navigator.vibrate(60)}}
+  else if(k==='lockn'){relock();sfx('tick')}
+  else if(k==='chg'){lockMode='setup';render()}
+  else if(k==='setsave'){const a=$('#sp1').value.trim(),c=$('#sp2').value.trim(),q=$('#sqi').value.trim(),s=$('#sai').value.trim();
+    if(!/^\d{4}$/.test(a)){toast('PIN musí mít 4 číslice');return}if(a!==c){toast('PINy se neshodují');return}if(!q||!s){toast('Doplň otázku i odpověď');return}
+    S.pin=a;S.sq=q;S.sa=s;save();gUnlocked=true;lockMode='pin';pinBuf='';sfx('spark');render();toast('PIN uložen 🔐')}
+});
 // ---- rychlý zápis
-function openSheet(){$('#inp').placeholder=S.tab==='shop'?'Co koupit?':'Co máš na mysli?…';$('#save').innerHTML=ic('check',20)+'Uložit';$('#ov').classList.add('open');setTimeout(()=>$('#inp').focus(),120)}
-function closeSheet(){$('#ov').classList.remove('open');$('#inp').blur()}
+let editing=null;
+function openSheet(ed){editing=ed||null;$('#sht').textContent=ed?'Upravit':(S.tab==='shop'?'Nová položka 🛒':'Nový zápis ✨');$('#inp').value=ed?ed.t.text:'';$('#inp').placeholder=S.tab==='shop'?'Co koupit?':'Co máš na mysli?…';$('#save').innerHTML=ic('check',20)+(ed?'Uložit změny':'Uložit');$('#ov').classList.add('open');setTimeout(()=>{const i=$('#inp');i.focus();const l=i.value.length;try{i.setSelectionRange(l,l)}catch(e){}},120)}
+function closeSheet(){$('#ov').classList.remove('open');$('#inp').blur();if(editing){editing=null;$('#inp').value=''}}
 function commit(){const v=$('#inp').value.trim();if(!v){closeSheet();return}
+  if(editing){editing.t.text=v;editing=null;$('#inp').value='';save();closeSheet();render();toast('Upraveno ✓');return}
   const K=S.tab==='shop'?'shop':'tasks';S[K].push({id:uid(),text:v,done:false,o:-Date.now()});if(K==='tasks')S.tab='tasks';
   $('#inp').value='';save();closeSheet();render();toast('Zapsáno ✨')}
 $('#fab').innerHTML=ic('plus',30);
-$('#fab').onclick=()=>S.tab==='gifts'?openG():openSheet();
+$('#fab').onclick=()=>S.tab==='gifts'?(gUnlocked&&lockMode!=='setup'?openG():toast('Nejdřív odemkni dárky 🔒')):openSheet();
 $('#save').onclick=commit;$('#gsave').innerHTML=ic('check',20)+'Uložit';
 $('#ov').onclick=e=>{if(e.target.id==='ov')closeSheet()};
 $('#inp').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();commit()}});
