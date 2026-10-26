@@ -346,6 +346,18 @@ header h1{line-height:34px;height:34px;white-space:nowrap}
 .gt.wrapd .gtx{opacity:0;filter:blur(8px);transform:scale(.94);pointer-events:none;-webkit-user-select:none;user-select:none}
 .gt.wrapd .gwr{opacity:1;transform:none}
 .ib.wbox.on{color:var(--ac)}
+/* ===== ANIMACE ZABALENÍ (jemná): měkký závoj se zvolna prolne přes text a přejde do 🎁 ===== */
+.gpp{position:absolute;inset:0;border-radius:12px;pointer-events:none;opacity:0;
+  background:linear-gradient(135deg,rgba(255,122,184,.34),rgba(139,123,255,.34));
+  border:1px solid rgba(255,255,255,.28);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.gpp::before{content:"";position:absolute;left:12%;right:12%;top:50%;height:2px;margin-top:-1px;border-radius:2px;background:rgba(255,255,255,.7);transform:scaleX(0);transform-origin:50% 50%}
+.gt.wrapping .gpp{animation:gpap .8s ease-in-out forwards}
+.gt.wrapping .gpp::before{animation:gribh .8s ease-in-out forwards}
+.gt.wrapping .gwr{transition:opacity .45s ease .3s,transform .55s cubic-bezier(.3,1.25,.5,1) .3s}
+.gt.wrapping .gtx{transition-duration:.45s}
+@keyframes gpap{0%{opacity:0}40%{opacity:1}70%{opacity:1}100%{opacity:0}}
+@keyframes gribh{0%,15%{transform:scaleX(0)}50%,70%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:0}}
+@media(prefers-reduced-motion:reduce){.gt.wrapping .gpp,.gt.wrapping .gpp::before{animation:none}.gt.wrapping .gwr{transition-delay:0s}}
 /* ===== STROMEČEK POD SEZNAMEM DÁRKŮ ===== */
 .xtree{position:relative;height:130px;max-width:260px;margin:18px auto 4px;cursor:pointer;-webkit-user-select:none;user-select:none;touch-action:manipulation;overflow:hidden}
 .xtree svg{display:block;width:100%;height:100%;overflow:visible}
@@ -363,6 +375,91 @@ header h1{line-height:34px;height:34px;white-space:nowrap}
 @keyframes xpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
 .xtree .xst{transform-box:fill-box;transform-origin:center}
 @media(prefers-reduced-motion:reduce){.xtree .xst.on,.xtree.tw .xo{animation:none}}
+/* ===== ZAHRÁDKA: období, počasí, dotyky, návštěvníci, fotka ===== */
+.stage{touch-action:manipulation}
+.stage .wxb{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.stage .wx{position:absolute;inset:0;z-index:5;pointer-events:none;overflow:hidden}
+.night .wx{opacity:.72}.night .wxb .sun{display:none}
+.wx i{position:absolute;top:-16px;left:0;display:block;opacity:0;will-change:transform}
+.wx .lf{width:var(--s);height:var(--s);border-radius:0 100% 0 100%;background:linear-gradient(135deg,transparent 46%,rgba(0,0,0,.22) 47% 53%,transparent 54%),var(--c);animation:wxfall var(--d) linear var(--dl) infinite}
+.wx .pt{width:var(--s);height:calc(var(--s)*.62);border-radius:80% 0 80% 0;background:var(--c);animation:wxfall var(--d) linear var(--dl) infinite}
+.wx .sn{width:var(--s);height:var(--s);border-radius:50%;background:#fff;box-shadow:0 0 5px rgba(255,255,255,.95);animation:wxfall var(--d) linear var(--dl) infinite}
+.wx .rn{width:1.5px;height:var(--s);background:linear-gradient(rgba(150,190,240,0),rgba(105,145,215,.9));animation:wxrain var(--d) linear var(--dl) infinite}
+.wx .gs{width:46px;height:2px;border-radius:2px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.9),transparent);animation:wxgust var(--d) linear var(--dl) infinite}
+.wx .tint{position:absolute;inset:0;background:rgba(70,90,130,.14)}
+@keyframes wxfall{0%{transform:translate(0,-10px) rotate(0);opacity:0}8%{opacity:.92}35%{transform:translate(calc(var(--dx)*.35 + 14px),90px) rotate(calc(var(--r)*.3))}70%{transform:translate(calc(var(--dx)*.75 - 10px),190px) rotate(calc(var(--r)*.7))}92%{opacity:.92}100%{transform:translate(var(--dx),284px) rotate(var(--r));opacity:0}}
+@keyframes wxrain{0%{transform:translate(0,-20px) rotate(12deg);opacity:0}10%{opacity:.85}100%{transform:translate(-60px,290px) rotate(12deg);opacity:.5}}
+@keyframes wxgust{0%{transform:translateX(-70px);opacity:0}15%{opacity:.8}85%{opacity:.8}100%{transform:translateX(480px);opacity:0}}
+.wxb .sun{position:absolute;right:16px;top:12px;width:40px;height:40px;border-radius:50%;background:radial-gradient(circle,#fffbd0 0 38%,#ffdc6b 40% 100%);box-shadow:0 0 26px 12px rgba(255,214,102,.6);animation:sunp 5s ease-in-out infinite alternate}
+@keyframes sunp{to{transform:scale(1.07);box-shadow:0 0 32px 16px rgba(255,214,102,.5)}}
+.wxb .fg{position:absolute;left:-30%;width:160%;height:80px;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.6),rgba(255,255,255,0));animation:wxfog var(--d) ease-in-out infinite alternate}
+@keyframes wxfog{from{transform:translateX(-9%)}to{transform:translateX(9%)}}
+.stage.wx-rain:not(.night)::before{background:#c9d2e4;box-shadow:30px -10px 0 6px #c9d2e4}
+.stage.wx-rain:not(.night){filter:saturate(.9)}
+@media(prefers-reduced-motion:reduce){.wx i,.wxb .fg,.wxb .sun{animation:none}.wx i{display:none}}
+/* barvy podle ročního období (noc má vlastní, jen země se mění) */
+.stage{background:linear-gradient(var(--sk1,#bfe6ff),var(--sk2,#ffe9f6) 62%,var(--gr,#d6f5c9) 62%)}
+.stage::after{background:var(--hl,#b9ecab)}
+.stage.night{background:linear-gradient(#0f1538,#2a2358 62%,var(--ngr,#1c3b3e) 62%)}
+.stage.night::after{background:var(--nhl,#24494a)}
+/* štítek s ročním obdobím a tlačítko foťáku (jen překryv, layout se nemění) */
+.scp{position:absolute;left:8px;top:8px;z-index:6;pointer-events:none;font:600 11px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#3b2a4a;background:rgba(255,255,255,.55);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);padding:5px 9px;border-radius:999px;opacity:.9;white-space:nowrap}
+.night .scp{background:rgba(20,20,60,.5);color:#dfe5ff}
+.sleeping .scp{display:none}
+.snapb{position:absolute;right:8px;bottom:8px;z-index:8;width:32px;height:32px;padding:0;border-radius:50%;border:1px solid rgba(255,255,255,.75);background:rgba(255,255,255,.5);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#3b2a4a;display:grid;place-items:center;cursor:pointer;opacity:.9;transition:transform .15s}
+.snapb:active{transform:scale(.9)}
+.night .snapb{background:rgba(30,30,70,.5);color:#dfe5ff;border-color:rgba(255,255,255,.25)}
+.shotfl{position:absolute;inset:0;background:#fff;z-index:9;pointer-events:none;animation:shot .55s ease-out forwards}
+@keyframes shot{0%{opacity:.85}100%{opacity:0}}
+/* reakce na dotek */
+.pet.r-head svg{animation:rhead .75s ease-in-out}
+@keyframes rhead{0%{transform:none}25%{transform:rotate(-6deg) translateY(2px)}55%{transform:rotate(5deg) translateY(-2px)}80%{transform:rotate(-2deg)}100%{transform:none}}
+.pet.r-belly svg{animation:rbelly .8s ease-in-out}
+@keyframes rbelly{0%{transform:none}20%{transform:scale(1.07,.9)}40%{transform:scale(.94,1.08)}60%{transform:scale(1.05,.95)}80%{transform:scale(.99,1.01)}100%{transform:none}}
+/* návštěvníci */
+.gv{position:absolute;left:0;top:0;z-index:3;cursor:pointer;touch-action:manipulation;will-change:transform}
+.gvf{width:100%;height:100%;transform-origin:50% 100%;transition:transform .2s}
+.gv-hog .gvf{transform-origin:50% 62%}
+.gvf svg{display:block;width:100%;height:100%;overflow:visible}
+.gvb{position:absolute;left:50%;bottom:calc(100% + 5px);transform:translateX(-50%) translateY(4px) scale(.9);transform-origin:50% 100%;width:max-content;max-width:150px;background:#fff;color:#3b2a4a;font:600 11px/1.25 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;text-align:center;padding:5px 9px;border-radius:11px;box-shadow:0 3px 10px rgba(0,0,0,.18);pointer-events:none;opacity:0;transition:opacity .25s,transform .3s cubic-bezier(.2,1.5,.4,1)}
+.gvb.on{opacity:1;transform:translateX(-50%) scale(1)}
+.gvb::after{content:'';position:absolute;bottom:-4px;left:50%;width:8px;height:8px;background:#fff;transform:translateX(-50%) rotate(45deg)}
+.gvb.l,.gvb.r{transform:translateY(4px) scale(.9)}
+.gvb.l{left:-4px;transform-origin:16px 100%}.gvb.r{left:auto;right:-4px;transform-origin:calc(100% - 16px) 100%}
+.gvb.l.on,.gvb.r.on{transform:none}
+.gvb.l::after{left:16px}.gvb.r::after{left:auto;right:12px;transform:rotate(45deg)}
+.gv-hog .gvf svg{animation:gvwad .55s ease-in-out infinite}
+.gv-sq .gvf svg{animation:gvsq .26s ease-in-out infinite alternate}
+.gv.idle .gvf svg{animation:none}
+@keyframes gvwad{50%{transform:translateY(-1.5px) rotate(-2deg)}}
+@keyframes gvsq{to{transform:translateY(-2px) rotate(-3deg)}}
+.gv-hog.idle .nose{animation:gvnose .4s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:center}
+@keyframes gvnose{to{transform:scale(1.35)}}
+.gv-sq.idle .sqh{animation:gvnib .32s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes gvnib{to{transform:rotate(7deg) translateY(1px)}}
+.gv-bird.fly .wing{animation:gvwing .14s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:20% 80%}
+@keyframes gvwing{to{transform:rotate(-40deg) scaleY(.65)}}
+.gv-bird.idle .gvf svg{animation:gvpeck 1.1s ease-in-out infinite;transform-origin:50% 100%}
+@keyframes gvpeck{0%,60%,100%{transform:none}75%{transform:rotate(14deg) translateY(1px)}}
+.gv-frog.idle .thr{animation:gvpuff .8s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0}
+@keyframes gvpuff{50%{transform:scale(1.16,1.35)}}
+@media(prefers-reduced-motion:reduce){.gv .gvf svg,.gv .nose,.gv .sqh,.gv .wing,.gv .thr{animation:none}}
+
+/* ===== NÁKUPY: množství (+/−) a hvězdička TOP bez textu ===== */
+.pill.ico{padding:0;width:38px;height:34px;min-height:34px;justify-content:center;gap:0;flex:none}
+.pill.ico::after{content:'';position:absolute;inset:-5px -3px}
+.qty{flex:none;display:flex;align-items:center;height:28px;border-radius:999px;background:var(--glass);position:relative}
+.qb{border:0;background:none;color:var(--mut);width:26px;height:26px;padding:0;border-radius:50%;display:grid;place-items:center;cursor:pointer;position:relative;touch-action:manipulation;transition:background .15s,color .15s}
+.qb::after{content:'';position:absolute;inset:-7px -2px}
+.qb:active{background:var(--glass)}
+.qty:not(.many) .qb{width:28px;height:28px}
+.qty.many{border:1px solid var(--bd)}
+.qty.many .qb{color:var(--ac)}
+.qn{min-width:17px;text-align:center;font:700 13px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--txt);font-variant-numeric:tabular-nums}
+.qn.pop{animation:qpop .28s cubic-bezier(.2,1.6,.4,1)}
+@keyframes qpop{0%{transform:scale(.6)}100%{transform:none}}
+.qd{flex:none;font:700 12px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--mut);padding:0 2px}
+@media(prefers-reduced-motion:reduce){.qn.pop{animation:none}}
 </style>
 </head>
 <body>
@@ -396,7 +493,7 @@ header h1{line-height:34px;height:34px;white-space:nowrap}
 
 <script>
 const $=s=>document.querySelector(s);
-const P={vol:'<path d="M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 010 7M19 5a9 9 0 010 14"/>',
+const P={minus:'<path d="M5 12h14"/>',vol:'<path d="M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 010 7M19 5a9 9 0 010 14"/>',
  mute:'<path d="M11 5L6 9H2v6h4l5 4zM22 9l-6 6M16 9l6 6"/>',
  cart:'<circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 002 1.6h9.7a2 2 0 002-1.6L23 6H6"/>',
  sprout:'<path d="M7 20h10M10 20c5.5-2.5.8-6.4 3-10M9.5 9.4c1.1.8 1.8 2.2 2.3 3.7-2 .4-3.5.4-4.8-.3-1.2-.6-2.3-1.9-3-4.2 2.8-.5 4.4 0 5.5.8zM14.1 6a7 7 0 00-1.1 4c1.9-.1 3.3-.6 4.3-1.4 1-1 1.6-2.3 1.7-4.6-2.7.1-4 1-4.9 2z"/>',
@@ -413,6 +510,7 @@ const P={vol:'<path d="M11 5L6 9H2v6h4l5 4zM15.5 8.5a5 5 0 010 7M19 5a9 9 0 010 
  x:'<path d="M18 6L6 18M6 6l12 12"/>',
  bell:'<path d="M6 8a6 6 0 0112 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 003.4 0"/>',
  gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v7a2 2 0 01-2 2H7a2 2 0 01-2-2v-7M7.5 8a2.5 2.5 0 010-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 010 5"/>',
+ camera:'<path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/>',
  box:'<path d="M16.5 9.4l-9-5.2M21 16V8a2 2 0 00-1-1.7l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.7l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="M3.3 7L12 12l8.7-5M12 22V12"/>',
  spark:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>'
 };
@@ -482,6 +580,11 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')yrClose()});
 function navBadges(){const cnt={tasks:S.tasks.filter(t=>!t.done).length,shop:S.shop.filter(t=>!t.done).length,gifts:gUnlocked?S.gifts.filter(x=>!x.bought).length:0,garden:S.pet&&!S.pet.done?S.drops:0};
   document.querySelectorAll('nav .t[data-t]').forEach(b=>{const n=cnt[b.dataset.t];let e=b.querySelector('em');if(n){if(!e){e=document.createElement('em');b.appendChild(e)}if(e.textContent!=n)e.textContent=n}else if(e)e.remove()})}
 
+// ---- animace zabalení dárku (papír + stuha + jiskry); odhalení zůstává beze změny
+function gWrapFx(tx){
+  tx.classList.remove('wrapping');void tx.offsetWidth;tx.classList.add('wrapping');
+  clearTimeout(tx._wt);tx._wt=setTimeout(()=>tx.classList.remove('wrapping'),1000)}
+
 // ---- vánoční stromeček (kreslí se z dat dárků, nic se neukládá)
 const XO=[[124,34,'#ff5b5b'],[138,44,'#ffd36b'],[116,56,'#6bc8ff'],[144,62,'#ff7ab8'],[126,70,'#ffffff'],[106,84,'#ffd36b'],[134,82,'#ff5b5b'],[152,90,'#6bc8ff'],[118,94,'#ff7ab8'],[98,96,'#ffffff']];
 const XB=['#e8403f','#2fbf71','#4f8dff','#ffb02e','#b06bff','#ff7ab8','#2fd3c0','#ff8a4d','#6bc8ff','#e8c53f'];
@@ -511,7 +614,7 @@ function xtreeUpdate(fresh){
 function xtreeTap(t){
   if(t.classList.contains('tw'))return;
   t.classList.add('tw');sfx('tick');
-  const cols=XO.map(o=>o[2]),w=t.clientWidth,sc=w/260,lit=[...t.querySelectorAll('.xo.on')];
+  const w=t.clientWidth,sc=w/260,lit=[...t.querySelectorAll('.xo.on')];
   const src=lit.length?lit:[...t.querySelectorAll('.xo')];
   for(let i=0;i<6;i++){const o=src[(Math.random()*src.length)|0],cx=+o.getAttribute('cx')*sc,cy=+o.getAttribute('cy')*sc,c=o.getAttribute('fill'),d=document.createElement('i');
     d.className='xfall';d.style.cssText=`left:${cx-4}px;top:${cy-4}px;background:${c};color:${c}`;t.appendChild(d);
@@ -525,7 +628,8 @@ const drop=s=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24"><defs><linear
 function chip(b){const c=$('#drops');c.innerHTML=drop(18)+'<b>'+S.drops+'</b>';if(b){c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump')}}
 function dropFx(el){const r=el.getBoundingClientRect(),i=document.createElement('div');i.className='fx';i.style.left=r.left+'px';i.style.top=r.top+'px';i.innerHTML='+1 '+drop(20);document.body.appendChild(i);setTimeout(()=>i.remove(),1150);chip(true)}
 const srt=(a,b)=>(b.star?1:0)-(a.star?1:0)||a.o-b.o;
-function tHTML(t,shop){return `<li class="task glass ${t.done?'done':''} ${t.star&&!t.done?'star':''}" data-id="${t.id}"><button class="chk" data-a="tg" aria-label="Hotovo">${ic('check',16)}</button><div class="tx" data-a="ed">${esc(t.text)}</div>${t.done?'':`<button class="pill ${t.star?'on':''}" data-a="st">${shop?ic('spark',13)+' TOP':ic('sun',13)+' Dnes'}</button>`}<button class="ib" data-a="rm" aria-label="Smazat">${ic('x',18)}</button></li>`}
+const qtyHTML=q=>q>1?`<button type="button" class="qb" data-a="qm" aria-label="Méně">${ic('minus',13)}</button><span class="qn" aria-live="polite">${q}</span><button type="button" class="qb" data-a="qp" aria-label="Více">${ic('plus',13)}</button>`:`<button type="button" class="qb" data-a="qp" aria-label="Přidat množství">${ic('plus',13)}</button>`;
+function tHTML(t,shop){const q=shop?Math.max(1,t.q|0||1):1;return `<li class="task glass ${t.done?'done':''} ${t.star&&!t.done?'star':''}" data-id="${t.id}"><button class="chk" data-a="tg" aria-label="Hotovo">${ic('check',16)}</button><div class="tx" data-a="ed">${esc(t.text)}</div>${t.done?(shop&&q>1?`<span class="qd">×${q}</span>`:''):`${shop?`<div class="qty${q>1?' many':''}">${qtyHTML(q)}</div>`:''}<button class="pill ${shop?'ico ':''}${t.star?'on':''}" data-a="st"${shop?' aria-label="TOP"':''}>${shop?ic('spark',17):ic('sun',13)+' Dnes'}</button>`}<button class="ib" data-a="rm" aria-label="Smazat">${ic('x',18)}</button></li>`}
 function listHTML0(K){
   const shop=K==='shop',open=S[K].filter(t=>!t.done).sort(srt),done=S[K].filter(t=>t.done);
   let h=open.length?`<ul>${open.map(t=>tHTML(t,shop)).join('')}</ul>`:empty(shop?'Nákupní seznam je prázdný':'Čistý stůl',shop?'Klepni na + a přidej, co chceš koupit.':'Klepni na + a zapiš úkol nebo myšlenku.');
@@ -550,7 +654,7 @@ function render(){
   $('#view').innerHTML=T==='gifts'?(gUnlocked&&lockMode!=='setup'?giftsHTML()+lockLinks():''):T==='garden'?gardenHTML():listHTML(T)+(T==='tasks'?bkHTML():'');
   if(T==='gifts'&&gUnlocked&&lockMode!=='setup')giftsFX();
   navTop();
-  if(T==='garden')startWalk();else{clearTimeout(walkT);clearTimeout(visT)}
+  if(T==='garden')startWalk();else{clearTimeout(walkT);clearTimeout(visT);clearTimeout(gvT)}
 }
 $('#view').addEventListener('click',e=>{
   const b=e.target.closest('[data-a]');if(!b)return;
@@ -558,6 +662,8 @@ $('#view').addEventListener('click',e=>{
   if(a==='tg'&&t){t.done=!t.done;
     if(t.done){t.star=false;if(!t.paid){t.paid=true;S.drops++;dropFx(b)}save();sfx('check');li.classList.add('done','flash');b.classList.add('on');confetti(b);setTimeout(()=>li.classList.add('out'),350);setTimeout(render,700)}
     else{save();render()}}
+  if((a==='qp'||a==='qm')&&t&&K==='shop'){const q0=Math.max(1,t.q|0||1),q1=Math.max(1,Math.min(99,q0+(a==='qp'?1:-1)));if(q1===q0)return;t.q=q1;save();
+    const bx=li.querySelector('.qty');if(bx){bx.classList.toggle('many',q1>1);bx.innerHTML=qtyHTML(q1);const n=bx.querySelector('.qn');if(n)n.classList.add('pop');sfx('tick')}return}
   if(a==='st'&&t){t.star=!t.star;t.o=-Date.now();save();li.classList.add('flash');setTimeout(render,260)}
   if(a==='ed'&&t&&!t.done)openSheet({t,K});
   if(a==='rm'&&t){const i=arr.indexOf(t);li.classList.add('out');setTimeout(()=>{arr.splice(i,1);save();render();toast('Smazáno',()=>{arr.splice(i,0,t);save();render()})},300)}
@@ -596,7 +702,7 @@ function giftsSummary(){if(!$('#gsp'))return;const c=gcalc();
   $('#bsp').style.width=c.sp/den*100+'%';$('#bpl').style.width=c.pl/den*100+'%';
   $('#glf').parentElement.classList.toggle('neg',c.b>0&&c.left<0);
   $('#gnote').textContent=!c.b?'Nastav si rozpočet a uvidíš, kolik ti zbývá.':c.left<0?'Přes rozpočet o '+kc(-c.left)+' 🙈':'Z rozpočtu '+kc(c.b)+' ti ještě zbývá '+kc(c.left)}
-const giftHTML=x=>`<li class="task glass ${x.bought?'done':''}" data-id="${x.id}"><button class="chk" data-g="tg" aria-label="Koupeno">${ic('check',16)}</button><div class="tx gt${x.wrap?' wrapd':''}" data-g="ed"><span class="gtx">${esc(x.gift)}<small class="${x.bought?'gok':''}">${x.price?kc(x.price):'bez ceny'}${x.bought?' · koupeno ✓':''}</small></span><span class="gwr" aria-hidden="true">🎁</span></div><button class="ib wbox${x.wrap?' on':''}" data-g="wr" aria-label="Zabalit dárek" aria-pressed="${x.wrap?'true':'false'}">${ic('box',18)}</button><button class="ib" data-g="rm" aria-label="Smazat">${ic('x',18)}</button></li>`;
+const giftHTML=x=>`<li class="task glass ${x.bought?'done':''}" data-id="${x.id}"><button class="chk" data-g="tg" aria-label="Koupeno">${ic('check',16)}</button><div class="tx gt${x.wrap?' wrapd':''}" data-g="ed"><span class="gtx">${esc(x.gift)}<small class="${x.bought?'gok':''}">${x.price?kc(x.price):'bez ceny'}${x.bought?' · koupeno ✓':''}</small></span><span class="gpp" aria-hidden="true"></span><span class="gwr" aria-hidden="true">🎁</span></div><button class="ib wbox${x.wrap?' on':''}" data-g="wr" aria-label="Zabalit dárek" aria-pressed="${x.wrap?'true':'false'}">${ic('box',18)}</button><button class="ib" data-g="rm" aria-label="Smazat">${ic('x',18)}</button></li>`;
 function giftsHTML(){
   let h=`<div class="gsum glass"><div class="gbud"><span>Rozpočet na dárky</span><div><input id="bud" type="number" inputmode="numeric" placeholder="0" value="${S.budget||''}"><b>Kč</b></div></div><div class="gbar"><i id="bsp"></i><i id="bpl"></i></div><div class="gst"><div><small>Utraceno</small><b id="gsp" class="ok"></b></div><div><small>Zbývá nakoupit</small><b id="gpl" class="pk"></b></div><div><small>Zbývá z rozpočtu</small><b id="glf"></b></div></div><p id="gnote"></p></div>`;
   if(!S.gifts.length)return h+empty('Zatím žádné dárky','Klepni na + a přidej první jméno a nápad na dárek 🎄');
@@ -613,7 +719,9 @@ function xmas(el){const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+
 $('#view').addEventListener('click',e=>{
   const b=e.target.closest('[data-g]');if(!b)return;
   const li=b.closest('[data-id]'),x=li&&S.gifts.find(y=>y.id===li.dataset.id);if(!x)return;const a=b.dataset.g;
-  if(a==='wr'){x.wrap=!x.wrap;save();const tx=li.querySelector('.tx');tx.classList.toggle('wrapd',x.wrap);b.classList.toggle('on',x.wrap);b.setAttribute('aria-pressed',x.wrap?'true':'false');sfx('tick');return}
+  if(a==='wr'){x.wrap=!x.wrap;save();const tx=li.querySelector('.tx');b.classList.toggle('on',x.wrap);b.setAttribute('aria-pressed',x.wrap?'true':'false');
+    if(x.wrap){gWrapFx(tx);tx.classList.add('wrapd');sfx('tick')}else{tx.classList.remove('wrapping');tx.classList.remove('wrapd');sfx('tick')}
+    return}
   if(a==='tg'){x.bought=!x.bought;
     if(x.bought&&!x.paid){x.paid=true;S.drops++;dropFx(b)}
     save();
@@ -761,8 +869,8 @@ function animalSVG(sp,st,vi,x){
 
 const pname=p=>(p.kind==='plant'?PL:AN)[p.sp].n;
 function pxp(p){const st=stOf(p.xp);if(st>=3)return{pct:100,tx:'Plně vyrostlo! 🎉'};const a=STAGES[st],b=STAGES[st+1];return{pct:(p.xp-a)/(b-a)*100,tx:`${p.xp-a} / ${b-a} XP do fáze „${LBL[p.kind][st+1]}“`}}
-function petHTML(){const p=S.pet,st=stOf(p.xp),x=pxp(p),pl=p.kind==='plant',slp=isSleeping();
-  return `<div class="pcard glass"><div class="pname"><b>${pname(p)}</b><span id="plbl">${LBL[p.kind][st]}</span></div><div class="stage${isNight()?' night':''}${slp?' sleeping':''}" id="stage"><div class="stars">${[...Array(16)].map((_,i)=>`<i style="left:${(i*37+11)%92+2}%;top:${(i*23+7)%58+3}%;animation-delay:${(i%5)*.5}s"></i>`).join('')}</div><span class="moon">🌙</span><div class="side" id="sidel">${sideSVG()}</div><div class="pet" id="pet">${petSVG(p,st)}</div><div class="zzz" id="zzz"${slp?'':' hidden'}><i>Z</i><i>z</i><i>z</i></div><div class="bub${slp?' sleepy':''}" id="bub"${slp?'':' hidden'}>${slp?'ššš spinkám 💤':''}</div></div><div class="xpbar"><i id="xpb" style="width:${x.pct}%"></i></div><div class="xptx" id="xptx">${x.tx}</div>`+
+function petHTML(){const p=S.pet,st=stOf(p.xp),x=pxp(p),pl=p.kind==='plant',slp=isSleeping(),sc=scene();
+  return `<div class="pcard glass"><div class="pname"><b>${pname(p)}</b><span id="plbl">${LBL[p.kind][st]}</span></div><div class="stage${isNight()?' night':''}${slp?' sleeping':''}${sceneCls(sc)}" id="stage" data-sc="${sceneKey(sc)}" style="${sceneVars(sc)}"><div class="stars">${[...Array(16)].map((_,i)=>`<i style="left:${(i*37+11)%92+2}%;top:${(i*23+7)%58+3}%;animation-delay:${(i%5)*.5}s"></i>`).join('')}</div><span class="moon">🌙</span>${sceneBack(sc)}<div class="side" id="sidel">${sideSVG()}</div><div class="pet" id="pet">${petSVG(p,st)}</div><div class="zzz" id="zzz"${slp?'':' hidden'}><i>Z</i><i>z</i><i>z</i></div><div class="bub${slp?' sleepy':''}" id="bub"${slp?'':' hidden'}>${slp?'ššš spinkám 💤':''}</div>${sceneFront(sc)}<div class="scp" id="scp">${sceneLbl(sc)}</div><button class="snapb" type="button" data-snap="1" aria-label="Uložit fotku zahrádky">${ic('camera',17)}</button></div><div class="xpbar"><i id="xpb" style="width:${x.pct}%"></i></div><div class="xptx" id="xptx">${x.tx}</div>`+
   (p.done?`<div class="pdone">Uloženo do sbírky 🏆</div><button class="pbtn gold" data-p="new">Vybrat nového kamaráda</button>`
   :`<div class="prow">${pl?'<button class="pbtn" data-p="free">💦 Zalít jen tak</button><button class="pbtn" data-p="stroke">👋 Pohladit</button>':'<button class="pbtn" data-p="pet">🤗 Podrbat</button><button class="pbtn" data-p="feed">🍪 Nakrmit</button><button class="pbtn" data-p="kiss">💋 Dát pusu</button>'}</div><button class="pbtn gold" data-p="prem">${drop(20)} Prémiová péče <em id="pcnt">${S.drops}</em></button><div class="phint">Péče pro radost je zdarma a dává trochu XP. Zlaté kapky získáš za splněné úkoly a nákupy.</div>`)+wardHTML()+`</div>`}
 function chooserHTML(){const c=(k,sp,svg,n)=>`<button class="pick glass" data-p="pick" data-k="${k}" data-sp="${sp}"><div>${svg}</div><b>${n}</b></button>`;
@@ -883,15 +991,15 @@ function anchor(p,st){
   const sc=[.6,.76,.9,1][st],hs=[1.3,1.16,1.07,1][st],Y=y=>188+((112+(y-112)*hs)-188)*sc;
   return{x:100,y:Y(108),r:40*hs*sc,fy:Y(106),ew:16*hs*sc,ny:Y(142),face:true,ok:true}}
 function accSVG(p,st,w,noSide){
-  const a=anchor(p,st);let o='';const k=a.r/40,L=id=>ACCL.find(x=>x.id===id);
-  for(const slot of ['neck','side','head','face']){const A=L(w[slot]);if(!A)continue;
+  const a=anchor(p,st);let o='';const k=a.r/40,L=id=>ACCL.find(x=>x.id===id)||ACCX.find(x=>x.id===id);
+  for(const slot of ['pj','neck','side','head','face']){const A=L(w[slot]);if(!A)continue;
     if(slot==='side'){if(!noSide)o+=`<g transform="translate(26 192) scale(.95)"><g class="sa">${A.svg({fy:0,ew:10})}</g></g>`;continue}
     const F=slot==='face'&&a.fa?a.fa:a;
     if(slot==='face'?(F===a&&!a.face):!a.ok)continue;
     const kk=F.r/40;
-    o+=`<g transform="translate(${F.x} ${slot==='neck'?F.ny:F.y}) scale(${kk})">${A.svg({fy:(F.fy-F.y)/kk,ew:F.ew/kk})}</g>`}
+    o+=`<g transform="translate(${F.x} ${slot==='neck'||slot==='pj'?F.ny:F.y}) scale(${kk})">${A.svg({fy:(F.fy-F.y)/kk,ew:F.ew/kk})}</g>`}
   return o}
-const petSVG=(p,st)=>{ZZ=p===S.pet&&isSleeping();const s=p.kind==='plant'?plantSVG(p.sp,st,p.v):animalSVG(p.sp,st,p.v,p.x),w=p===S.pet?S.worn:p.w;ZZ=false;return w?s.replace('</svg>',accSVG(p,st,w,p===S.pet)+'</svg>'):s};
+const petSVG=(p,st)=>{const cur=p===S.pet,sl=cur&&isSleeping();ZZ=sl;const s=p.kind==='plant'?plantSVG(p.sp,st,p.v):animalSVG(p.sp,st,p.v,p.x),w=cur?petExtras(p,sl,S.worn):p.w;ZZ=false;return w?s.replace('</svg>',accSVG(p,st,w,cur)+'</svg>'):s};
 function syncUnlocks(){if(!S.pet)return[];const st=stOf(S.pet.xp),nu=[];ACCL.forEach(a=>{if(a.lvl<=st&&!S.unl[a.id]){S.unl[a.id]=1;if(a.lvl>0)nu.push(a.n)}});if(nu.length)save();return nu}
 let wopen=false,wf='all';
 const curSea=()=>{const m=new Date().getMonth()+1;return m===12?'xmas':m===10?'hallo':m>=9&&m<=11?'autumn':m>=3&&m<=5?'spring':m>=6&&m<=8?'summer':'winter'};
@@ -923,7 +1031,6 @@ function trick(){const p=S.pet;if(!p||trickBusy||!$('#pet'))return;if(isSleeping
   say(t[1]);for(let i=0;i<10;i++)pf(sg,t[2],'rise');pf(sg,['😊','🥰','😍','🤗','😻','😄'][Math.random()*6|0],'rise',true);
   if(t[0]==='bloom'){confetti(sg);for(let i=0;i<10;i++)pf(sg,['🌸','🌼','🌷'][i%3],'rise')}
   if(K==='plant')sfx('spark');else critter(p.sp)}
-$('#view').addEventListener('click',e=>{if(!e.target.closest('#stage'))return;const t=Date.now();if(t-lastTap<380){lastTap=0;trick()}else lastTap=t});
 // ---- časté nákupy
 const TPL0=['Mléko','Pečivo','Vejce','Máslo','Sýr','Jogurt','Chleba','Rohlíky','Jablka','Banány','Brambory','Cibule','Rýže','Těstoviny','Káva','Šunka','Voda','Toaletní papír'];
 if(!S.tpl)S.tpl=[...TPL0];
@@ -1013,7 +1120,7 @@ const isSleeping=()=>!!S.pet&&isNight()&&!(S.pet.wake>Date.now());
 let wakeT,lastN=false;
 function applySleep(){const st=$('#stage');if(!st||!S.pet)return;const z=isSleeping(),n=isNight();lastZ=z;lastN=n;st.classList.toggle('night',n);st.classList.toggle('sleeping',z);repaint();const zz=$('#zzz');if(zz)zz.hidden=!z;
   const b=$('#bub');if(b){if(z){b.textContent=Math.random()<.5?'Zzz… 💤':'ššš spinkám 💤';b.hidden=false;b.classList.add('sleepy')}else{if(b.classList.contains('sleepy'))b.hidden=true;b.classList.remove('sleepy')}}
-  if(z)document.querySelectorAll('#stage .vis:not(.ff)').forEach(e=>e.remove());
+  if(z)document.querySelectorAll('#stage .vis:not(.ff), #stage .gv').forEach(e=>e.remove());
   const pe=$('#pet');if(pe&&z){pe.classList.remove('walking');pe.style.setProperty('--wd','.6s');pe.style.setProperty('--wx','0px');wx=0}}
 function wk(){if(!S.pet||!isNight())return;const was=isSleeping();S.pet.wake=Date.now()+8000;clearTimeout(wakeT);wakeT=setTimeout(()=>{if(S.pet&&S.tab==='garden'&&isSleeping())applySleep()},8100);if(was)applySleep()}
 setInterval(()=>{if(S.tab==='garden'&&S.pet&&(isSleeping()!==lastZ||isNight()!==lastN))applySleep()},15000);
@@ -1023,7 +1130,7 @@ function walkStep(){clearTimeout(walkT);const pe=$('#pet');
     const dur=Math.max(1.2,Math.abs(nx-wx)/26);pe.classList.remove('hop','sway');pe.style.setProperty('--wd',dur+'s');pe.style.setProperty('--wx',nx+'px');pe.classList.add('walking');wx=nx;
     setTimeout(()=>{const q=$('#pet');if(q)q.classList.remove('walking')},dur*1000)}
   walkT=setTimeout(walkStep,3500+Math.random()*4500)}
-function startWalk(){clearTimeout(walkT);clearTimeout(visT);wx=0;lastZ=isSleeping();lastN=isNight();if(S.tab==='garden'&&S.pet&&S.pet.kind==='animal')walkT=setTimeout(walkStep,2500+Math.random()*2500);else if(S.tab==='garden'&&S.pet&&S.pet.kind==='plant')visT=setTimeout(()=>{spawnVis();visNext()},4000+Math.random()*3000)}
+function startWalk(){clearTimeout(walkT);clearTimeout(visT);clearTimeout(gvT);if(S.tab==='garden'&&S.pet&&!S.pet.done)gvNext(9000+Math.random()*9000);wx=0;lastZ=isSleeping();lastN=isNight();if(S.tab==='garden'&&S.pet&&S.pet.kind==='animal')walkT=setTimeout(walkStep,2500+Math.random()*2500);else if(S.tab==='garden'&&S.pet&&S.pet.kind==='plant')visT=setTimeout(()=>{spawnVis();visNext()},4000+Math.random()*3000)}
 
 // ---- návštěvníci u rostlinky
 let visT;
@@ -1053,6 +1160,213 @@ function flyVis(sg,T,type,n){
   const an=el.animate(kf,{duration:type==='bee'?6000:type==='ff'?10000:8500+n*700,delay:n*1300,fill:'backwards',easing:'linear'});an.onfinish=()=>el.remove();
   if(type!=='ff'&&n===0)[1900,5000].forEach(t=>setTimeout(()=>{if(el.isConnected&&!isSleeping())say(bag('vm'+type,VM[type]))},t))}
 function visNext(){clearTimeout(visT);visT=setTimeout(()=>{spawnVis();visNext()},9000+Math.random()*9000)}
+
+
+// ============================================================
+// ZAHRÁDKA 2: roční období a počasí, dotyky, návštěvníci, pyžamko, fotka
+// (vše offline; počasí se pro daný den vybírá podle data, není z internetu)
+// ============================================================
+const SEAN={spring:['Jaro','🌸'],summer:['Léto','☀️'],autumn:['Podzim','🍂'],winter:['Zima','❄️']};
+const WXN={clear:['Jasno','☀️'],rain:['Deštík','🌧️'],wind:['Větrno','💨'],fog:['Mlha','🌫️']};
+const PAL={
+ spring:{sk1:'#bfe6ff',sk2:'#ffe9f6',gr:'#d6f5c9',hl:'#b9ecab',ngr:'#1c3b3e',nhl:'#24494a'},
+ summer:{sk1:'#8fd5ff',sk2:'#fff3cf',gr:'#c9f2a4',hl:'#a6e486',ngr:'#1c3b3e',nhl:'#24494a'},
+ autumn:{sk1:'#d3e6f3',sk2:'#ffe3c8',gr:'#efdcae',hl:'#dfc489',ngr:'#2d3a3a',nhl:'#3a4a44'},
+ winter:{sk1:'#cfe0f6',sk2:'#f3f6ff',gr:'#f4f7fd',hl:'#e6edf8',ngr:'#3d4b75',nhl:'#4a5a86'}};
+function sceneSea(d){const m=(d||new Date()).getMonth()+1;return m===12||m<=2?'winter':m<=5?'spring':m<=8?'summer':'autumn'}
+function sceneWx(d,sea){
+  d=d||new Date();let h=Math.imul(d.getFullYear()*372+d.getMonth()*31+d.getDate(),2654435761)>>>0;
+  h=Math.imul(h^(h>>>15),2246822519)>>>0;h=(h^(h>>>13))>>>0;const r=(h%1000)/1000;
+  const T={winter:[['clear',.45],['fog',.25],['wind',.3]],spring:[['clear',.4],['rain',.3],['wind',.2],['fog',.1]],summer:[['clear',.6],['rain',.2],['wind',.2]],autumn:[['clear',.25],['rain',.3],['wind',.25],['fog',.2]]}[sea];
+  let a=0;for(const q of T){a+=q[1];if(r<a)return q[0]}return 'clear'}
+function scene(){if(window.SCENE_TEST)return window.SCENE_TEST;const d=new Date(),sea=sceneSea(d);return{sea,wx:sceneWx(d,sea),dec:d.getMonth()===11}}
+const sceneKey=sc=>sc.sea+'-'+sc.wx+(sc.dec?'-d':'');
+const sceneCls=sc=>' sea-'+sc.sea+' wx-'+sc.wx;
+const sceneVars=sc=>{const P=PAL[sc.sea];return `--sk1:${P.sk1};--sk2:${P.sk2};--gr:${P.gr};--hl:${P.hl};--ngr:${P.ngr};--nhl:${P.nhl}`};
+const sceneLbl=sc=>SEAN[sc.sea][1]+' '+SEAN[sc.sea][0]+' · '+WXN[sc.wx][1]+' '+WXN[sc.wx][0];
+function sceneBack(sc){
+  let h='';
+  if(sc.wx==='clear'&&(sc.sea==='summer'||sc.sea==='spring'))h+='<i class="sun"></i>';
+  if(sc.wx==='fog')h+=[[92,'26s',-6],[142,'34s',-20],[196,'30s',-12]].map(f=>`<i class="fg" style="top:${f[0]}px;--d:${f[1]};animation-delay:${f[2]}s"></i>`).join('');
+  return `<div class="wxb" aria-hidden="true">${h}</div>`}
+function sceneFront(sc){
+  const R=(a,b)=>a+Math.random()*(b-a),wind=sc.wx==='wind';let h='';
+  const fall=(cls,n,s0,s1,d0,d1,cols)=>{for(let i=0;i<n;i++){const d=R(d0,d1)/(wind?1.7:1),dx=wind?R(80,170):R(-35,45);
+    h+=`<i class="${cls}" style="left:${R(0,100).toFixed(1)}%;--s:${R(s0,s1).toFixed(1)}px;--d:${d.toFixed(1)}s;--dl:-${R(0,d).toFixed(1)}s;--dx:${dx.toFixed(0)}px;--r:${R(-320,320).toFixed(0)}deg;--c:${cols?cols[i%cols.length]:'#fff'}"></i>`}};
+  if(sc.sea==='autumn')fall('lf',wind?13:9,8,13,7,11,['#e8583a','#ff9a3d','#ffc83d','#c2452d','#d9702b']);
+  if(sc.sea==='winter')fall('sn',22,2.6,5.2,6,12);
+  if(sc.sea==='spring')fall('pt',wind?13:10,7,11,7,12,['#ffc2dd','#ff9fc6','#ffffff','#ffd6e8']);
+  if(sc.wx==='rain'){for(let i=0;i<26;i++){const d=R(.7,1.1);h+=`<i class="rn" style="left:${R(0,105).toFixed(1)}%;--s:${R(11,18).toFixed(0)}px;--d:${d.toFixed(2)}s;--dl:-${R(0,d).toFixed(2)}s"></i>`}}
+  if(wind){for(let i=0;i<4;i++){const d=R(2.2,3.4);h+=`<i class="gs" style="top:${R(30,200).toFixed(0)}px;--d:${d.toFixed(1)}s;--dl:-${R(0,d).toFixed(1)}s"></i>`}}
+  return `<div class="wx" aria-hidden="true">${sc.wx==='rain'?'<div class="tint"></div>':''}${h}</div>`}
+
+// ---- čepice na spaní a pyžamko
+const ACCX=[
+ {id:'_cap',slot:'head',svg:o=>`<path d="M-27 -31Q-26 -66 5 -70Q30 -72 43 -50L33 -45Q25 -57 10 -53Q13 -41 27 -32z" fill="#8c9bff"/><path d="M-27 -31Q-26 -66 5 -70" stroke="#a9b4ff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".7"/><rect x="-29" y="-38" width="58" height="10" rx="5" fill="#fff"/><circle cx="43" cy="-48" r="6.5" fill="#fff"/><circle cx="-6" cy="-52" r="2" fill="#ffe27a"/><circle cx="8" cy="-62" r="1.6" fill="#ffe27a"/><circle cx="-14" cy="-44" r="1.4" fill="#ffe27a"/>`},
+ {id:'_pj',slot:'pj',svg:o=>`<clipPath id="pjc"><path d="M-35 -1Q0 11 35 -1L43 32Q0 46 -43 32z"/></clipPath><path d="M-35 -1Q0 11 35 -1L43 32Q0 46 -43 32z" fill="#a9c4ff"/><g clip-path="url(#pjc)" stroke="#fff" stroke-width="4.5" opacity=".75"><path d="M-30 -4V50M-18 -4V50M-6 -4V50M6 -4V50M18 -4V50M30 -4V50"/></g><path d="M-35 -1Q0 11 35 -1" stroke="#fff" stroke-width="3" fill="none"/><circle cx="0" cy="11" r="2.2" fill="#fff"/><circle cx="0" cy="21" r="2.2" fill="#fff"/><circle cx="0" cy="31" r="2.2" fill="#fff"/>`}
+];
+const PJ_OK=['cat','dog','hare','rab','gp'];
+function petExtras(p,sl,w){
+  w={...(w||{})};
+  if(sl){w.head='_cap';if(p.kind==='animal'&&PJ_OK.includes(p.sp))w.pj='_pj'}
+  else if(!w.head&&scene().dec)w.head='santa';
+  return w}
+
+// ---- dotyky na kamaráda
+const TAPM={
+ animal:{head:['{s}! To je moje hlavička! 🥰','Ještě pohlaď, prosím! 💕','Mmm, hlavička je moje slabost 😊','Tady to mám nejradši! ✨','Hlavu vzhůru, jsem tvůj kamarád! 💛'],
+         belly:['Hihi, šimrá to! 😆','Neee, bříško! 🤭','Ha ha ha, přestaň! 😂','Bříško je moje tajemství 🤫','Nafukuju se jak balónek! 🎈']},
+ plant:{head:['Jé, ťukáš mi na květ! 🌸','Voním jen pro tebe! 🌷','Hihi, šimrá to v lístcích! 😊','Kvetu, kvetu, kvetu! ✨','Dívej se na mě, jsem hvězda zahrádky! 🌟'],
+        belly:['Toc toc, kdo to klepe? 🚪','Hihi, třesou se mi listy! 🍃','Pevně držím v hlíně! 💪','Pod zemí mám kořínky, ťuk ťuk 🌱','To je můj květináč, opatrně! 🌿']},
+ young:['Kuk, tady jsem! 🌱','Ještě jsem malinká, ale rostu! 💚','Ťuk ťuk, nahoru k sluníčku! ☀️'],
+ sleep:{animal:['Zzz… ještě chvilku… 💤','Hmm? Já spím… 😴','Pššt, sním o dobrotách 🌙','Zzz… tak ještě pět minut 💤'],plant:['Zzz… listy spí… 🌙','Pšt, rostu ve spánku 💤','Zzz… dobrou noc… 😴']}};
+function tapZone(e){
+  const p=S.pet,pe=$('#pet'),svg=pe&&pe.querySelector('svg');if(!p||!svg)return null;
+  const r=svg.getBoundingClientRect(),q=r.width/230,k=1.084*q,vx=(e.clientX-r.left-6.65*q)/k,vy=(e.clientY-r.top)/k-25;
+  const a=anchor(p,stOf(p.xp));
+  if(Math.hypot(vx-a.x,(vy-a.y)*.9)<a.r*1.12||(p.kind==='animal'&&vy<a.y&&Math.abs(vx-a.x)<a.r*.8&&vy>a.y-a.r*2.2))return 'head';
+  if(p.kind==='plant')return vy>a.y&&vy<192&&Math.abs(vx-100)<(stOf(p.xp)>=2?46:36)?'belly':null;
+  return vy>a.y+a.r*.5&&vy<196&&vx>38&&vx<165?'belly':null}
+function pfAt(st,ch,x,y,big){const i=document.createElement('i');i.className='pf'+(big?' big':'');i.textContent=ch;
+  i.style.cssText=`left:${x}px;top:${y}px;--dx:${((Math.random()-.5)*70).toFixed(0)}px;--dy:-${(40+Math.random()*50).toFixed(0)}px;animation-delay:${(Math.random()*.2).toFixed(2)}s`;st.appendChild(i);setTimeout(()=>i.remove(),1900)}
+let lastR=0;
+function petTouch(e){
+  const p=S.pet,sg=$('#stage'),pe=$('#pet');if(!p||!sg||!pe||trickBusy)return;
+  const z=tapZone(e);if(!z)return;
+  const t=Date.now();if(t-lastR<450)return;lastR=t;
+  const R=sg.getBoundingClientRect(),x=e.clientX-R.left,y=e.clientY-R.top,K=p.kind;
+  if(isSleeping()){const b=$('#bub');if(!b)return;b.textContent=bag('tslp'+K,TAPM.sleep[K]);b.hidden=false;b.classList.add('sleepy');b.classList.remove('show');void b.offsetWidth;b.classList.add('show');
+    clearTimeout(bt);bt=setTimeout(()=>{if(isSleeping()&&$('#bub'))$('#bub').textContent='ššš spinkám 💤'},2600);pfAt(sg,'💤',x,y-6);return}
+  const young=K==='plant'&&stOf(p.xp)<2,L=young?TAPM.young:TAPM[K][z];
+  const msg=bag('tap'+K+z+(young?'y':''),L).replace('{s}',K==='animal'?AN[p.sp].s:'Hurá');
+  pe.classList.remove('hop','sway','r-head','r-belly');void pe.offsetWidth;pe.classList.add(z==='head'?'r-head':'r-belly');
+  clearTimeout(pe._rt);pe._rt=setTimeout(()=>pe.classList.remove('r-head','r-belly'),850);
+  if(z==='head'){for(let i=0;i<4;i++)pfAt(sg,i%2?'💗':'❤️',x+(Math.random()-.5)*30,y-10);sfx('stroke')}
+  else{for(let i=0;i<5;i++)pfAt(sg,['✨','😆','⭐'][i%3],x+(Math.random()-.5)*36,y);sfx('tick')}
+  say(msg)}
+$('#view').addEventListener('click',e=>{
+  if(!e.target.closest('#stage')||e.target.closest('.snapb,.gv'))return;
+  const t=Date.now();
+  if(t-lastTap<340){lastTap=0;trick()}else{lastTap=t;petTouch(e)}});
+
+// ---- návštěvníci (ježek, veverka, pták, žabka)
+const GVD={hog:{w:40,h:30},sq:{w:38,h:36},bird:{w:34,h:32},frog:{w:36,h:28}};
+const GVL={
+ hog:{base:['Ahoj! Já jsem ježek 🦔','Hledám jablíčko 🍎','Nepíchám, jen se koukám 😊','Jdu na procházku po zahrádce 🐾','Mám trny, ale srdce jemné 💛','Voní tu houbami 🍄'],autumn:['Listí je pěkně chrupkavé! 🍂','Sbírám zásoby na zimní spánek 🍎'],spring:['Konečně jaro, už jsem vzhůru! 🌱'],summer:['Hledám brouky k večeři 🐞'],rain:['Deštík, to je ale mokro! ☔']},
+ sq:{base:['Hledám oříšky! 🌰','Nevíš, kam jsem schoval žalud? 🤔','Hup hup, jdu na ořech! 🐿️','Můj ocas je nejpuchovatější široko daleko ✨','Ořech tady, ořech tam! 🌰'],autumn:['Podzim! Čas schovávat oříšky 🍂','Zásoby na zimu, to je moje práce 💪'],winter:['Brrr, kde jsem schoval ty oříšky? ❄️','Přišel jsem se zahřát 🧣'],spring:['Jaro! Zase můžu skákat po stromech 🌳'],summer:['Dneska je ideální počasí na skákání ☀️']},
+ bird:{base:['Čip čirip! 🎶','Zpívám ti jen tak, zadarmo 🎵','Ahoj, pěkná zahrádko! 🌼','Našel jsem červíka, mňam! 🐛','Fííí fiuuu! 🎶'],spring:['Jaro! Čip čip, stavím hnízdo 🌸'],winter:['Brrr, to je zima! Nemáš semínka? ❄️'],autumn:['Brzy poletím na jih 🍂'],summer:['Dneska je ideální počasí na zpívání ☀️']},
+ frog:{base:['Kvak! 🐸','Kvak kvak, skáču za tebou! 💚','Hledám pěknou louži 💧','Žádné mouchy tu nejsou? 😋','Kvááák, nikomu neříkej, že jsem tu 🤫'],rain:['Deštík! Kvak! ☔','Konečně prší, kvak kvak! 🌧️'],spring:['Jaro, čas kvákat! 🎶'],summer:['Horko, skočím do vody! 💦'],autumn:['Brr, podzim, už se budu schovávat 🍂']}};
+const GVT={hog:['Pšš! Jsem klubíčko! 🦔','Neboj, nepíchám! 😊'],sq:['Hop! To mě překvapilo! 🐿️','Ořech je můj! 🌰'],bird:['Čip! Ahoj! 🎶','Frrr! Skoro jsem odletěl! 🐦'],frog:['Kvak! Ty jsi mě vylekala! 🐸','Hop, hop, hop! 💚']};
+function gvSVG(t){
+  if(t==='hog'){let sp='';for(let a=-170;a<=-10;a+=16){const r=x=>x*Math.PI/180,P=(aa,k)=>[(17+(15+k)*Math.cos(r(aa))).toFixed(1),(19+(10.5+k)*Math.sin(r(aa))).toFixed(1)],b1=P(a-9,0),tp=P(a,6.5),b2=P(a+9,0);sp+=`<path d="M${b1}L${tp}L${b2}z" fill="#4e362a"/>`}
+    return `<svg viewBox="0 0 40 30">${sp}<ellipse cx="17" cy="19" rx="15" ry="10.5" fill="#6b4c3b"/><ellipse cx="12" cy="29" rx="3.6" ry="1.7" fill="#efd2b0"/><ellipse cx="24" cy="29" rx="3.6" ry="1.7" fill="#efd2b0"/><path d="M23 13.5Q35 14 38.5 23.5Q36 28.4 28 28.2Q22 26 21.5 19z" fill="#efd2b0"/><ellipse cx="27" cy="14" rx="2.6" ry="2.3" fill="#efd2b0"/><circle class="nose" cx="38.2" cy="23.4" r="2" fill="#3b2a4a"/><circle cx="31.5" cy="19.8" r="1.7" fill="#3b2a4a"/><circle cx="32" cy="19.2" r=".55" fill="#fff"/><path d="M30 25q3 2 6 0" stroke="#b9805a" stroke-width="1" fill="none" stroke-linecap="round"/></svg>`}
+  if(t==='sq')return `<svg viewBox="0 0 38 36"><path d="M13 34C-3 31 -1 8 11 5C20 3 22 12 15 15C11 18 14 25 18 27z" fill="#d98a4f"/><path d="M11 30C3 26 3 12 11 9" stroke="#f2b57f" stroke-width="2.2" fill="none" stroke-linecap="round"/><ellipse cx="21" cy="27" rx="10" ry="8.6" fill="#b96a30"/><ellipse cx="24" cy="29" rx="6" ry="5.6" fill="#f4dab4"/><ellipse cx="17" cy="35" rx="4.4" ry="1.8" fill="#8a4f24"/><ellipse cx="27" cy="35" rx="4.4" ry="1.8" fill="#8a4f24"/><g class="sqh"><circle cx="27" cy="15.5" r="8" fill="#b96a30"/><path d="M21.5 9.5L22 2.5L27 8zM28 8L31 2.5L33.5 10z" fill="#b96a30"/><path d="M22.4 8L22.6 4.8L25 7.4z" fill="#f2b57f"/><ellipse cx="31" cy="19" rx="4.4" ry="3.4" fill="#f4dab4"/><circle cx="30.6" cy="14.4" r="1.7" fill="#3b2a4a"/><circle cx="31" cy="13.8" r=".55" fill="#fff"/><ellipse cx="35" cy="17.6" rx="1.7" ry="1.3" fill="#3b2a4a"/></g><ellipse cx="29.5" cy="27" rx="3.3" ry="3.9" fill="#c9a06a"/><path d="M26 25.4q3.5-4.4 7 0z" fill="#7a5a3a"/></svg>`;
+  if(t==='bird')return `<svg viewBox="0 0 34 32"><path d="M7 19L-1 25L9 23z" fill="#4a86c5"/><path d="M13 27v4M19 27v4" stroke="#8a6a52" stroke-width="1.3" stroke-linecap="round"/><ellipse cx="16" cy="19" rx="11" ry="9" fill="#ffd23d"/><path d="M5.5 17Q10 8 22 11Q16 14 8 22z" fill="#5aa9e6"/><g class="wing"><path d="M9 17Q18 11.5 22.5 20Q14 24.5 9 17z" fill="#4a86c5"/></g><circle cx="24" cy="12" r="7" fill="#5aa9e6"/><ellipse cx="25.6" cy="14.2" rx="4.4" ry="3.3" fill="#fff"/><circle cx="26.2" cy="11.6" r="1.5" fill="#1d1a24"/><circle cx="26.6" cy="11.1" r=".5" fill="#fff"/><path d="M30.2 11l4.6 1.7l-4.6 1.9z" fill="#ff9a3d"/></svg>`;
+  return `<svg viewBox="0 0 36 28"><ellipse cx="17" cy="19" rx="13" ry="8" fill="#6fcf6a"/><ellipse class="thr" cx="21" cy="22" rx="8" ry="4.4" fill="#c8f0b8"/><path d="M4 22Q1 27.5 7 27.5H15z" fill="#58b655"/><ellipse cx="25" cy="26.4" rx="5" ry="1.8" fill="#58b655"/><circle cx="15" cy="10" r="4.6" fill="#6fcf6a"/><circle cx="24" cy="10" r="4.6" fill="#6fcf6a"/><circle cx="15.6" cy="9.6" r="3.1" fill="#fff"/><circle cx="24.6" cy="9.6" r="3.1" fill="#fff"/><circle cx="16.4" cy="9.6" r="1.5" fill="#1d1a24"/><circle cx="25.4" cy="9.6" r="1.5" fill="#1d1a24"/><path d="M22 19.4q7 4 12 0" stroke="#2b6b3a" stroke-width="1.4" fill="none" stroke-linecap="round"/><circle cx="29.5" cy="17.4" r="2" fill="#ff9fae" opacity=".7"/></svg>`}
+function gvLine(t,sc){const L=GVL[t],pool=[...L.base,...(L[sc.sea]||[]),...(L[sc.sea]||[]),...(sc.wx==='rain'?[...(L.rain||[]),...(L.rain||[]),...(L.rain||[])]:[])];return bag('gvl'+t+sceneKey(sc),pool)}
+var gvT;
+function gvNext(first){clearTimeout(gvT);gvT=setTimeout(()=>{gvPick();gvNext()},first||(38000+Math.random()*40000))}
+function gvPick(){
+  const sg=$('#stage');if(!sg||!S.pet||S.tab!=='garden')return;
+  if(sg.querySelector('.vis,.gv')){gvNext(9000);return}
+  const sc=scene();let L=['hog','sq','bird','frog'];
+  if(sc.sea==='winter')L=['bird','sq'];
+  if(sc.wx==='rain')L=sc.sea==='winter'?[]:['frog','hog'];
+  if(L.length)gvSpawn(bag('gv'+sceneKey(sc),L))}
+function gvSpawn(t){
+  const sg=$('#stage'),p=S.pet;if(!sg||!p||S.tab!=='garden'||document.hidden||isNight()||isSleeping()||sg.querySelector('.gv'))return null;
+  const W=sg.clientWidth,d=GVD[t],sc=scene();
+  let right=Math.random()<.5;if(S.worn&&S.worn.side)right=true;
+  let cx=p.kind==='plant'?plantPt().x+(right?1:-1)*(54+Math.random()*18):(right?W-d.w/2-6:d.w/2+6);
+  cx=Math.max(d.w/2+4,Math.min(W-d.w/2-4,cx));
+  const el=document.createElement('div');el.className='gv gv-'+t;el.dataset.t=t;
+  el.style.width=d.w+'px';el.style.height=d.h+'px';
+  el.innerHTML=`<div class="gvb ${cx<86?'l':cx>W-86?'r':''}"></div><div class="gvf">${gvSVG(t)}</div>`;
+  sg.appendChild(el);
+  const dir=right?-1:1;el._dir=dir;el.querySelector('.gvf').style.transform=`scaleX(${dir})`;
+  gvRun(el,t,{W,dir,right,stopL:cx-d.w/2,startL:right?W+8:-d.w-8,y:200+Math.random()*7-d.h,line:gvLine(t,sc)});
+  return el}
+async function gvRun(el,t,o){
+  const d=GVD[t],gf=el.querySelector('.gvf'),bub=el.querySelector('.gvb'),y=o.y,tr=(x,yy)=>`translate(${x}px,${yy===undefined?y:yy}px)`;
+  const alive=()=>el.isConnected,wait=ms=>new Promise(r=>setTimeout(r,ms));
+  const go=(kf,dur,ease)=>new Promise(r=>{const a=el.animate(kf,{duration:dur,easing:ease||'linear',fill:'forwards'});a.onfinish=()=>r();setTimeout(r,dur+250)});
+  const setDir=v=>{el._dir=v;gf.style.transform=`scaleX(${v})`};
+  const A=o.startL,B=o.stopL,dist=Math.abs(B-A);
+  el.style.transform=tr(A);
+  try{
+  if(t==='hog')await go([{transform:tr(A)},{transform:tr(B)}],Math.max(1800,dist/22*1000));
+  else if(t==='sq')await go([{transform:tr(A),offset:0},{transform:tr(A+(B-A)*.5),offset:.42,easing:'ease-out'},{transform:tr(A+(B-A)*.5),offset:.6},{transform:tr(B),offset:1}],Math.max(1600,dist/55*1000+900),'ease-in-out');
+  else if(t==='frog'){const n=Math.max(2,Math.round(dist/28)),kf=[];for(let i=0;i<n;i++){const x0=A+(B-A)*i/n,x1=A+(B-A)*(i+1)/n;kf.push({transform:tr(x0),easing:'ease-out'},{transform:tr((x0+x1)/2,y-16),easing:'ease-in'})}kf.push({transform:tr(B)});await go(kf,n*520)}
+  else{el.classList.add('fly');await go([{transform:tr(A,-26),easing:'ease-in-out'},{transform:tr(A+(B-A)*.45,16+Math.random()*20),easing:'ease-in-out'},{transform:tr(B+(o.dir>0?-10:10),y-18),easing:'ease-in-out'},{transform:tr(B)}],2300);el.classList.remove('fly')}
+  if(!alive())return;
+  el.classList.add('idle');setDir(o.dir);bub.textContent=o.line;bub.classList.add('on');
+  if(t==='bird'){for(let i=0;i<3&&alive();i++){await go([{transform:tr(B)},{transform:tr(B,y-6)},{transform:tr(B)}],300);await wait(650)}}
+  else await wait(t==='sq'?3800:3500);
+  if(!alive())return;
+  bub.classList.remove('on');el.classList.remove('idle');
+  if(t==='bird'){const ex=o.right?-d.w-10:o.W+10,ed=ex>B?1:-1;setDir(ed);el.classList.add('fly');await go([{transform:tr(B),easing:'ease-in'},{transform:tr(B+ed*26,y-34),easing:'ease-in-out'},{transform:tr(ex,-34)}],1900)}
+  else{setDir(-o.dir);await go([{transform:tr(B)},{transform:tr(A)}],t==='sq'?1300:t==='frog'?Math.max(1500,dist/28*520):Math.max(1800,dist/26*1000),t==='sq'?'ease-in':'linear')}
+  }catch(e){}
+  el.remove()}
+$('#view').addEventListener('click',e=>{const el=e.target.closest('.gv');if(!el)return;
+  if(el._busy)return;el._busy=true;setTimeout(()=>{el._busy=false},900);
+  const t=el.dataset.t,gf=el.querySelector('.gvf'),bub=el.querySelector('.gvb'),dd=el._dir||1,S0=`scaleX(${dd})`,sg=$('#stage'),R=sg.getBoundingClientRect(),r=el.getBoundingClientRect();
+  bub.textContent=bag('gvt'+t,GVT[t]);bub.classList.add('on');clearTimeout(el._bt);el._bt=setTimeout(()=>bub.classList.remove('on'),2000);
+  let kf,dur=700;
+  if(t==='hog')kf=[{transform:S0},{transform:S0+` rotate(${dd*360}deg) scale(.82)`,offset:.7},{transform:S0}];
+  else if(t==='frog'){dur=650;kf=[{transform:S0},{transform:S0+' translateY(-26px)',offset:.45,easing:'ease-in'},{transform:S0}]}
+  else if(t==='sq'){dur=650;kf=[{transform:S0},{transform:S0+' translateY(-18px) rotate(-8deg)',offset:.4},{transform:S0+' translateY(-4px) rotate(6deg)',offset:.7},{transform:S0}]}
+  else{dur=800;kf=[{transform:S0},{transform:S0+' translateY(-14px)',offset:.35},{transform:S0},{transform:S0+' translateY(-8px)',offset:.8},{transform:S0}]}
+  gf.animate(kf,{duration:dur,easing:'ease-in-out'});
+  sfx(t==='bird'?'chirp':t==='frog'?'ribbit':'tick');
+  for(let i=0;i<3;i++)pfAt(sg,['✨','💚','⭐'][i],r.left-R.left+r.width/2+(Math.random()-.5)*20,r.top-R.top+4)});
+SF.chirp=()=>{[0,.1,.2].forEach((t,i)=>tn(2600+i*300,.07,'sine',.05,t,3400))};
+SF.ribbit=()=>{tn(170,.1,'square',.03,0,260);tn(210,.12,'square',.03,.12,150)};
+SF.snap=()=>{ns(.05,4200,2200,.07,0,1.2);tn(1300,.04,'square',.025,.04,900)};
+
+// ---- fotka zahrádky (uloží PNG; funguje offline)
+const svgImg=(svg,w,h)=>new Promise((res,rej)=>{const s=svg.replace('<svg ',`<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}" `),im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(s)});
+function snapBG(c,W,H,sc,night){
+  const P=PAL[sc.sea],R=(a,b)=>a+Math.random()*(b-a);
+  let g=c.createLinearGradient(0,0,0,H*.62);
+  if(night){g.addColorStop(0,'#0f1538');g.addColorStop(1,'#2a2358')}else{g.addColorStop(0,P.sk1);g.addColorStop(1,P.sk2)}
+  c.fillStyle=g;c.fillRect(0,0,W,H*.62);c.fillStyle=night?P.ngr:P.gr;c.fillRect(0,H*.62,W,H*.38);
+  if(night){for(let i=0;i<16;i++){const x=((i*37+11)%92+2)/100*W,y=((i*23+7)%58+3)/100*H;c.fillStyle='rgba(255,255,255,.9)';c.shadowColor='#fff';c.shadowBlur=5;c.beginPath();c.arc(x,y,1.5,0,6.28);c.fill()}c.shadowBlur=0;
+    const m=document.createElement('canvas');m.width=m.height=60;const mc=m.getContext('2d');mc.fillStyle='#fff1b8';mc.beginPath();mc.arc(30,30,13,0,6.28);mc.fill();mc.globalCompositeOperation='destination-out';mc.beginPath();mc.arc(36,25,11,0,6.28);mc.fill();c.drawImage(m,W-52,-2,40,40)}
+  else{c.fillStyle='rgba(255,255,255,.85)';[[.16,38,70],[.6,64,56]].forEach(q=>{const x=W*q[0],y=q[1],w=q[2];c.beginPath();c.roundRect?c.roundRect(x,y,w,22,11):c.rect(x,y,w,22);c.fill();c.beginPath();c.arc(x+w*.62,y+2,11,0,6.28);c.fill();c.beginPath();c.arc(x+w*.3,y+4,8,0,6.28);c.fill()});
+    if(sc.wx==='clear'&&(sc.sea==='summer'||sc.sea==='spring')){const rg=c.createRadialGradient(W-38,34,4,W-38,34,48);rg.addColorStop(0,'rgba(255,240,150,1)');rg.addColorStop(.35,'rgba(255,214,102,.75)');rg.addColorStop(1,'rgba(255,214,102,0)');c.fillStyle=rg;c.fillRect(W-100,0,100,90)}}
+  c.fillStyle=night?P.nhl:P.hl;c.beginPath();c.ellipse(W/2,H-12,W*.65,56,0,0,6.28);c.fill();
+  if(sc.wx==='fog'){[92,142,196].forEach(y=>{const rg=c.createRadialGradient(W/2,y+40,4,W/2,y+40,W*.7);rg.addColorStop(0,'rgba(255,255,255,.55)');rg.addColorStop(1,'rgba(255,255,255,0)');c.save();c.translate(0,y+40);c.scale(1,.28);c.translate(0,-(y+40));c.fillStyle=rg;c.fillRect(-W*.3,0,W*1.6,H*3);c.restore()})}}
+function snapFG(c,W,H,sc){
+  const R=(a,b)=>a+Math.random()*(b-a);
+  if(sc.wx==='rain'){c.fillStyle='rgba(70,90,130,.14)';c.fillRect(0,0,W,H);c.strokeStyle='rgba(120,160,225,.75)';c.lineWidth=1.3;for(let i=0;i<30;i++){const x=R(0,W+20),y=R(0,H),l=R(11,18);c.beginPath();c.moveTo(x,y);c.lineTo(x-l*.22,y+l);c.stroke()}}
+  const part=(n,fn)=>{for(let i=0;i<n;i++){c.save();c.translate(R(0,W),R(4,H*.9));c.rotate(R(0,6.28));fn(i);c.restore()}};
+  if(sc.sea==='autumn'){const cols=['#e8583a','#ff9a3d','#ffc83d','#c2452d','#d9702b'];part(10,i=>{const s=R(8,13);c.fillStyle=cols[i%5];c.beginPath();c.moveTo(0,0);c.quadraticCurveTo(s*.2,-s*.9,s,-s);c.quadraticCurveTo(s*.9,s*.1,0,0);c.fill()})}
+  if(sc.sea==='winter')part(22,()=>{c.fillStyle='#fff';c.shadowColor='#fff';c.shadowBlur=4;c.beginPath();c.arc(0,0,R(1.3,2.6),0,6.28);c.fill();c.shadowBlur=0});
+  if(sc.sea==='spring'){const cols=['#ffc2dd','#ff9fc6','#ffffff','#ffd6e8'];part(11,i=>{c.fillStyle=cols[i%4];c.beginPath();c.ellipse(0,0,R(4,6),R(2.5,3.6),0,0,6.28);c.fill()})}
+  if(sc.wx==='wind'){c.strokeStyle='rgba(255,255,255,.7)';c.lineWidth=1.6;for(let i=0;i<4;i++){const x=R(0,W-50),y=R(30,200);c.beginPath();c.moveTo(x,y);c.lineTo(x+46,y);c.stroke()}}}
+async function snapGarden(){
+  const sg=$('#stage'),p=S.pet;if(!sg||!p)return;
+  try{
+    const W=sg.clientWidth,H=sg.clientHeight,Z=Math.max(2,Math.min(4,1080/W)),cv=document.createElement('canvas');cv.width=Math.round(W*Z);cv.height=Math.round(H*Z);
+    const c=cv.getContext('2d'),sc=scene(),night=isNight(),SR=sg.getBoundingClientRect();c.scale(Z,Z);
+    snapBG(c,W,H,sc,night);
+    const draw=async(svgEl,flip)=>{if(!svgEl)return;const r=svgEl.getBoundingClientRect();if(!r.width)return;const im=await svgImg(svgEl.outerHTML,r.width,r.height);c.save();if(flip<0){c.translate(r.left-SR.left+r.width,r.top-SR.top);c.scale(-1,1);c.drawImage(im,0,0,r.width,r.height)}else c.drawImage(im,r.left-SR.left,r.top-SR.top,r.width,r.height);c.restore()};
+    if(night&&'filter' in c)c.filter='brightness(.8)';
+    await draw(sg.querySelector('#sidel svg'),1);await draw(sg.querySelector('#pet svg'),1);
+    if('filter' in c)c.filter='none';
+    for(const g of sg.querySelectorAll('.gv'))await draw(g.querySelector('svg'),g._dir||1);
+    snapFG(c,W,H,sc);
+    const st=stOf(p.xp),cap=pname(p)+' · '+new Date().toLocaleDateString('cs-CZ');c.font='600 11px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif';const tw=c.measureText(cap).width;
+    c.fillStyle=night?'rgba(20,20,60,.5)':'rgba(255,255,255,.6)';c.beginPath();c.roundRect?c.roundRect(10,10,tw+16,22,11):c.rect(10,10,tw+16,22);c.fill();c.fillStyle=night?'#dfe5ff':'#3b2a4a';c.textBaseline='middle';c.fillText(cap,18,21.5);
+    const fl=document.createElement('div');fl.className='shotfl';sg.appendChild(fl);setTimeout(()=>fl.remove(),600);sfx('snap');
+    const blob=await new Promise(r=>cv.toBlob(r,'image/png'));if(!blob)throw 0;
+    const name='zahradka-'+iso(new Date())+'.png';
+    try{const f=new File([blob],name,{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Moje zahrádka'});toast('Fotka připravena ✓');return}}catch(er){if(er&&er.name==='AbortError')return}
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),5000);toast('Fotka uložena ✓')
+  }catch(er){toast('Fotku se nepodařilo vytvořit 😕')}}
+$('#view').addEventListener('click',e=>{if(e.target.closest('[data-snap]'))snapGarden()});
+setInterval(()=>{const sg=$('#stage');if(S.tab==='garden'&&sg&&sg.dataset.sc&&sg.dataset.sc!==sceneKey(scene()))render()},20000);
 
 // ---- měření spodní lišty a stažení oken prstem dolů
 function navTop(){try{const n=$('#nav');if(n&&n.offsetTop)document.documentElement.style.setProperty('--navtop',(document.body.clientHeight-n.offsetTop)+'px')}catch(e){}}
