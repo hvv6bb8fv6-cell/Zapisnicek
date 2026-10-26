@@ -68,7 +68,7 @@ h3 button{background:none;border:0;color:var(--warn);font:inherit;font-size:12px
 .empty{text-align:center;color:var(--mut);padding:50px 20px;animation:in .5s both}
 .empty svg{color:var(--ac);margin-bottom:8px;animation:float 3s ease-in-out infinite}
 @keyframes float{50%{transform:translateY(-8px) rotate(8deg)}}
-nav{position:absolute;left:50%;transform:translateX(-50%);bottom:max(env(safe-area-inset-bottom,0px),12px);width:min(496px,calc(100% - 24px));display:grid;grid-template-columns:1fr 1fr 78px 1fr 1fr;align-items:center;padding:8px 6px;background:var(--nav);border:1px solid var(--bd);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-radius:28px;box-shadow:0 12px 36px rgba(0,0,0,.35);z-index:10}
+nav{position:absolute;left:50%;transform:translateX(-50%);bottom:max(calc(env(safe-area-inset-bottom,0px) - 8px),10px);width:min(496px,calc(100% - 24px));display:grid;grid-template-columns:1fr 1fr 78px 1fr 1fr;align-items:center;padding:8px 6px;background:var(--nav);border:1px solid var(--bd);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);border-radius:28px;box-shadow:0 12px 36px rgba(0,0,0,.35);z-index:10}
 nav .t{background:none;border:0;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:2px;font:600 11px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:6px 0;cursor:pointer;transition:.25s;position:relative}
 nav .t.on{color:var(--txt)}
 nav .t.on svg{color:var(--ac);transform:translateY(-2px) scale(1.12)}
@@ -86,7 +86,7 @@ nav .t em{position:absolute;top:0;right:22%;background:var(--ac2);color:#fff;fon
 .seg button.on{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#fff;border-color:transparent}
 #save,#gsave,#rsave{width:100%;border:0;padding:14px;border-radius:16px;font:700 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#fff;background:linear-gradient(135deg,var(--ac),var(--ac2));cursor:pointer;display:flex;gap:8px;justify-content:center;align-items:center}
 #save:active,#gsave:active,#rsave:active{transform:scale(.97)}
-#toast{position:absolute;left:50%;bottom:calc(max(env(safe-area-inset-bottom,0px),12px) + 92px);transform:translate(-50%,20px);background:var(--nav);border:1px solid var(--bd);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:30;display:flex;gap:12px;align-items:center;white-space:nowrap}
+#toast{position:absolute;left:50%;bottom:calc(max(calc(env(safe-area-inset-bottom,0px) - 8px),10px) + 92px);transform:translate(-50%,20px);background:var(--nav);border:1px solid var(--bd);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);padding:10px 16px;border-radius:999px;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:30;display:flex;gap:12px;align-items:center;white-space:nowrap}
 #toast.show{opacity:1;transform:translate(-50%,0);pointer-events:auto}
 #toast button{background:none;border:0;color:var(--ac);font:700 14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;cursor:pointer;padding:0}
 .cf{position:fixed;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:40;animation:cf .8s cubic-bezier(.2,.8,.3,1) forwards}
@@ -280,7 +280,7 @@ nav{z-index:10000}#toast{z-index:10001}
 @keyframes tw{50%{opacity:.25;transform:scale(.6)}}
 .moon{position:absolute;right:14px;top:10px;font-size:26px;opacity:0;transition:opacity .6s;z-index:1}
 .night .moon{opacity:.95}
-.night .pet svg{filter:brightness(.8) drop-shadow(0 2px 3px rgba(0,0,0,.4));animation:zbreath 4s ease-in-out infinite}
+.night .pet svg{filter:brightness(.8) drop-shadow(0 2px 3px rgba(0,0,0,.4))}
 @keyframes zbreath{50%{transform:scale(1.02,.985)}}
 .zzz{position:absolute;left:56%;top:70px;z-index:7;pointer-events:none}
 .zzz i{position:absolute;left:0;top:0;font-style:normal;font-weight:800;color:#d9e0ff;opacity:0;animation:zz 3.2s ease-in infinite}
@@ -292,6 +292,27 @@ nav{z-index:10000}#toast{z-index:10001}
 .pet .sa{transform:translateX(calc(var(--wx,0px)*-.915));transition:transform var(--wd,0s) ease-in-out}
 .pet.walking svg{animation:step .5s ease-in-out infinite}
 @keyframes step{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-7px) rotate(2deg)}}
+
+.sleeping .pet svg{animation:zbreath 4s ease-in-out infinite}
+.side{position:absolute;inset:0;display:grid;place-items:center;z-index:1;pointer-events:none}
+.side svg{width:230px;height:244px;margin-top:12px;overflow:visible}
+.night .side svg{filter:brightness(.8)}
+.lockov{display:flex;flex-direction:column;overscroll-behavior:contain}
+.lockov .lw{margin:auto;width:100%;max-width:520px;padding:calc(max(env(safe-area-inset-top,0px),var(--sat,0px)) + 16px) 20px 112px}
+@media (max-height:760px){.kp{grid-template-columns:repeat(3,66px);gap:12px}.dots{margin:14px 0 18px}.lk{font-size:32px}}
+#view{padding-bottom:128px}
+#view.tk{display:flex;flex-direction:column}
+#view.tk>*{flex-shrink:0}
+.bkfoot{margin-top:auto;padding-top:26px;display:flex;justify-content:space-between;opacity:.3}
+.bkfoot .bkb{background:none;border:0;color:var(--txt);font:600 12px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:10px 6px;min-height:44px;cursor:pointer}
+#view.tk{padding-bottom:calc(max(calc(env(safe-area-inset-bottom,0px) - 8px),10px) + 64px)}
+.bkfoot{padding-bottom:0}
+
+.vis{position:absolute;left:0;top:0;z-index:6;pointer-events:none;font-size:22px;will-change:transform}
+.vis b{display:block;font-weight:400;font-style:normal;animation:flap .22s ease-in-out infinite alternate}
+@keyframes flap{from{transform:scaleX(1)}to{transform:scaleX(.45)}}
+.vis.ff{width:6px;height:6px;border-radius:50%;background:#fff6a8;box-shadow:0 0 10px 4px rgba(255,240,130,.8);font-size:0;animation:ffb 1.1s ease-in-out infinite}
+@keyframes ffb{50%{opacity:.35}}
 </style>
 </head>
 <body>
@@ -301,7 +322,6 @@ nav{z-index:10000}#toast{z-index:10001}
   <main id="view"></main>
 </div>
 <div class="lockov" id="lockov"></div>
-<div class="bkfix" id="bkfix"><button class="bkb" data-bk="exp">⬇ Zálohovat data</button><button class="bkb" data-bk="imp">⬆ Obnovit data</button><input type="file" id="bkf" accept=".json,application/json" hidden></div>
 <nav id="nav">
   <button class="t" data-t="tasks"></button>
   <button class="t" data-t="shop"></button>
@@ -399,10 +419,10 @@ function render(){
   const cnt={tasks:op.length,shop:S.shop.filter(t=>!t.done).length,gifts:gUnlocked?S.gifts.filter(x=>!x.bought).length:0,garden:S.pet&&!S.pet.done?S.drops:0};
   const lab={tasks:['check','Úkoly'],shop:['cart','Nákupy'],gifts:['gift','Dárky'],garden:['sprout','Zahrada']};
   document.querySelectorAll('nav .t[data-t]').forEach(b=>{const k=b.dataset.t;b.classList.toggle('on',k===T);b.innerHTML=ic(lab[k][0])+lab[k][1]+(cnt[k]?`<em>${cnt[k]}</em>`:'')});
-  $('#bkfix').hidden=T!=='tasks';
+  $('#view').classList.toggle('tk',T==='tasks');
   $('#view').innerHTML=T==='gifts'?(gUnlocked&&lockMode!=='setup'?giftsHTML()+lockLinks():''):T==='garden'?gardenHTML():listHTML(T)+(T==='tasks'?bkHTML():'');
   if(T==='gifts'&&gUnlocked&&lockMode!=='setup')giftsFX();
-  if(T==='garden')startWalk();else clearTimeout(walkT);
+  if(T==='garden')startWalk();else{clearTimeout(walkT);clearTimeout(visT)}
 }
 $('#view').addEventListener('click',e=>{
   const b=e.target.closest('[data-a]');if(!b)return;
@@ -607,7 +627,7 @@ function animalSVG(sp,st,vi,x){
 const pname=p=>(p.kind==='plant'?PL:AN)[p.sp].n;
 function pxp(p){const st=stOf(p.xp);if(st>=3)return{pct:100,tx:'Plně vyrostlo! 🎉'};const a=STAGES[st],b=STAGES[st+1];return{pct:(p.xp-a)/(b-a)*100,tx:`${p.xp-a} / ${b-a} XP do fáze „${LBL[p.kind][st+1]}“`}}
 function petHTML(){const p=S.pet,st=stOf(p.xp),x=pxp(p),pl=p.kind==='plant',slp=isSleeping();
-  return `<div class="pcard glass"><div class="pname"><b>${pname(p)}</b><span id="plbl">${LBL[p.kind][st]}</span></div><div class="stage${slp?' night':''}" id="stage"><div class="stars">${[...Array(16)].map((_,i)=>`<i style="left:${(i*37+11)%92+2}%;top:${(i*23+7)%58+3}%;animation-delay:${(i%5)*.5}s"></i>`).join('')}</div><span class="moon">🌙</span><div class="pet" id="pet">${petSVG(p,st)}</div><div class="zzz" id="zzz"${slp?'':' hidden'}><i>Z</i><i>z</i><i>z</i></div><div class="bub${slp?' sleepy':''}" id="bub"${slp?'':' hidden'}>${slp?'ššš spinkám 💤':''}</div></div><div class="xpbar"><i id="xpb" style="width:${x.pct}%"></i></div><div class="xptx" id="xptx">${x.tx}</div>`+
+  return `<div class="pcard glass"><div class="pname"><b>${pname(p)}</b><span id="plbl">${LBL[p.kind][st]}</span></div><div class="stage${isNight()?' night':''}${slp?' sleeping':''}" id="stage"><div class="stars">${[...Array(16)].map((_,i)=>`<i style="left:${(i*37+11)%92+2}%;top:${(i*23+7)%58+3}%;animation-delay:${(i%5)*.5}s"></i>`).join('')}</div><span class="moon">🌙</span><div class="side" id="sidel">${sideSVG()}</div><div class="pet" id="pet">${petSVG(p,st)}</div><div class="zzz" id="zzz"${slp?'':' hidden'}><i>Z</i><i>z</i><i>z</i></div><div class="bub${slp?' sleepy':''}" id="bub"${slp?'':' hidden'}>${slp?'ššš spinkám 💤':''}</div></div><div class="xpbar"><i id="xpb" style="width:${x.pct}%"></i></div><div class="xptx" id="xptx">${x.tx}</div>`+
   (p.done?`<div class="pdone">Uloženo do sbírky 🏆</div><button class="pbtn gold" data-p="new">${pl?'🌱 Zasadit novou kytičku':'🐾 Adoptovat nové zvířátko'}</button>`
   :`<div class="prow">${pl?'<button class="pbtn" data-p="free">💦 Zalít jen tak</button><button class="pbtn" data-p="stroke">👋 Pohladit</button>':'<button class="pbtn" data-p="pet">🤗 Podrbat</button><button class="pbtn" data-p="feed">🍪 Nakrmit</button><button class="pbtn" data-p="kiss">💋 Dát pusu</button>'}</div><button class="pbtn gold" data-p="prem">${drop(20)} Prémiová péče <em id="pcnt">${S.drops}</em></button><div class="phint">Péče pro radost je zdarma a dává trochu XP. Zlaté kapky získáš za splněné úkoly a nákupy.</div>`)+wardHTML()+`</div>`}
 function chooserHTML(){const c=(k,sp,svg,n)=>`<button class="pick glass" data-p="pick" data-k="${k}" data-sp="${sp}"><div>${svg}</div><b>${n}</b></button>`;
@@ -727,16 +747,16 @@ function anchor(p,st){
   if(sp==='capy'){const sc=[.62,.78,.9,1][st],bh=[.62,.78,.9,1][st],hd=86*(1-bh),hs=[1.14,1.08,1.03,1][st],Y=y=>190+((110+(y-110)*hs+hd)-190)*sc;return{x:100,y:Y(88),r:44*hs*sc,fy:Y(82),ew:24*hs*sc,ny:Y(124),face:true,ok:true}}
   const sc=[.6,.76,.9,1][st],hs=[1.3,1.16,1.07,1][st],Y=y=>188+((112+(y-112)*hs)-188)*sc;
   return{x:100,y:Y(108),r:40*hs*sc,fy:Y(106),ew:16*hs*sc,ny:Y(142),face:true,ok:true}}
-function accSVG(p,st,w){
+function accSVG(p,st,w,noSide){
   const a=anchor(p,st);let o='';const k=a.r/40,L=id=>ACCL.find(x=>x.id===id);
   for(const slot of ['neck','side','head','face']){const A=L(w[slot]);if(!A)continue;
-    if(slot==='side'){o+=`<g transform="translate(26 192) scale(.95)"><g class="sa">${A.svg({fy:0,ew:10})}</g></g>`;continue}
+    if(slot==='side'){if(!noSide)o+=`<g transform="translate(26 192) scale(.95)"><g class="sa">${A.svg({fy:0,ew:10})}</g></g>`;continue}
     const F=slot==='face'&&a.fa?a.fa:a;
     if(slot==='face'?(F===a&&!a.face):!a.ok)continue;
     const kk=F.r/40;
     o+=`<g transform="translate(${F.x} ${slot==='neck'?F.ny:F.y}) scale(${kk})">${A.svg({fy:(F.fy-F.y)/kk,ew:F.ew/kk})}</g>`}
   return o}
-const petSVG=(p,st)=>{ZZ=p===S.pet&&isSleeping();const s=p.kind==='plant'?plantSVG(p.sp,st,p.v):animalSVG(p.sp,st,p.v,p.x),w=p===S.pet?S.worn:p.w;ZZ=false;return w?s.replace('</svg>',accSVG(p,st,w)+'</svg>'):s};
+const petSVG=(p,st)=>{ZZ=p===S.pet&&isSleeping();const s=p.kind==='plant'?plantSVG(p.sp,st,p.v):animalSVG(p.sp,st,p.v,p.x),w=p===S.pet?S.worn:p.w;ZZ=false;return w?s.replace('</svg>',accSVG(p,st,w,p===S.pet)+'</svg>'):s};
 function syncUnlocks(){if(!S.pet)return[];const st=stOf(S.pet.xp),nu=[];ACCL.forEach(a=>{if(a.lvl<=st&&!S.unl[a.id]){S.unl[a.id]=1;if(a.lvl>0)nu.push(a.n)}});if(nu.length)save();return nu}
 let wopen=false,wf='all';
 const curSea=()=>{const m=new Date().getMonth()+1;return m===12?'xmas':m===10?'hallo':m>=9&&m<=11?'autumn':m>=3&&m<=5?'spring':m>=6&&m<=8?'summer':'winter'};
@@ -748,7 +768,8 @@ function wardInner(){
   +`</div><div class="whint">Doplňky se odemykají růstem kamaráda (zdarma od určité fáze) nebo dřív za zlaté kapky. ★ = právě je sezóna.</div><button class="pbtn" data-q="wclr" style="margin-top:10px;width:100%">Sundat vše</button>`}
 function wardHTML(){return `<button class="pbtn wtog" data-q="wtog">👗 Šatník ${wopen?'▴':'▾'}</button><div class="wpanel ${wopen?'open':''}" id="wp">${wopen?wardInner():''}</div>`}
 function refreshW(){const w=$('#wp');if(!w)return;w.innerHTML=wopen?wardInner():'';w.classList.toggle('open',wopen)}
-function repaint(){const p=S.pet;if(p&&$('#pet'))$('#pet').innerHTML=petSVG(p,stOf(p.xp))}
+const sideSVG=()=>{const A=ACCL.find(x=>x.id===S.worn.side);return A?`<svg viewBox="0 -25 200 225"><g transform="translate(26 192) scale(.95)">${A.svg({fy:0,ew:10})}</g></svg>`:''};
+function repaint(){const p=S.pet;if(p&&$('#pet'))$('#pet').innerHTML=petSVG(p,stOf(p.xp));const sl=$('#sidel');if(sl)sl.innerHTML=sideSVG()}
 // ---- tajné triky
 let lastTap=0,trickBusy=false;
 const TRK={
@@ -836,36 +857,54 @@ function wake(){try{if(S.snd===false&&!AC)return;const a=au();if(!a)return;if(a.
 ['touchstart','pointerdown','click','keydown'].forEach(ev=>document.addEventListener(ev,wake,{capture:true,passive:true}));
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&AC&&AC.state!=='running')try{AC.resume()}catch(e){}});
 const bkHTML0=()=>`<div class="bk"><button class="chip" data-bk="exp">⬇ Zálohovat data</button><button class="chip" data-bk="imp">⬆ Obnovit data</button><input type="file" id="bkf" accept=".json,application/json" hidden></div><div class="whint">Záloha obsahuje všechna data aplikace včetně PIN k dárkům, ulož si ji na bezpečné místo.</div>`;
-$('#bkfix').addEventListener('click',async e=>{const b=e.target.closest('[data-bk]');if(!b)return;
+$('#view').addEventListener('click',async e=>{const b=e.target.closest('[data-bk]');if(!b)return;
   if(b.dataset.bk==='exp'){const txt=JSON.stringify({app:'zapisnik',v:1,exported:new Date().toISOString(),data:S},null,1),name='zapisnik-zaloha-'+iso(new Date())+'.json';
     try{const f=new File([txt],name,{type:'application/json'});if(navigator.canShare&&navigator.canShare({files:[f]})){await navigator.share({files:[f],title:'Záloha Zápisníku'});toast('Záloha připravena ✓');return}}catch(er){if(er&&er.name==='AbortError')return}
     const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();a.remove();toast('Záloha stažena ✓')}
   else $('#bkf').click()});
-$('#bkfix').addEventListener('change',e=>{if(e.target.id!=='bkf')return;const f=e.target.files[0];if(!f)return;const r=new FileReader();
+$('#view').addEventListener('change',e=>{if(e.target.id!=='bkf')return;const f=e.target.files[0];if(!f)return;const r=new FileReader();
   r.onload=()=>{try{let d=JSON.parse(r.result);if(d&&d.data)d=d.data;if(!d||typeof d!=='object'||!Array.isArray(d.tasks)||!Array.isArray(d.gifts))throw 0;
     if(!confirm('Obnovit data ze zálohy? Současná data v tomto telefonu budou nahrazena.'))return;
     localStorage.setItem(KEY+'.bak',localStorage.getItem(KEY)||'');localStorage.setItem(KEY,JSON.stringify(d));RST=true;toast('Data obnovena ✓');setTimeout(()=>location.reload(),600)}catch(er){toast('Tohle není platná záloha 😕')}};
   r.readAsText(f);e.target.value=''});
 
 const critter=sp=>{if(['cat','dog','llama','capy'].includes(sp)){sfx('tick');return}sfx(sp==='hare'?'rab':sp)};
-const bkHTML=()=>'';
+const bkHTML=()=>`<div class="bkfoot"><button class="bkb" data-bk="exp">⬇ Zálohovat data</button><button class="bkb" data-bk="imp">⬆ Obnovit data</button><input type="file" id="bkf" accept=".json,application/json" hidden></div>`;
 
 // ---- spánek (21–6 h) a procházky po scéně
 let ZZ=false,wx=0,walkT,lastZ=false;
 const isNight=d=>{const h=(d||new Date()).getHours();return h>=21||h<6};
 const isSleeping=()=>!!S.pet&&isNight()&&!(S.pet.wake>Date.now());
-function applySleep(){const st=$('#stage');if(!st||!S.pet)return;const z=isSleeping();lastZ=z;st.classList.toggle('night',z);repaint();const zz=$('#zzz');if(zz)zz.hidden=!z;
+let wakeT,lastN=false;
+function applySleep(){const st=$('#stage');if(!st||!S.pet)return;const z=isSleeping(),n=isNight();lastZ=z;lastN=n;st.classList.toggle('night',n);st.classList.toggle('sleeping',z);repaint();const zz=$('#zzz');if(zz)zz.hidden=!z;
   const b=$('#bub');if(b){if(z){b.textContent=Math.random()<.5?'Zzz… 💤':'ššš spinkám 💤';b.hidden=false;b.classList.add('sleepy')}else{if(b.classList.contains('sleepy'))b.hidden=true;b.classList.remove('sleepy')}}
+  if(z)document.querySelectorAll('#stage .vis:not(.ff)').forEach(e=>e.remove());
   const pe=$('#pet');if(pe&&z){pe.classList.remove('walking');pe.style.setProperty('--wd','.6s');pe.style.setProperty('--wx','0px');wx=0}}
-function wk(){if(!isSleeping())return;S.pet.wake=Date.now()+600000;applySleep();const b=$('#bub');if(b){b.classList.remove('sleepy');b.hidden=true}}
-setInterval(()=>{if(S.tab==='garden'&&S.pet&&isSleeping()!==lastZ)applySleep()},15000);
+function wk(){if(!S.pet||!isNight())return;const was=isSleeping();S.pet.wake=Date.now()+8000;clearTimeout(wakeT);wakeT=setTimeout(()=>{if(S.pet&&S.tab==='garden'&&isSleeping())applySleep()},8100);if(was)applySleep()}
+setInterval(()=>{if(S.tab==='garden'&&S.pet&&(isSleeping()!==lastZ||isNight()!==lastN))applySleep()},15000);
 function walkStep(){clearTimeout(walkT);const pe=$('#pet');
   if(pe&&S.tab==='garden'&&S.pet&&S.pet.kind==='animal'&&!isSleeping()&&!trickBusy&&!document.hidden){
     let nx;do{nx=Math.round((Math.random()*2-1)*60)}while(Math.abs(nx-wx)<30);
     const dur=Math.max(1.2,Math.abs(nx-wx)/26);pe.classList.remove('hop','sway');pe.style.setProperty('--wd',dur+'s');pe.style.setProperty('--wx',nx+'px');pe.classList.add('walking');wx=nx;
     setTimeout(()=>{const q=$('#pet');if(q)q.classList.remove('walking')},dur*1000)}
   walkT=setTimeout(walkStep,3500+Math.random()*4500)}
-function startWalk(){clearTimeout(walkT);wx=0;lastZ=isSleeping();if(S.tab==='garden'&&S.pet&&S.pet.kind==='animal')walkT=setTimeout(walkStep,2500+Math.random()*2500)}
+function startWalk(){clearTimeout(walkT);clearTimeout(visT);wx=0;lastZ=isSleeping();lastN=isNight();if(S.tab==='garden'&&S.pet&&S.pet.kind==='animal')walkT=setTimeout(walkStep,2500+Math.random()*2500);else if(S.tab==='garden'&&S.pet&&S.pet.kind==='plant')visT=setTimeout(()=>{spawnVis();visNext()},4000+Math.random()*3000)}
+
+// ---- návštěvníci u rostlinky
+let visT;
+function plantPt(){const p=S.pet,a=anchor(p,stOf(p.xp)),W=$('#stage').clientWidth,k=1.084;return{x:(W-230)/2+6.65+a.x*k,y:19+(a.y+25)*k,W}}
+function spawnVis(){const p=S.pet,sg=$('#stage');if(!sg||S.tab!=='garden'||!p||p.kind!=='plant'||document.hidden||sg.querySelector('.vis'))return;
+  const T=plantPt(),W=T.W,night=isNight(),type=night?'ff':(Math.random()<.4?'bee':'bf'),fromL=Math.random()<.5;
+  const el=document.createElement('i');el.className='vis'+(type==='ff'?' ff':'');el.innerHTML=type==='ff'?'':`<b>${type==='bee'?'🐝':'🦋'}</b>`;if(type==='bee')el.style.fontSize='18px';sg.appendChild(el);
+  const sx=fromL?-30:W+30,ex=fromL?W+30:-30,sy=30+Math.random()*90,ey=30+Math.random()*90,N1=10,N2=26,N3=10,ang0=Math.random()*6.28,sgn=Math.random()<.5?1:-1,r=type==='bee'?36:48;
+  const ring=i=>{const a=ang0+sgn*i/N2*Math.PI*2.2,rr=r*(1-i/N2*.25);return[T.x+Math.cos(a)*rr,T.y+Math.sin(a)*rr*.62-4]},f0=ring(0),f1=ring(N2),pts=[];
+  for(let i=0;i<N1;i++){const t=i/N1;pts.push([sx+(f0[0]-sx)*t,sy+(f0[1]-sy)*t+Math.sin(t*9)*8])}
+  for(let i=0;i<=N2;i++){const q=ring(i);pts.push([q[0]+Math.sin(i*1.3)*3,q[1]+Math.cos(i*1.7)*3])}
+  for(let i=1;i<=N3;i++){const t=i/N3;pts.push([f1[0]+(ex-f1[0])*t,f1[1]+(ey-f1[1])*t+Math.sin(t*9)*8])}
+  const kf=pts.map((q,i)=>({transform:`translate(${q[0]}px,${q[1]}px) scaleX(${i&&q[0]>pts[i-1][0]?-1:1})`}));
+  const an=el.animate(kf,{duration:type==='bee'?6000:type==='ff'?10000:8500,easing:'linear'});an.onfinish=()=>el.remove();
+  if(type!=='ff')setTimeout(()=>{if(el.isConnected&&!isSleeping())say(type==='bee'?'Bzzz, včelka! 🐝':'Jé, motýlek! 🦋')},2400)}
+function visNext(){clearTimeout(visT);visT=setTimeout(()=>{spawnVis();visNext()},9000+Math.random()*9000)}
 // ---- rychlý zápis
 let editing=null;
 function openSheet(ed){editing=ed||null;$('#sht').textContent=ed?'Upravit':(S.tab==='shop'?'Nová položka 🛒':'Nový zápis ✨');$('#inp').value=ed?ed.t.text:'';$('#inp').placeholder=S.tab==='shop'?'Co koupit?':'Co máš na mysli?…';$('#save').innerHTML=ic('check',20)+(ed?'Uložit změny':'Uložit');$('#ov').classList.add('open');setTimeout(()=>{const i=$('#inp');i.focus();const l=i.value.length;try{i.setSelectionRange(l,l)}catch(e){}},120)}
