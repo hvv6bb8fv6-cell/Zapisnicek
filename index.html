@@ -346,6 +346,23 @@ header h1{line-height:34px;height:34px;white-space:nowrap}
 .gt.wrapd .gtx{opacity:0;filter:blur(8px);transform:scale(.94);pointer-events:none;-webkit-user-select:none;user-select:none}
 .gt.wrapd .gwr{opacity:1;transform:none}
 .ib.wbox.on{color:var(--ac)}
+/* ===== STROMEČEK POD SEZNAMEM DÁRKŮ ===== */
+.xtree{position:relative;height:130px;max-width:260px;margin:18px auto 4px;cursor:pointer;-webkit-user-select:none;user-select:none;touch-action:manipulation;overflow:hidden}
+.xtree svg{display:block;width:100%;height:100%;overflow:visible}
+.xtree .xo{opacity:.22;transition:opacity .5s ease}
+.xtree .xo.on{opacity:1;filter:drop-shadow(0 0 3px currentColor)}
+.xtree .xst{fill:var(--mut);opacity:.35;transition:fill .5s,opacity .5s,filter .5s}
+.xtree .xst.on{fill:#ffd36b;opacity:1;filter:drop-shadow(0 0 7px #ffd36b);animation:xpulse 2.2s ease-in-out infinite}
+.xtree .xbx.new{transform-box:fill-box;transform-origin:50% 100%;animation:xpop .55s cubic-bezier(.2,1.6,.4,1)}
+.xtree .xm{fill:var(--mut);font:700 11px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+.xtree.tw .xo{animation:xtw .6s ease-in-out 4 alternate}
+.xtree.tw .xo:nth-child(2n){animation-delay:.15s}.xtree.tw .xo:nth-child(3n){animation-delay:.3s}
+.xtree .xfall{position:absolute;width:9px;height:9px;border-radius:50%;pointer-events:none;box-shadow:0 0 6px currentColor}
+@keyframes xtw{from{opacity:.25}to{opacity:1}}
+@keyframes xpop{0%{transform:scale(.2) translateY(-24px);opacity:0}100%{transform:none;opacity:1}}
+@keyframes xpulse{0%,100%{transform:scale(1)}50%{transform:scale(1.18)}}
+.xtree .xst{transform-box:fill-box;transform-origin:center}
+@media(prefers-reduced-motion:reduce){.xtree .xst.on,.xtree.tw .xo{animation:none}}
 </style>
 </head>
 <body>
@@ -465,6 +482,44 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')yrClose()});
 function navBadges(){const cnt={tasks:S.tasks.filter(t=>!t.done).length,shop:S.shop.filter(t=>!t.done).length,gifts:gUnlocked?S.gifts.filter(x=>!x.bought).length:0,garden:S.pet&&!S.pet.done?S.drops:0};
   document.querySelectorAll('nav .t[data-t]').forEach(b=>{const n=cnt[b.dataset.t];let e=b.querySelector('em');if(n){if(!e){e=document.createElement('em');b.appendChild(e)}if(e.textContent!=n)e.textContent=n}else if(e)e.remove()})}
 
+// ---- vánoční stromeček (kreslí se z dat dárků, nic se neukládá)
+const XO=[[124,34,'#ff5b5b'],[138,44,'#ffd36b'],[116,56,'#6bc8ff'],[144,62,'#ff7ab8'],[126,70,'#ffffff'],[106,84,'#ffd36b'],[134,82,'#ff5b5b'],[152,90,'#6bc8ff'],[118,94,'#ff7ab8'],[98,96,'#ffffff']];
+const XB=['#e8403f','#2fbf71','#4f8dff','#ffb02e','#b06bff','#ff7ab8','#2fd3c0','#ff8a4d','#6bc8ff','#e8c53f'];
+function xStarPath(cx,cy,R,r){let d='';for(let i=0;i<10;i++){const a=-Math.PI/2+i*Math.PI/5,k=i%2?r:R;d+=(i?'L':'M')+(cx+Math.cos(a)*k).toFixed(1)+' '+(cy+Math.sin(a)*k).toFixed(1)}return d+'Z'}
+function xBoxSVG(i,x,isNew){const c=XB[i%XB.length];
+  return `<g class="xbx${isNew?' new':''}"><rect x="${x}" y="104" width="16" height="14" rx="2" fill="${c}"/><rect x="${x+6.5}" y="104" width="3" height="14" fill="#fff" opacity=".85"/><rect x="${x}" y="109.5" width="16" height="3" fill="#fff" opacity=".85"/><path d="M${x+8} 104c-5-6-8-1-4 0zM${x+8} 104c5-6 8-1 4 0z" fill="#fff" opacity=".95"/></g>`}
+function xtreeHTML(){
+  return `<div id="xtree" class="xtree" role="img" aria-label="Vánoční stromeček"><svg viewBox="0 0 260 130" aria-hidden="true">
+<rect x="124" y="100" width="12" height="16" rx="2" fill="#8a5a3c"/>
+<path d="M130 48L88 100H172Z" fill="#1f9e5a"/><path d="M130 30L98 74H162Z" fill="#27b066"/><path d="M130 14L106 50H154Z" fill="#33c474"/>
+<path d="${xStarPath(130,12,9,4)}" class="xst"/>
+<g id="xto">${XO.map((o,i)=>`<circle class="xo" cx="${o[0]}" cy="${o[1]}" r="3.6" fill="${o[2]}" style="color:${o[2]}" data-i="${i}"/>`).join('')}</g>
+<g id="xtb"></g><text id="xtm" class="xm" x="252" y="14" text-anchor="end"></text></svg></div>`}
+function xtreeUpdate(fresh){
+  const t=$('#xtree');if(!t)return;
+  const tot=S.gifts.length,b=S.gifts.filter(g=>g.bought).length,ratio=tot?b/tot:0,lit=b?Math.max(1,Math.round(ratio*XO.length)):0,full=tot>0&&b===tot;
+  t.querySelectorAll('.xo').forEach((o,i)=>o.classList.toggle('on',i<lit));
+  const st=t.querySelector('.xst'),was=st.classList.contains('on');st.classList.toggle('on',full);
+  const shown=Math.min(b,10),prev=+(t.dataset.n||0),g=$('#xtb');
+  if(shown!==prev||t.dataset.n===undefined){
+    let h='';for(let i=0;i<shown;i++){const k=i>>1,x=i%2?144+k*19:100-k*19;h+=xBoxSVG(i,x,fresh===true&&t.dataset.n!==undefined&&i>=prev)}
+    g.innerHTML=h}
+  t.dataset.n=shown;
+  $('#xtm').textContent=b>10?'+'+(b-10):'';
+  t.setAttribute('aria-label','Vánoční stromeček: koupeno '+b+' z '+tot+' dárků');
+  if(fresh===true&&full&&!was){confetti(t);xmas(t);sfx('fan')}}
+function xtreeTap(t){
+  if(t.classList.contains('tw'))return;
+  t.classList.add('tw');sfx('tick');
+  const cols=XO.map(o=>o[2]),w=t.clientWidth,sc=w/260,lit=[...t.querySelectorAll('.xo.on')];
+  const src=lit.length?lit:[...t.querySelectorAll('.xo')];
+  for(let i=0;i<6;i++){const o=src[(Math.random()*src.length)|0],cx=+o.getAttribute('cx')*sc,cy=+o.getAttribute('cy')*sc,c=o.getAttribute('fill'),d=document.createElement('i');
+    d.className='xfall';d.style.cssText=`left:${cx-4}px;top:${cy-4}px;background:${c};color:${c}`;t.appendChild(d);
+    const dx=(Math.random()-.5)*50,dy=100-cy+Math.random()*10;
+    d.animate([{transform:'translate(0,0)',opacity:1},{transform:`translate(${dx*.6}px,${dy}px)`,opacity:1,offset:.7},{transform:`translate(${dx}px,${dy-14}px)`,opacity:0}],{duration:1100+Math.random()*500,delay:i*110,easing:'cubic-bezier(.4,0,.8,.6)',fill:'both'}).onfinish=()=>d.remove()}
+  setTimeout(()=>t.classList.remove('tw'),2500)}
+$('#view').addEventListener('click',e=>{const t=e.target.closest('#xtree');if(t)xtreeTap(t)});
+
 const empty=(t,s)=>`<div class="empty">${ic('spark',44)}<div><b>${t}</b></div><div>${s}</div></div>`;
 const drop=s=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24"><defs><linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffe27a"/><stop offset="1" stop-color="#ffa63d"/></linearGradient></defs><path d="M12 2.5C12 2.5 5 10 5 15a7 7 0 0014 0c0-5-7-12.5-7-12.5z" fill="url(#gd)"/><path d="M9 15a3 3 0 003 3" stroke="#fff" stroke-opacity=".75" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`;
 function chip(b){const c=$('#drops');c.innerHTML=drop(18)+'<b>'+S.drops+'</b>';if(b){c.classList.remove('bump');void c.offsetWidth;c.classList.add('bump')}}
@@ -547,8 +602,8 @@ function giftsHTML(){
   if(!S.gifts.length)return h+empty('Zatím žádné dárky','Klepni na + a přidej první jméno a nápad na dárek 🎄');
   const gr=[];S.gifts.forEach(x=>{const k=x.name.trim().toLowerCase();let o=gr.find(y=>y.k===k);if(!o)gr.push(o={k,n:x.name.trim(),it:[]});o.it.push(x)});
   gr.forEach(o=>{h+=`<h3>🎁 ${esc(o.n)}<span>${kc(o.it.reduce((s,x)=>s+x.price,0))}</span></h3><ul>${o.it.map(giftHTML).join('')}</ul>`});
-  return h}
-function giftsFX(){giftsSummary()}
+  return h+xtreeHTML()}
+function giftsFX(){giftsSummary();xtreeUpdate()}
 function xsub(now){const t0=new Date(now.getFullYear(),now.getMonth(),now.getDate()),xm=new Date(now.getFullYear(),11,24);if(t0>xm)xm.setFullYear(xm.getFullYear()+1);const d=Math.round((xm-t0)/864e5);return d===0?'Dnes je Štědrý den 🎅':d===1?'Zítra je Štědrý den 🎅':'Do Štědrého dne zbývá '+d+(d<5?' dny':' dní')}
 function xmas(el){const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2,em=['🎄','⭐','❄️','🎁','🔔','✨'],cols=['#e8403f','#2fbf71','#ffd36b','#ffffff'];
   for(let i=0;i<24;i++){const c=document.createElement('i'),a=Math.random()*6.28,d=50+Math.random()*85,e=i%3===0;c.className='cf'+(e?' em':'');if(e)c.textContent=em[(i/3|0)%6];
@@ -565,7 +620,7 @@ $('#view').addEventListener('click',e=>{
     li.classList.toggle('done',x.bought);b.classList.toggle('on',x.bought);
     const sm=li.querySelector('small');if(sm){sm.className=x.bought?'gok':'';sm.textContent=(x.price?kc(x.price):'bez ceny')+(x.bought?' · koupeno ✓':'')}
     if(x.bought){sfx('check');li.classList.remove('flash');void li.offsetWidth;li.classList.add('flash');setTimeout(()=>li.classList.remove('flash'),700);xmas(b);toast('Dárek v pytli! 🎅')}
-    giftsSummary();navBadges();return}
+    giftsSummary();navBadges();xtreeUpdate(true);return}
   if(a==='ed'&&!x.wrap)openG(x);
   if(a==='rm'){const i=S.gifts.indexOf(x);li.classList.add('out');setTimeout(()=>{S.gifts.splice(i,1);save();render();toast('Dárek smazán',()=>{S.gifts.splice(i,0,x);save();render()})},300)}
 });
