@@ -313,6 +313,13 @@ nav{z-index:10000}#toast{z-index:10001}
 @keyframes flap{from{transform:scaleX(1)}to{transform:scaleX(.45)}}
 .vis.ff{width:6px;height:6px;border-radius:50%;background:#fff6a8;box-shadow:0 0 10px 4px rgba(255,240,130,.8);font-size:0;animation:ffb 1.1s ease-in-out infinite}
 @keyframes ffb{50%{opacity:.35}}
+
+#view{padding-bottom:calc(var(--navtop,100px) + 44px)}
+#view.tk{padding-bottom:calc(var(--navtop,100px) + 6px)}
+#sheet{padding-bottom:calc(var(--navtop,100px) + 30px)}
+#gsheet{padding-bottom:calc(var(--navtop,100px) + 30px)}
+.grab{width:40px;height:5px;border-radius:3px;background:var(--mut);opacity:.45;margin:-8px auto 12px}
+#ov,#gov{overflow:hidden}
 </style>
 </head>
 <body>
@@ -329,11 +336,11 @@ nav{z-index:10000}#toast{z-index:10001}
   <button class="t" data-t="gifts"></button>
   <button class="t" data-t="garden"></button>
 </nav>
-<div id="ov"><div id="sheet"><div class="sht" id="sht"></div>
+<div id="ov"><div id="sheet"><div class="grab"></div><div class="sht" id="sht"></div>
   <textarea id="inp" placeholder="Co máš na mysli?…" enterkeyhint="done"></textarea>
   <button id="save"></button>
 </div></div>
-<div id="gov"><div id="gsheet">
+<div id="gov"><div id="gsheet"><div class="grab"></div>
   <h2 id="gt">Nový dárek 🎁</h2>
   <input id="gn" type="text" placeholder="Pro koho? (např. Maminka)" autocomplete="off" list="gnames">
   <datalist id="gnames"></datalist>
@@ -414,7 +421,7 @@ function render(){
   $('#snowbtn').hidden=T!=='gifts'||!gUnlocked||lockMode==='setup';$('#snowbtn').classList.toggle('off',S.snow===false);
   $('#theme').innerHTML=ic(S.theme==='dark'?'sun':'moon');chip();$('#ring').innerHTML='';$('#snd').innerHTML=ic(S.snd===false?'mute':'vol');syncUnlocks();
   const op=S.tasks.filter(t=>!t.done),ns=op.filter(t=>t.star).length;
-  $('#ttl').textContent={tasks:'Úkoly & Myšlenky',shop:'Nákupy',gifts:'Dárky 🎄',garden:'Zahrádka 🌷'}[T];
+  $('#ttl').textContent={tasks:'Úkoly',shop:'Nákupy',gifts:'Dárky 🎄',garden:'Zahrádka 🌷'}[T];
   $('#sub').textContent=T==='tasks'?`Otevřeno: ${op.length}${ns?' · Dnes: '+ns:''}`:T==='shop'?'Odškrtni a získej zlatou kapku 💧':T==='gifts'?xsub(now):'Pečuj o svého kamaráda';
   const cnt={tasks:op.length,shop:S.shop.filter(t=>!t.done).length,gifts:gUnlocked?S.gifts.filter(x=>!x.bought).length:0,garden:S.pet&&!S.pet.done?S.drops:0};
   const lab={tasks:['check','Úkoly'],shop:['cart','Nákupy'],gifts:['gift','Dárky'],garden:['sprout','Zahrada']};
@@ -422,6 +429,7 @@ function render(){
   $('#view').classList.toggle('tk',T==='tasks');
   $('#view').innerHTML=T==='gifts'?(gUnlocked&&lockMode!=='setup'?giftsHTML()+lockLinks():''):T==='garden'?gardenHTML():listHTML(T)+(T==='tasks'?bkHTML():'');
   if(T==='gifts'&&gUnlocked&&lockMode!=='setup')giftsFX();
+  navTop();
   if(T==='garden')startWalk();else{clearTimeout(walkT);clearTimeout(visT)}
 }
 $('#view').addEventListener('click',e=>{
@@ -494,7 +502,7 @@ let gEdit=null;
 function openG(x){gEdit=x||null;$('#gt').textContent=x?'Upravit dárek':'Nový dárek 🎁';
   $('#gn').value=x?x.name:'';$('#gg').value=x?x.gift:'';$('#gp').value=x&&x.price?x.price:'';$('#gb').checked=!!(x&&x.bought);
   $('#gnames').innerHTML=[...new Set(S.gifts.map(y=>y.name.trim()))].map(n=>`<option value="${esc(n)}">`).join('');
-  $('#gov').classList.add('open');setTimeout(()=>$(x?'#gg':'#gn').focus(),120)}
+  $('#gov').classList.add('open');setTimeout(()=>$(x?'#gg':'#gn').focus({preventScroll:true}),120)}
 function closeG(){$('#gov').classList.remove('open');if(document.activeElement)document.activeElement.blur()}
 function saveG(){const n=$('#gn').value.trim(),gi=$('#gg').value.trim(),p=Math.max(0,+$('#gp').value||0),bo=$('#gb').checked;
   if(!n||!gi){toast('Doplň jméno a dárek');return}
@@ -628,7 +636,7 @@ const pname=p=>(p.kind==='plant'?PL:AN)[p.sp].n;
 function pxp(p){const st=stOf(p.xp);if(st>=3)return{pct:100,tx:'Plně vyrostlo! 🎉'};const a=STAGES[st],b=STAGES[st+1];return{pct:(p.xp-a)/(b-a)*100,tx:`${p.xp-a} / ${b-a} XP do fáze „${LBL[p.kind][st+1]}“`}}
 function petHTML(){const p=S.pet,st=stOf(p.xp),x=pxp(p),pl=p.kind==='plant',slp=isSleeping();
   return `<div class="pcard glass"><div class="pname"><b>${pname(p)}</b><span id="plbl">${LBL[p.kind][st]}</span></div><div class="stage${isNight()?' night':''}${slp?' sleeping':''}" id="stage"><div class="stars">${[...Array(16)].map((_,i)=>`<i style="left:${(i*37+11)%92+2}%;top:${(i*23+7)%58+3}%;animation-delay:${(i%5)*.5}s"></i>`).join('')}</div><span class="moon">🌙</span><div class="side" id="sidel">${sideSVG()}</div><div class="pet" id="pet">${petSVG(p,st)}</div><div class="zzz" id="zzz"${slp?'':' hidden'}><i>Z</i><i>z</i><i>z</i></div><div class="bub${slp?' sleepy':''}" id="bub"${slp?'':' hidden'}>${slp?'ššš spinkám 💤':''}</div></div><div class="xpbar"><i id="xpb" style="width:${x.pct}%"></i></div><div class="xptx" id="xptx">${x.tx}</div>`+
-  (p.done?`<div class="pdone">Uloženo do sbírky 🏆</div><button class="pbtn gold" data-p="new">${pl?'🌱 Zasadit novou kytičku':'🐾 Adoptovat nové zvířátko'}</button>`
+  (p.done?`<div class="pdone">Uloženo do sbírky 🏆</div><button class="pbtn gold" data-p="new">Vybrat nového kamaráda</button>`
   :`<div class="prow">${pl?'<button class="pbtn" data-p="free">💦 Zalít jen tak</button><button class="pbtn" data-p="stroke">👋 Pohladit</button>':'<button class="pbtn" data-p="pet">🤗 Podrbat</button><button class="pbtn" data-p="feed">🍪 Nakrmit</button><button class="pbtn" data-p="kiss">💋 Dát pusu</button>'}</div><button class="pbtn gold" data-p="prem">${drop(20)} Prémiová péče <em id="pcnt">${S.drops}</em></button><div class="phint">Péče pro radost je zdarma a dává trochu XP. Zlaté kapky získáš za splněné úkoly a nákupy.</div>`)+wardHTML()+`</div>`}
 function chooserHTML(){const c=(k,sp,svg,n)=>`<button class="pick glass" data-p="pick" data-k="${k}" data-sp="${sp}"><div>${svg}</div><b>${n}</b></button>`;
   return `<div class="pcard glass"><h4>Koho chceš pěstovat? 💛</h4><p>Vyber si kytičku nebo zvířátko, o které se budeš starat.</p></div><h3>Kytičky</h3><div class="pgrid">${Object.keys(PL).map(s=>c('plant',s,plantSVG(s,3),PL[s].n)).join('')}</div><h3>Zvířátka</h3><div class="pgrid">${Object.keys(AN).map(s=>c('animal',s,animalSVG(s,3),AN[s].n)).join('')}</div>`}
@@ -905,9 +913,18 @@ function spawnVis(){const p=S.pet,sg=$('#stage');if(!sg||S.tab!=='garden'||!p||p
   const an=el.animate(kf,{duration:type==='bee'?6000:type==='ff'?10000:8500,easing:'linear'});an.onfinish=()=>el.remove();
   if(type!=='ff')setTimeout(()=>{if(el.isConnected&&!isSleeping())say(type==='bee'?'Bzzz, včelka! 🐝':'Jé, motýlek! 🦋')},2400)}
 function visNext(){clearTimeout(visT);visT=setTimeout(()=>{spawnVis();visNext()},9000+Math.random()*9000)}
+
+// ---- měření spodní lišty a stažení oken prstem dolů
+function navTop(){try{const n=$('#nav');if(n&&n.offsetTop)document.documentElement.style.setProperty('--navtop',(document.body.clientHeight-n.offsetTop)+'px')}catch(e){}}
+function sheetDrag(sh,close){let y0=null,x0=0,dy=0,on=false,inp=false;
+  sh.addEventListener('touchstart',e=>{y0=e.touches[0].clientY;x0=e.touches[0].clientX;dy=0;on=false;const t=e.target.closest('textarea,input,select');inp=!!t&&t.scrollHeight>t.clientHeight+2},{passive:true});
+  sh.addEventListener('touchmove',e=>{if(y0===null||inp)return;const d=e.touches[0].clientY-y0,dx=e.touches[0].clientX-x0;if(!on){if(d>10&&d>Math.abs(dx)){on=true;sh.style.transition='none'}else return}dy=Math.max(0,d);sh.style.transform='translateY('+dy+'px)'},{passive:true});
+  sh.addEventListener('touchend',()=>{if(y0===null)return;y0=null;if(!on)return;on=false;sh.style.transition='';const go=dy>90;sh.style.transform='';if(go)close()});
+  sh.addEventListener('touchcancel',()=>{if(on){on=false;sh.style.transition='';sh.style.transform=''}y0=null})}
+sheetDrag($('#sheet'),()=>closeSheet());sheetDrag($('#gsheet'),()=>closeG());
 // ---- rychlý zápis
 let editing=null;
-function openSheet(ed){editing=ed||null;$('#sht').textContent=ed?'Upravit':(S.tab==='shop'?'Nová položka 🛒':'Nový zápis ✨');$('#inp').value=ed?ed.t.text:'';$('#inp').placeholder=S.tab==='shop'?'Co koupit?':'Co máš na mysli?…';$('#save').innerHTML=ic('check',20)+(ed?'Uložit změny':'Uložit');$('#ov').classList.add('open');setTimeout(()=>{const i=$('#inp');i.focus();const l=i.value.length;try{i.setSelectionRange(l,l)}catch(e){}},120)}
+function openSheet(ed){editing=ed||null;$('#sht').textContent=ed?'Upravit':(S.tab==='shop'?'Nová položka 🛒':'Nový zápis ✨');$('#inp').value=ed?ed.t.text:'';$('#inp').placeholder=S.tab==='shop'?'Co koupit?':'Co máš na mysli?…';$('#save').innerHTML=ic('check',20)+(ed?'Uložit změny':'Uložit');$('#ov').classList.add('open');setTimeout(()=>{const i=$('#inp');i.focus({preventScroll:true});const l=i.value.length;try{i.setSelectionRange(l,l)}catch(e){}},120)}
 function closeSheet(){$('#ov').classList.remove('open');$('#inp').blur();if(editing){editing=null;$('#inp').value=''}}
 function commit(){const v=$('#inp').value.trim();if(!v){closeSheet();return}
   if(editing){editing.t.text=v;editing=null;$('#inp').value='';save();closeSheet();render();toast('Upraveno ✓');return}
@@ -925,7 +942,7 @@ function fit(){try{
   var s=document.documentElement.style;s.setProperty("--H",T+"px");s.setProperty("--T","-"+d+"px")}catch(e){}}
 function top0(){try{if(document.activeElement&&/TEXTAREA|INPUT/.test(document.activeElement.tagName))return;window.scrollTo(0,0);document.documentElement.scrollTop=0;document.body.scrollTop=0}catch(e){}}
 function sat(){try{if(!navigator.standalone)return;var p=document.createElement("div");p.style.cssText="position:absolute;visibility:hidden;padding-top:env(safe-area-inset-top,0px)";document.body.appendChild(p);var v=parseFloat(getComputedStyle(p).paddingTop)||0;p.remove();document.documentElement.style.setProperty("--sat",(v<20?(screen.height>=852?59:47):0)+"px")}catch(e){}}
-function sync(){fit();sat()}
+function sync(){fit();sat();navTop()}
 sync();[100,400,1000].forEach(function(t){setTimeout(sync,t)});
 ["resize","orientationchange","pageshow","focus","scroll"].forEach(function(ev){window.addEventListener(ev,function(){setTimeout(sync,60)})});
 document.addEventListener("visibilitychange",function(){setTimeout(sync,60)});
