@@ -460,6 +460,15 @@ header h1{line-height:34px;height:34px;white-space:nowrap}
 @keyframes qpop{0%{transform:scale(.6)}100%{transform:none}}
 .qd{flex:none;font:700 12px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--mut);padding:0 2px}
 @media(prefers-reduced-motion:reduce){.qn.pop{animation:none}}
+
+/* ===== NÁKUPY: přesouvání položek (podržet a přetáhnout) ===== */
+.dl .task{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+#view.dragging{-webkit-user-select:none;user-select:none}
+.task.drag{cursor:grabbing}
+/* ===== BALONEK V RUCE / U KVĚTINÁČE ===== */
+.bln{transform-box:view-box;animation:blnsw 3.6s ease-in-out infinite alternate}
+@keyframes blnsw{from{transform:rotate(-3.5deg)}to{transform:rotate(3.5deg)}}
+@media(prefers-reduced-motion:reduce){.bln{animation:none}}
 </style>
 </head>
 <body>
@@ -542,6 +551,7 @@ function migrate(){
   S.ideas=[];S.tasks.forEach(t=>{if(t.list==='today'&&!t.done)t.star=true;t.paid=true});
   S.v=2;save()}
 migrate();if(!['tasks','shop','gifts','garden'].includes(S.tab))S.tab='tasks';
+(function(){const fx=w=>{if(w&&w.side==='balloon'){delete w.side;w.hand='balloon'}};fx(S.worn);(S.coll||[]).forEach(c=>fx(c.w))})();
 
 // ---- archiv dárků po letech (klíče darky_2026, darky_2027 …)
 const YK='darky_';
@@ -632,7 +642,7 @@ const qtyHTML=q=>q>1?`<button type="button" class="qb" data-a="qm" aria-label="M
 function tHTML(t,shop){const q=shop?Math.max(1,t.q|0||1):1;return `<li class="task glass ${t.done?'done':''} ${t.star&&!t.done?'star':''}" data-id="${t.id}"><button class="chk" data-a="tg" aria-label="Hotovo">${ic('check',16)}</button><div class="tx" data-a="ed">${esc(t.text)}</div>${t.done?(shop&&q>1?`<span class="qd">×${q}</span>`:''):`${shop?`<div class="qty${q>1?' many':''}">${qtyHTML(q)}</div>`:''}<button class="pill ${shop?'ico ':''}${t.star?'on':''}" data-a="st"${shop?' aria-label="TOP"':''}>${shop?ic('spark',17):ic('sun',13)+' Dnes'}</button>`}<button class="ib" data-a="rm" aria-label="Smazat">${ic('x',18)}</button></li>`}
 function listHTML0(K){
   const shop=K==='shop',open=S[K].filter(t=>!t.done).sort(srt),done=S[K].filter(t=>t.done);
-  let h=open.length?`<ul>${open.map(t=>tHTML(t,shop)).join('')}</ul>`:empty(shop?'Nákupní seznam je prázdný':'Čistý stůl',shop?'Klepni na + a přidej, co chceš koupit.':'Klepni na + a zapiš úkol nebo myšlenku.');
+  let h=open.length?`<ul${shop?' class="dl"':''}>${open.map(t=>tHTML(t,shop)).join('')}</ul>`:empty(shop?'Nákupní seznam je prázdný':'Čistý stůl',shop?'Klepni na + a přidej, co chceš koupit.':'Klepni na + a zapiš úkol nebo myšlenku.');
   if(done.length)h+=`<h3>${shop?'V košíku':'Hotovo'} (${done.length})<button data-a="clr">${shop?'Vysypat košík':'Smazat hotové'}</button></h3><ul>${done.map(t=>tHTML(t,shop)).join('')}</ul>`;
   return h}
 function render(){
@@ -654,6 +664,7 @@ function render(){
   $('#view').innerHTML=T==='gifts'?(gUnlocked&&lockMode!=='setup'?giftsHTML()+lockLinks():''):T==='garden'?gardenHTML():listHTML(T)+(T==='tasks'?bkHTML():'');
   if(T==='gifts'&&gUnlocked&&lockMode!=='setup')giftsFX();
   navTop();
+  if(T==='shop')dragHint();
   if(T==='garden')startWalk();else{clearTimeout(walkT);clearTimeout(visT);clearTimeout(gvT)}
 }
 $('#view').addEventListener('click',e=>{
@@ -946,7 +957,7 @@ function sfx(n){if(S.snd===false)return;try{const a=au(),f=SF[n];if(!a||!f)retur
 $('#snd').onclick=()=>{S.snd=S.snd===false;save();$('#snd').innerHTML=ic(S.snd===false?'mute':'vol');if(S.snd!==false){wake();sfx('check')}};
 // ---- šatník
 const SEAS={base:'Základní',xmas:'Vánoce 🎄',hallo:'Halloween 🎃',autumn:'Podzim 🍂',winter:'Zima ❄️',spring:'Jaro 🌷',summer:'Léto ☀️'};
-const SLOT={head:'Hlava',face:'Obličej',neck:'Krk',side:'Vedle'};
+const SLOT={head:'Hlava',face:'Obličej',neck:'Krk',side:'Vedle',hand:'V ruce'};
 const ACCL=[
  {id:'hat',n:'Klobouček',slot:'head',s:'base',lvl:0,svg:o=>`<ellipse cy="-33" rx="30" ry="7" fill="#7a5aa6"/><path d="M-18 -33v-22q0-6 6-6h24q6 0 6 6v22z" fill="#9170c9"/><rect x="-18" y="-42" width="36" height="7" fill="#ffd36b"/>`},
  {id:'party',n:'Párty čepička',slot:'head',s:'base',lvl:1,svg:o=>`<path d="M-17 -33L0 -80L17 -33z" fill="#ff7aa8"/><path d="M-11 -50h22M-14 -41h28" stroke="#fff" stroke-width="3"/><circle cy="-81" r="5" fill="#ffd36b"/>`},
@@ -968,7 +979,7 @@ const ACCL=[
  {id:'scarf',n:'Zimní šála',slot:'neck',s:'winter',lvl:2,svg:o=>`<path d="M-30 -4Q0 12 30 -4V8Q0 24-30 8z" fill="#e8403f"/><path d="M-6 8l-3 24h13l-2-22z" fill="#e8403f"/><path d="M-30 2Q0 18 30 2" stroke="#fff" stroke-width="3" fill="none" stroke-dasharray="6 6"/>`},
  {id:'lei',n:'Havajský věnec',slot:'neck',s:'summer',lvl:2,svg:o=>[-24,-16,-8,0,8,16,24].map((x,i)=>`<circle cx="${x}" cy="${12-x*x/48}" r="5.4" fill="${['#ff8fb8','#ffe27a','#ff9a3d','#c9a8ff','#ff5d8a','#ffe27a','#ff8fb8'][i]}"/><circle cx="${x}" cy="${12-x*x/48}" r="1.8" fill="#fff"/>`).join('')},
  {id:'gnome',n:'Zahradní trpaslík',slot:'side',s:'base',lvl:1,svg:o=>`<ellipse cy="-1" rx="12" ry="3" fill="rgba(0,0,0,.15)"/><path d="M-9 0v-13h18v13z" fill="#4aa8ff"/><circle cy="-21" r="8" fill="#ffd9c2"/><path d="M-8 -20q8 20 16 0z" fill="#fff"/><path d="M-9 -25L0 -54L9 -25z" fill="#e8403f"/><circle cx="-3" cy="-23" r="1.2" fill="#3b2a4a"/><circle cx="3" cy="-23" r="1.2" fill="#3b2a4a"/><circle cy="-20" r="2" fill="#ff9a8a"/>`},
- {id:'balloon',n:'Balonek',slot:'side',s:'base',lvl:2,svg:o=>`<path d="M0 0Q-3 -12 0 -22" stroke="#999" stroke-width="1.2" fill="none"/><ellipse cy="-36" rx="11" ry="14" fill="#ff5d8a"/><path d="M-3 -23l3 3 3-3z" fill="#e0457a"/><ellipse cx="-4" cy="-41" rx="2.5" ry="4" fill="#fff" opacity=".5"/>`},
+ {id:'balloon',n:'Balonek',slot:'hand',s:'base',lvl:2,svg:o=>`<path d="M0 0Q-3 -12 0 -22" stroke="#999" stroke-width="1.2" fill="none"/><ellipse cy="-36" rx="11" ry="14" fill="#ff5d8a"/><path d="M-3 -23l3 3 3-3z" fill="#e0457a"/><ellipse cx="-4" cy="-41" rx="2.5" ry="4" fill="#fff" opacity=".5"/>`},
  {id:'tree',n:'Vánoční stromeček',slot:'side',s:'xmas',lvl:3,svg:o=>`<rect x="-3" y="-6" width="6" height="6" fill="#8a5a3a"/><path d="M-17 -6L0 -28L17 -6zM-14 -20L0 -42L14 -20zM-11 -34L0 -54L11 -34z" fill="#3fae66"/><path d="M0 -66l2.3 5.5h5.7l-4.5 3.6 1.7 5.6-5.2-3.4-5.2 3.4 1.7-5.6-4.5-3.6h5.7z" fill="#ffd36b"/><circle cx="-6" cy="-14" r="2.5" fill="#ff5d5d"/><circle cx="6" cy="-26" r="2.5" fill="#4aa8ff"/><circle cx="-3" cy="-40" r="2.2" fill="#ffd36b"/>`},
  {id:'gift',n:'Vánoční dárky',slot:'side',s:'xmas',lvl:3,svg:o=>`<rect x="-16" y="-18" width="22" height="18" rx="2" fill="#e8403f"/><rect x="-6" y="-18" width="4" height="18" fill="#ffd36b"/><rect x="-16" y="-12" width="22" height="4" fill="#ffd36b"/><rect x="6" y="-12" width="12" height="12" rx="2" fill="#4aa8ff"/><rect x="10" y="-12" width="4" height="12" fill="#fff"/><path d="M-5 -18q-8-8-3-10 4 0 3 10zM-5 -18q8-8 3-10-4 0-3 10z" fill="#ffd36b"/>`},
  {id:'snowman',n:'Sněhulák',slot:'side',s:'winter',lvl:3,svg:o=>`<circle cy="-10" r="12" fill="#fff" stroke="#cfe3f5" stroke-width="1.5"/><circle cy="-30" r="9" fill="#fff" stroke="#cfe3f5" stroke-width="1.5"/><path d="M-9 -37h18v-3h-18z" fill="#3b2a4a"/><rect x="-6" y="-48" width="12" height="11" fill="#3b2a4a"/><path d="M0 -30l8 2-8 2z" fill="#ff9a3d"/><circle cx="-3" cy="-33" r="1.2" fill="#3b2a4a"/><circle cx="3" cy="-33" r="1.2" fill="#3b2a4a"/><path d="M-9 -22q9 5 18 0" stroke="#e8403f" stroke-width="3" fill="none"/>`},
@@ -990,28 +1001,56 @@ function anchor(p,st){
   if(sp==='capy'){const sc=[.62,.78,.9,1][st],bh=[.62,.78,.9,1][st],hd=86*(1-bh),hs=[1.14,1.08,1.03,1][st],Y=y=>190+((110+(y-110)*hs+hd)-190)*sc;return{x:100,y:Y(88),r:44*hs*sc,fy:Y(82),ew:24*hs*sc,ny:Y(124),face:true,ok:true}}
   const sc=[.6,.76,.9,1][st],hs=[1.3,1.16,1.07,1][st],Y=y=>188+((112+(y-112)*hs)-188)*sc;
   return{x:100,y:Y(108),r:40*hs*sc,fy:Y(106),ew:16*hs*sc,ny:Y(142),face:true,ok:true}}
+function sideG(w,p,sa){
+  const L=ACCL.find(x=>x.id===w.side),R=ACCL.find(x=>x.id===w.side2);if(!L&&!R)return '';
+  const k=(L&&R)?.84:.95,rx=(p&&p.sp==='llama')?186:174;
+  const one=(A,x)=>A?`<g transform="translate(${x} 192) scale(${k})"><g${sa?' class="sa"':''}>${A.svg({fy:0,ew:10})}</g></g>`:'';
+  return one(L,26)+one(R,rx)}
+function heldBln(p,st){
+  const plant=p.kind==='plant',sb=[.74,.84,.93,1][st];let sx,sy,hx,hy,col='#4fbf73',aw=5,ol=false,dr=1;
+  if(plant){sx=116;sy=147;hx=140;hy=131}
+  else{
+    const sp=p.sp,A0=AN[sp],A={...A0,...A0.v[(p.v||0)%A0.v.length]};col=A.c;
+    if(sp==='llama'){const sc=[.62,.78,.9,1][st],f=(x,y)=>[100+(x-100)*sc,188+(y-188)*sc];[sx,sy]=f(100,134);[hx,hy]=f(124,118);aw=9*sc+2}
+    else if(sp==='capy'){const sc=[.62,.78,.9,1][st],bw=[.82,.9,.96,1][st],bh=[.62,.78,.9,1][st],f=(x,y)=>{const bx=100+(x-100)*bw,by=190+(y-190)*bh;return[100+(bx-100)*sc,190+(by-190)*sc]};[sx,sy]=f(146,152);[hx,hy]=f(164,138);aw=9*sc+2;ol=true}
+    else{dr=['cat','dog','hare','rab'].includes(sp)?-1:1;const sc=[.6,.76,.9,1][st],bw=(sp==='gp'?52:44)*[.72,.86,.95,1][st],f=(x,y)=>[100+(x-100)*sc,188+(y-188)*sc];[sx,sy]=f(100+dr*(bw-8),150);[hx,hy]=f(100+dr*(bw+10),134);aw=9*sc+2}
+  }
+  const bx=hx+dr*(plant?20:12),by=hy-(plant?62:52)*sb,rx=11*sb,ry=14*sb,sy2=by+ry,cx=hx+(bx-hx)*.15-5*dr,cy=(hy+sy2)/2;
+  let g=`<g class="hb">`;
+  const armD=`M${sx.toFixed(1)} ${sy.toFixed(1)}Q${((sx+hx)/2+2).toFixed(1)} ${((sy+hy)/2+4).toFixed(1)} ${hx.toFixed(1)} ${hy.toFixed(1)}`;
+  if(ol)g+=`<path d="${armD}" stroke="#2b1d14" stroke-width="${(aw+5).toFixed(1)}" fill="none" stroke-linecap="round"/>`;
+  g+=`<path d="${armD}" stroke="${col}" stroke-width="${aw.toFixed(1)}" fill="none" stroke-linecap="round"/>`;
+  if(plant)g+=`<path d="M0 0C-5 -3 -6 -9 0 -12 6 -9 5 -3 0 0z" fill="#5fcf80" transform="translate(${hx} ${hy}) rotate(55)"/>`;
+  else g+=`<circle cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="${(aw*.62).toFixed(1)}" fill="${col}"${ol?' stroke="#2b1d14" stroke-width="2.4"':' stroke="rgba(0,0,0,.14)" stroke-width="1"'}/>`;
+  g+=`<g class="bln" style="transform-origin:${hx.toFixed(1)}px ${hy.toFixed(1)}px">`
+   +`<path d="M${hx.toFixed(1)} ${hy.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${bx.toFixed(1)} ${sy2.toFixed(1)}" stroke="#8c8c99" stroke-width="1.3" fill="none" stroke-linecap="round"/>`
+   +`<ellipse cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" rx="${rx.toFixed(1)}" ry="${ry.toFixed(1)}" fill="#ff5d8a"/>`
+   +`<path d="M${(bx-3*sb).toFixed(1)} ${(sy2+3*sb).toFixed(1)}l${(3*sb).toFixed(1)} ${(-3.5*sb).toFixed(1)} ${(3*sb).toFixed(1)} ${(3.5*sb).toFixed(1)}z" fill="#e0457a"/>`
+   +`<ellipse cx="${(bx-4*sb).toFixed(1)}" cy="${(by-5*sb).toFixed(1)}" rx="${(2.5*sb).toFixed(1)}" ry="${(4*sb).toFixed(1)}" fill="#fff" opacity=".5"/></g></g>`;
+  return g}
 function accSVG(p,st,w,noSide){
-  const a=anchor(p,st);let o='';const k=a.r/40,L=id=>ACCL.find(x=>x.id===id)||ACCX.find(x=>x.id===id);
-  for(const slot of ['pj','neck','side','head','face']){const A=L(w[slot]);if(!A)continue;
-    if(slot==='side'){if(!noSide)o+=`<g transform="translate(26 192) scale(.95)"><g class="sa">${A.svg({fy:0,ew:10})}</g></g>`;continue}
+  const a=anchor(p,st);let o='';const L=id=>ACCL.find(x=>x.id===id)||ACCX.find(x=>x.id===id);
+  if(!noSide)o+=sideG(w,p,true);
+  for(const slot of ['pj','neck','head','face']){const A=L(w[slot]);if(!A)continue;
     const F=slot==='face'&&a.fa?a.fa:a;
     if(slot==='face'?(F===a&&!a.face):!a.ok)continue;
     const kk=F.r/40;
     o+=`<g transform="translate(${F.x} ${slot==='neck'||slot==='pj'?F.ny:F.y}) scale(${kk})">${A.svg({fy:(F.fy-F.y)/kk,ew:F.ew/kk})}</g>`}
+  if(w.hand==='balloon')o+=heldBln(p,st);
   return o}
 const petSVG=(p,st)=>{const cur=p===S.pet,sl=cur&&isSleeping();ZZ=sl;const s=p.kind==='plant'?plantSVG(p.sp,st,p.v):animalSVG(p.sp,st,p.v,p.x),w=cur?petExtras(p,sl,S.worn):p.w;ZZ=false;return w?s.replace('</svg>',accSVG(p,st,w,cur)+'</svg>'):s};
 function syncUnlocks(){if(!S.pet)return[];const st=stOf(S.pet.xp),nu=[];ACCL.forEach(a=>{if(a.lvl<=st&&!S.unl[a.id]){S.unl[a.id]=1;if(a.lvl>0)nu.push(a.n)}});if(nu.length)save();return nu}
 let wopen=false,wf='all';
 const curSea=()=>{const m=new Date().getMonth()+1;return m===12?'xmas':m===10?'hallo':m>=9&&m<=11?'autumn':m>=3&&m<=5?'spring':m>=6&&m<=8?'summer':'winter'};
-const aIcon=a=>`<svg viewBox="${{head:'-42 -92 84 66',face:'-30 -20 60 40',neck:'-34 -20 68 50',side:'-24 -64 48 70'}[a.slot]}">${a.svg({fy:-2,ew:16})}</svg>`;
+const aIcon=a=>`<svg viewBox="${{head:'-42 -92 84 66',face:'-30 -20 60 40',neck:'-34 -20 68 50',side:'-24 -64 48 70',hand:'-24 -64 48 70'}[a.slot]}">${a.svg({fy:-2,ew:16})}</svg>`;
 function wardInner(){
   const cs=curSea();
   return `<div class="chips">`+['all',...Object.keys(SEAS)].map(k=>`<button class="chip ${wf===k?'on':''}" data-q="wf" data-f="${k}">${k==='all'?'Vše':SEAS[k]}${k===cs?' ★':''}</button>`).join('')+`</div><div class="wgrid">`
-  +ACCL.filter(a=>wf==='all'||a.s===wf).map(a=>{const un=S.unl[a.id],on=S.worn[a.slot]===a.id;return `<button class="wi ${on?'on':''} ${un?'':'lock'}" data-q="wi" data-id="${a.id}"><i>${aIcon(a)}</i><b>${a.n}</b><small>${on?'Nasazeno ✓':un?SLOT[a.slot]:'🔒 '+cost(a)+' 💧'}</small></button>`}).join('')
-  +`</div><div class="whint">Doplňky se odemykají růstem kamaráda (zdarma od určité fáze) nebo dřív za zlaté kapky. ★ = právě je sezóna.</div><button class="pbtn" data-q="wclr" style="margin-top:10px;width:100%">Sundat vše</button>`}
+  +ACCL.filter(a=>wf==='all'||a.s===wf).map(a=>{const un=S.unl[a.id],on=a.slot==='side'?(S.worn.side===a.id||S.worn.side2===a.id):S.worn[a.slot]===a.id;return `<button class="wi ${on?'on':''} ${un?'':'lock'}" data-q="wi" data-id="${a.id}"><i>${aIcon(a)}</i><b>${a.n}</b><small>${on?'Nasazeno ✓':un?SLOT[a.slot]:'🔒 '+cost(a)+' 💧'}</small></button>`}).join('')
+  +`</div><div class="whint">Doplňky se odemykají růstem kamaráda (zdarma od určité fáze) nebo dřív za zlaté kapky. ★ = právě je sezóna. Vedle kamaráda stojí nejvýš 2 věci.</div><button class="pbtn" data-q="wclr" style="margin-top:10px;width:100%">Sundat vše</button>`}
 function wardHTML(){return `<button class="pbtn wtog" data-q="wtog">👗 Šatník ${wopen?'▴':'▾'}</button><div class="wpanel ${wopen?'open':''}" id="wp">${wopen?wardInner():''}</div>`}
 function refreshW(){const w=$('#wp');if(!w)return;w.innerHTML=wopen?wardInner():'';w.classList.toggle('open',wopen)}
-const sideSVG=()=>{const A=ACCL.find(x=>x.id===S.worn.side);return A?`<svg viewBox="0 -25 200 225"><g transform="translate(26 192) scale(.95)">${A.svg({fy:0,ew:10})}</g></svg>`:''};
+const sideSVG=()=>{const g=sideG(S.worn,S.pet,false);return g?`<svg viewBox="0 -25 200 225">${g}</svg>`:''};
 function repaint(){const p=S.pet;if(p&&$('#pet'))$('#pet').innerHTML=petSVG(p,stOf(p.xp));const sl=$('#sidel');if(sl)sl.innerHTML=sideSVG()}
 // ---- tajné triky
 let lastTap=0,trickBusy=false;
@@ -1047,7 +1086,7 @@ $('#view').addEventListener('click',e=>{
   else if(a==='wclr'){S.worn={};save();refreshW();repaint();sfx('tick')}
   else if(a==='wi'){const A=ACCL.find(x=>x.id===b.dataset.id);
     if(!S.unl[A.id]){const c=cost(A);if(S.drops<c){toast('Chybí ti ještě '+(c-S.drops)+' 💧');return}if(!confirm('Odemknout „'+A.n+'“ za '+c+' zlatých kapek?'))return;S.drops-=c;S.unl[A.id]=1;chip(true);if($('#pcnt'))$('#pcnt').textContent=S.drops}
-    if(S.worn[A.slot]===A.id)delete S.worn[A.slot];else S.worn[A.slot]=A.id;save();refreshW();repaint();sfx('tick')}
+    toggleAcc(A);save();refreshW();repaint();sfx('tick')}
   else if(a==='tt'){tplOpen=!tplOpen;b.nextElementSibling.classList.toggle('open',tplOpen);b.querySelector('span').textContent=tplOpen?'▴':'▾'}
   else if(a==='ta'){if(lpFired)return;const t=S.tpl[+b.dataset.i];if(S.shop.some(x=>!x.done&&x.text.toLowerCase()===t.toLowerCase())){toast('Už je v seznamu');return}keep(()=>{S.shop.push({id:uid(),text:t,done:false,o:-Date.now()});save()});toast('Přidáno: '+t);sfx('tick')}
   else if(a==='tn')addTpl();
@@ -1276,8 +1315,9 @@ function gvPick(){
 function gvSpawn(t){
   const sg=$('#stage'),p=S.pet;if(!sg||!p||S.tab!=='garden'||document.hidden||isNight()||isSleeping()||sg.querySelector('.gv'))return null;
   const W=sg.clientWidth,d=GVD[t],sc=scene();
-  let right=Math.random()<.5;if(S.worn&&S.worn.side)right=true;
-  let cx=p.kind==='plant'?plantPt().x+(right?1:-1)*(54+Math.random()*18):(right?W-d.w/2-6:d.w/2+6);
+  const wl=!!(S.worn&&S.worn.side),wr=!!(S.worn&&S.worn.side2),edge=wl&&wr;
+  let right=Math.random()<.5;if(wl&&!wr)right=true;else if(wr&&!wl)right=false;
+  let cx=p.kind==='plant'&&!edge?plantPt().x+(right?1:-1)*(54+Math.random()*18):(right?W-d.w/2-6:d.w/2+6);
   cx=Math.max(d.w/2+4,Math.min(W-d.w/2-4,cx));
   const el=document.createElement('div');el.className='gv gv-'+t;el.dataset.t=t;
   el.style.width=d.w+'px';el.style.height=d.h+'px';
@@ -1367,6 +1407,74 @@ async function snapGarden(){
   }catch(er){toast('Fotku se nepodařilo vytvořit 😕')}}
 $('#view').addEventListener('click',e=>{if(e.target.closest('[data-snap]'))snapGarden()});
 setInterval(()=>{const sg=$('#stage');if(S.tab==='garden'&&sg&&sg.dataset.sc&&sg.dataset.sc!==sceneKey(scene()))render()},20000);
+
+
+// ---- doplněk: nasadit / sundat (vedle max. 2 věci, nejstarší se vymění)
+function toggleAcc(A){const w=S.worn;
+  if(A.slot!=='side'){if(w[A.slot]===A.id)delete w[A.slot];else w[A.slot]=A.id;return}
+  const so=(w.so||[]).filter(id=>id===w.side||id===w.side2);
+  if(w.side===A.id||w.side2===A.id){if(w.side===A.id)delete w.side;if(w.side2===A.id)delete w.side2;w.so=so.filter(id=>id!==A.id);return}
+  if(!w.side){w.side=A.id;w.so=[...so,A.id];return}
+  if(!w.side2){w.side2=A.id;w.so=[...so,A.id];return}
+  const old=so[0]||w.side,slot=w.side===old?'side':'side2',gone=ACCL.find(x=>x.id===old);
+  w[slot]=A.id;w.so=[...so.filter(id=>id!==old),A.id];toast('Max. 2 věci vedle · sundáno: '+(gone?gone.n:'nejstarší'))}
+// ---- nákupy: přesouvání položek (podržet a přetáhnout)
+function dragHint(){if(S.hintDrag||S.shop.filter(t=>!t.done).length<2)return;S.hintDrag=1;save();setTimeout(()=>{if(S.tab==='shop')toast('Podrž položku a přetáhni ji ↕')},900)}
+(function(){
+  const V=$('#view');let D=null,pend=null,lastDrag=0,raf=0;
+  const pick=t=>{if(S.tab!=='shop'||!t||!t.closest)return null;if(t.closest('button,input,a,label'))return null;return t.closest('.dl .task:not(.done)')};
+  function begin(li,cy){
+    const ul=li.parentElement,items=[...ul.children].filter(x=>x.classList.contains('task')),i=items.indexOf(li);
+    const stars=items.filter(x=>x.classList.contains('star')).length,isS=li.classList.contains('star'),lo=isS?0:stars,hi=isS?stars-1:items.length-1;
+    if(items.length<2||lo>=hi)return false;
+    const sc=V.scrollTop,rc=items.map(x=>x.getBoundingClientRect());
+    D={li,ul,items,i,k:i,lo,hi,y0:cy,cy,sc0:sc,mid:rc.map(r=>r.top+sc+r.height/2),h:rc.map(r=>r.height+10),warned:false,touch:false};
+    items.forEach(x=>{x.style.animation='none';if(x!==li)x.style.transition='transform .22s ease'});
+    li.style.transition='none';li.classList.add('drag');V.classList.add('dragging');
+    if(navigator.vibrate)navigator.vibrate(18);sfx('tick');loop();return true}
+  function update(){
+    if(!D)return;const dyRaw=(D.cy-D.y0)+(V.scrollTop-D.sc0),{items,i,lo,hi,mid,h}=D;
+    const c=mid[i]+dyRaw;let k=0;for(let j=0;j<items.length;j++)if(j!==i&&mid[j]<c)k++;
+    const kk=Math.max(lo,Math.min(hi,k));
+    if(kk!==k&&!D.warned){D.warned=true;if(items[i].classList.contains('star'))toast('TOP položky zůstávají nahoře ⭐');else toast('TOP položky zůstávají nahoře ⭐')}
+    const dy=Math.max(mid[lo]-mid[i],Math.min(mid[hi]-mid[i],dyRaw));
+    D.li.style.transform=`translateY(${dy}px)`;
+    for(let j=0;j<items.length;j++){if(j===i)continue;const sh=(i<kk&&j>i&&j<=kk)?-h[i]:(kk<i&&j>=kk&&j<i)?h[i]:0;items[j].style.transform=sh?`translateY(${sh}px)`:''}
+    D.k=kk}
+  function loop(){cancelAnimationFrame(raf);const f=()=>{if(!D)return;const r=V.getBoundingClientRect(),n=$('#nav'),top=r.top+48,bot=Math.min(r.bottom,n?n.getBoundingClientRect().top:r.bottom)-48;
+      let d=0;if(D.cy<top)d=-Math.min(14,(top-D.cy)/5+1);else if(D.cy>bot)d=Math.min(14,(D.cy-bot)/5+1);
+      if(d){V.scrollTop+=d;update()}raf=requestAnimationFrame(f)};raf=requestAnimationFrame(f)}
+  function reset(){if(!D)return;D.items.forEach(x=>{x.style.transform='';x.style.transition=''});D.li.classList.remove('drag');V.classList.remove('dragging');D=null;cancelAnimationFrame(raf)}
+  function finish(){
+    if(!D)return;cancelAnimationFrame(raf);lastDrag=Date.now();
+    const d=D,{li,ul,items,i,k,h}=d;
+    if(k===i){reset();return}
+    let fin=0;if(k>i){for(let j=i+1;j<=k;j++)fin+=h[j]}else{for(let j=k;j<i;j++)fin-=h[j]}
+    li.style.transition='transform .2s ease';li.style.transform=`translateY(${fin}px)`;li.classList.remove('drag');
+    setTimeout(()=>{
+      const arr=items.slice();arr.splice(i,1);arr.splice(k,0,li);
+      arr.forEach(x=>{x.style.transition='none';x.style.transform=''});arr.forEach(x=>ul.appendChild(x));
+      arr.forEach((x,n)=>{const t=S.shop.find(y=>y.id===x.dataset.id);if(t)t.o=n});save();
+      void ul.offsetWidth;arr.forEach(x=>{x.style.transition=''});V.classList.remove('dragging');D=null;sfx('tick')},210)}
+  // dotyk: podržet ~0,4 s, pak táhnout
+  V.addEventListener('touchstart',e=>{
+    if(D||e.touches.length!==1){if(pend){clearTimeout(pend.timer);pend=null}return}
+    const li=pick(e.target);if(!li)return;const t=e.touches[0];
+    pend={li,x:t.clientX,y:t.clientY,cy:t.clientY,timer:setTimeout(()=>{if(pend&&begin(pend.li,pend.cy)){D.touch=true;touchX=null}pend=null},380)}},{passive:true});
+  V.addEventListener('touchmove',e=>{const t=e.touches[0];if(!t)return;
+    if(D&&D.touch){e.preventDefault();D.cy=t.clientY;update();return}
+    if(pend){pend.cy=t.clientY;if(Math.abs(t.clientX-pend.x)>8||Math.abs(t.clientY-pend.y)>8){clearTimeout(pend.timer);pend=null}}},{passive:false});
+  const tEnd=e=>{if(pend){clearTimeout(pend.timer);pend=null}if(D&&D.touch){if(e.cancelable)e.preventDefault();touchX=null;e.type==='touchcancel'?(lastDrag=Date.now(),reset()):finish()}};
+  V.addEventListener('touchend',tEnd,{passive:false});V.addEventListener('touchcancel',tEnd,{passive:false});
+  V.addEventListener('contextmenu',e=>{if(pick(e.target))e.preventDefault()});
+  // myš: stačí stisknout a posunout
+  V.addEventListener('mousedown',e=>{if(e.button!==0||D)return;const li=pick(e.target);if(!li)return;pend={li,x:e.clientX,y:e.clientY,cy:e.clientY,mouse:true}});
+  document.addEventListener('mousemove',e=>{
+    if(D&&!D.touch){D.cy=e.clientY;update();return}
+    if(pend&&pend.mouse&&(Math.abs(e.clientX-pend.x)>6||Math.abs(e.clientY-pend.y)>6)){const p0=pend;pend=null;if(begin(p0.li,p0.y)){D.cy=e.clientY;update()}}});
+  document.addEventListener('mouseup',()=>{if(pend&&pend.mouse)pend=null;if(D&&!D.touch)finish()});
+  V.addEventListener('click',e=>{if(Date.now()-lastDrag<450){e.stopImmediatePropagation();e.preventDefault()}},true);
+})();
 
 // ---- měření spodní lišty a stažení oken prstem dolů
 function navTop(){try{const n=$('#nav');if(n&&n.offsetTop)document.documentElement.style.setProperty('--navtop',(document.body.clientHeight-n.offsetTop)+'px')}catch(e){}}
