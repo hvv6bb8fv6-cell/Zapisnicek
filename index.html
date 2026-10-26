@@ -465,10 +465,19 @@ header h1{line-height:34px;height:34px;white-space:nowrap}
 .dl .task{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
 #view.dragging{-webkit-user-select:none;user-select:none}
 .task.drag{cursor:grabbing}
-/* ===== BALONEK V RUCE / U KVĚTINÁČE ===== */
+/* ===== DOPLŇKY V RUCE ===== */
 .bln{transform-box:view-box;animation:blnsw 3.6s ease-in-out infinite alternate}
 @keyframes blnsw{from{transform:rotate(-3.5deg)}to{transform:rotate(3.5deg)}}
 @media(prefers-reduced-motion:reduce){.bln{animation:none}}
+
+/* ===== animace prskavky a svíčky ===== */
+.spk{transform-box:fill-box;transform-origin:50% 50%;animation:spk .5s ease-in-out infinite alternate}
+@keyframes spk{from{transform:scale(.76) rotate(0deg);opacity:.75}to{transform:scale(1.12) rotate(20deg);opacity:1}}
+.flm{transform-box:fill-box;transform-origin:50% 100%;animation:flm .8s ease-in-out infinite alternate}
+@keyframes flm{from{transform:scale(1,1) rotate(-2deg)}to{transform:scale(.88,1.14) rotate(2.5deg)}}
+.flg{animation:flg 1.4s ease-in-out infinite alternate}
+@keyframes flg{from{opacity:.14}to{opacity:.32}}
+@media(prefers-reduced-motion:reduce){.spk,.flm,.flg{animation:none}}
 </style>
 </head>
 <body>
@@ -478,6 +487,7 @@ header h1{line-height:34px;height:34px;white-space:nowrap}
   <main id="view"></main>
 </div>
 <div class="lockov" id="lockov"></div>
+<div class="lockov" id="unwov"></div>
 <nav id="nav">
   <button class="t" data-t="tasks"></button>
   <button class="t" data-t="shop"></button>
@@ -551,7 +561,11 @@ function migrate(){
   S.ideas=[];S.tasks.forEach(t=>{if(t.list==='today'&&!t.done)t.star=true;t.paid=true});
   S.v=2;save()}
 migrate();if(!['tasks','shop','gifts','garden'].includes(S.tab))S.tab='tasks';
-(function(){const fx=w=>{if(w&&w.side==='balloon'){delete w.side;w.hand='balloon'}};fx(S.worn);(S.coll||[]).forEach(c=>fx(c.w))})();
+(function(){const fx=w=>{if(!w)return;if(w.side==='balloon'){delete w.side;w.hand='balloon'}
+  ['side','side2'].forEach(k=>{if(w[k]==='cream'){if(!w.hand)w.hand='cream';delete w[k]}});
+  if(!w.side&&w.side2){w.side=w.side2;delete w.side2}
+  if(Array.isArray(w.so))w.so=w.so.filter(id=>id===w.side||id===w.side2)};
+  fx(S.worn);(S.coll||[]).forEach(c=>fx(c.w))})();
 
 // ---- archiv dárků po letech (klíče darky_2026, darky_2027 …)
 const YK='darky_';
@@ -646,7 +660,7 @@ function listHTML0(K){
   if(done.length)h+=`<h3>${shop?'V košíku':'Hotovo'} (${done.length})<button data-a="clr">${shop?'Vysypat košík':'Smazat hotové'}</button></h3><ul>${done.map(t=>tHTML(t,shop)).join('')}</ul>`;
   return h}
 function render(){
-  if(S.tab!=='gifts'){gUnlocked=false;lockMode='pin';pinBuf=''}
+  if(S.tab!=='gifts'){gUnlocked=false;lockMode='pin';pinBuf='';if(typeof uwClose==='function'&&uwId)uwClose()}
   syncLock();
   if(lastTab!==S.tab){lastTab=S.tab;$('#view').scrollTop=0}
   const T=S.tab,now=new Date();
@@ -730,8 +744,8 @@ function xmas(el){const r=el.getBoundingClientRect(),x=r.left+r.width/2,y=r.top+
 $('#view').addEventListener('click',e=>{
   const b=e.target.closest('[data-g]');if(!b)return;
   const li=b.closest('[data-id]'),x=li&&S.gifts.find(y=>y.id===li.dataset.id);if(!x)return;const a=b.dataset.g;
-  if(a==='wr'){x.wrap=!x.wrap;save();const tx=li.querySelector('.tx');b.classList.toggle('on',x.wrap);b.setAttribute('aria-pressed',x.wrap?'true':'false');
-    if(x.wrap){gWrapFx(tx);tx.classList.add('wrapd');sfx('tick')}else{tx.classList.remove('wrapping');tx.classList.remove('wrapd');sfx('tick')}
+  if(a==='wr'){if(x.wrap){uwOpen(x.id);sfx('tick');return}
+    x.wrap=true;save();const tx=li.querySelector('.tx');b.classList.add('on');b.setAttribute('aria-pressed','true');gWrapFx(tx);tx.classList.add('wrapd');sfx('tick');
     return}
   if(a==='tg'){x.bought=!x.bought;
     if(x.bought&&!x.paid){x.paid=true;S.drops++;dropFx(b)}
@@ -979,6 +993,17 @@ const ACCL=[
  {id:'scarf',n:'Zimní šála',slot:'neck',s:'winter',lvl:2,svg:o=>`<path d="M-30 -4Q0 12 30 -4V8Q0 24-30 8z" fill="#e8403f"/><path d="M-6 8l-3 24h13l-2-22z" fill="#e8403f"/><path d="M-30 2Q0 18 30 2" stroke="#fff" stroke-width="3" fill="none" stroke-dasharray="6 6"/>`},
  {id:'lei',n:'Havajský věnec',slot:'neck',s:'summer',lvl:2,svg:o=>[-24,-16,-8,0,8,16,24].map((x,i)=>`<circle cx="${x}" cy="${12-x*x/48}" r="5.4" fill="${['#ff8fb8','#ffe27a','#ff9a3d','#c9a8ff','#ff5d8a','#ffe27a','#ff8fb8'][i]}"/><circle cx="${x}" cy="${12-x*x/48}" r="1.8" fill="#fff"/>`).join('')},
  {id:'gnome',n:'Zahradní trpaslík',slot:'side',s:'base',lvl:1,svg:o=>`<ellipse cy="-1" rx="12" ry="3" fill="rgba(0,0,0,.15)"/><path d="M-9 0v-13h18v13z" fill="#4aa8ff"/><circle cy="-21" r="8" fill="#ffd9c2"/><path d="M-8 -20q8 20 16 0z" fill="#fff"/><path d="M-9 -25L0 -54L9 -25z" fill="#e8403f"/><circle cx="-3" cy="-23" r="1.2" fill="#3b2a4a"/><circle cx="3" cy="-23" r="1.2" fill="#3b2a4a"/><circle cy="-20" r="2" fill="#ff9a8a"/>`},
+ {id:'chick',n:'Kuřátko',slot:'side',s:'spring',lvl:3,svg:o=>`<ellipse cy="0" rx="13" ry="3" fill="rgba(0,0,0,.12)"/><circle cy="-14" r="13" fill="#ffd93d"/><path d="M-3 -26q-1.5-5 1.5-6M1 -26.5q.5-5 4-4.5" stroke="#f2b705" stroke-width="1.6" fill="none" stroke-linecap="round"/><ellipse cx="-12" cy="-12" rx="3.6" ry="6" fill="#f5c518" transform="rotate(18 -12 -12)"/><ellipse cx="12" cy="-12" rx="3.6" ry="6" fill="#f5c518" transform="rotate(-18 12 -12)"/><circle cx="-5.2" cy="-19" r="1.9" fill="#3b2a4a"/><circle cx="5.2" cy="-19" r="1.9" fill="#3b2a4a"/><circle cx="-4.6" cy="-19.7" r=".6" fill="#fff"/><circle cx="5.8" cy="-19.7" r=".6" fill="#fff"/><path d="M-2.8 -16.2h5.6l-2.8 4z" fill="#ff9a3d"/><circle cx="-8.6" cy="-14" r="2.4" fill="#ff9fae" opacity=".6"/><circle cx="8.6" cy="-14" r="2.4" fill="#ff9fae" opacity=".6"/><path d="M-13 -9L-9.5 -5.5L-6.5 -9.5L-3 -5.5L0 -9.5L3 -5.5L6.5 -9.5L9.5 -5.5L13 -9V-3q0 5-13 5T-13 -3z" fill="#fff" stroke="#e8dff0" stroke-width="1"/>`},
+ {id:'flower',n:'Kytička',slot:'hand',s:'spring',lvl:1,sw:1,tilt:10,svg:o=>`<path d="M0 0V-26" stroke="#4fbf73" stroke-width="2.6" stroke-linecap="round"/><path d="M0 -9C-7 -10-9 -16-4 -19-1 -15 0 -12 0 -9z" fill="#5fcf80"/>`+[0,1,2,3,4].map(i=>`<ellipse cy="-6.5" rx="4" ry="6" fill="${i%2?'#ff8fb8':'#ffb3d1'}" transform="translate(0 -33) rotate(${i*72})"/>`).join('')+`<circle cy="-33" r="3.6" fill="#ffd36b"/>`},
+ {id:'mug',n:'Hrníček',slot:'hand',s:'winter',lvl:1,svg:o=>`<g transform="translate(3 0)"><path d="M-15 -19h16v13q0 6-6 6h-4q-6 0-6-6z" fill="#fff6ec" stroke="#d9b99a" stroke-width="1.4"/><path d="M-15 -13.5h16" stroke="#ff8fb8" stroke-width="3"/><path d="M1 -16h3.5q4 0 4 4.2t-4 4.2H1" stroke="#d9b99a" stroke-width="2.4" fill="none" stroke-linecap="round"/><ellipse cx="-7" cy="-18.5" rx="8" ry="1.8" fill="#a9653a"/><path d="M-10 -23q-3-4 0-8M-5 -23q-3-4 0-8M0 -23q-3-4 0-8" stroke="#fff" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".75"/></g>`},
+ {id:'lolli',n:'Lízátko',slot:'hand',s:'base',lvl:1,tilt:8,svg:o=>`<path d="M0 0V-24" stroke="#e6dff0" stroke-width="2.4" stroke-linecap="round"/><circle cy="-33" r="10" fill="#ff7aa8"/><circle cy="-33" r="6.3" fill="none" stroke="#fff" stroke-width="1.8"/><circle cy="-33" r="2.6" fill="none" stroke="#ffd36b" stroke-width="1.8"/><ellipse cx="-4.5" cy="-38" rx="2" ry="3" fill="#fff" opacity=".45"/>`},
+ {id:'wand',n:'Kouzelná hůlka',slot:'hand',s:'base',lvl:2,sw:1,tilt:12,svg:o=>`<path d="M0 0V-32" stroke="#9b6bc2" stroke-width="3.4" stroke-linecap="round"/><path d="M0 -7V-13" stroke="#ffd36b" stroke-width="3.8"/><g transform="translate(0 -40) scale(1.35)"><path d="M0 -7L1.76 -2.43L6.66 -2.16L2.85 .93L4.11 5.66L0 3L-4.11 5.66L-2.85 .93L-6.66 -2.16L-1.76 -2.43Z" fill="#ffd36b" stroke="#f2a93b" stroke-width="1" stroke-linejoin="round"/></g><circle cx="-10" cy="-47" r="1.4" fill="#fff"/><circle cx="10" cy="-36" r="1.2" fill="#fff"/><circle cx="9" cy="-51" r="1.6" fill="#ffd36b"/>`},
+ {id:'book',n:'Knížka',slot:'hand',s:'base',lvl:1,svg:o=>`<rect x="-11" y="-25" width="22" height="25" rx="2.2" fill="#4f8dff"/><rect x="-11" y="-25" width="5" height="25" rx="2" fill="#3a6fd8"/><path d="M11 -23v21" stroke="#fff" stroke-width="2"/><path d="M-2 -17h9M-2 -12h6" stroke="#fff" stroke-width="1.8" stroke-linecap="round" opacity=".85"/><path d="M2 -21l1.2 2.4 2.6.4-1.9 1.8.5 2.6-2.4-1.3-2.4 1.3.5-2.6-1.9-1.8 2.6-.4z" fill="#ffd36b" opacity=".0"/>`},
+ {id:'lantern',n:'Lucerna',slot:'hand',s:'hallo',lvl:2,svg:o=>`<circle cy="-26" r="15" fill="#ffd36b" opacity=".25"/><path d="M0 0V-11" stroke="#7a5a3a" stroke-width="2.4" stroke-linecap="round"/><rect x="-8" y="-34" width="16" height="22" rx="3" fill="#ffd36b" stroke="#7a5a3a" stroke-width="1.8"/><path d="M-3 -33v20M3 -33v20" stroke="#7a5a3a" stroke-width="1" opacity=".45"/><path d="M0 -17q-4.5-4.5 0-10q4.5 5.5 0 10z" fill="#ff8a2b"/><path d="M-9.5 -34h19l-3.5-5h-12z" fill="#7a5a3a"/><path d="M-3 -39.5q3-6 6 0" stroke="#7a5a3a" stroke-width="1.6" fill="none"/>`},
+ {id:'umbrella',n:'Deštník',slot:'hand',s:'base',lvl:1,tilt:8,svg:o=>`<path d="M0 0v4a3.2 3.2 0 01-6.4 0" stroke="#7a5a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M0 0V-34" stroke="#7a5a3a" stroke-width="2.2" stroke-linecap="round"/><path d="M-22 -32C-22 -50 22 -50 22 -32Q16.5 -36 11 -32Q5.5 -36 0 -32Q-5.5 -36 -11 -32Q-16.5 -36 -22 -32z" fill="#ff7aa8"/><path d="M-11 -32C-12.5 -40-7 -44.5 0 -45.3C-3 -42-5 -37-5.5 -32z" fill="#ffd36b"/><path d="M11 -32C12.5 -40 7 -44.5 0 -45.3C3 -42 5 -37 5.5 -32z" fill="#ffd36b"/><path d="M-22 -32C-22 -50 22 -50 22 -32" stroke="#e0457a" stroke-width="1.2" fill="none"/><path d="M0 -45.5V-50" stroke="#7a5a3a" stroke-width="2" stroke-linecap="round"/>`},
+ {id:'sparkler',n:'Prskavka',slot:'hand',s:'xmas',lvl:2,tilt:10,svg:o=>`<path d="M0 0V-30" stroke="#a8a8b8" stroke-width="1.8" stroke-linecap="round"/><path d="M0 -30V-37" stroke="#3b3b4a" stroke-width="2.8" stroke-linecap="round"/><g transform="translate(0 -40)"><g class="spk">`+[0,1,2,3,4,5,6,7,8,9,10,11].map(i=>{const a=i*Math.PI/6,l=i%2?8:13,x=Math.cos(a)*l,y=Math.sin(a)*l;return `<path d="M${(Math.cos(a)*3.2).toFixed(1)} ${(Math.sin(a)*3.2).toFixed(1)}L${x.toFixed(1)} ${y.toFixed(1)}" stroke="${i%2?'#fff':'#ffd36b'}" stroke-width="1.6" stroke-linecap="round"/><circle cx="${(x*1.12).toFixed(1)}" cy="${(y*1.12).toFixed(1)}" r="1.1" fill="#fff"/>`}).join('')+`</g><circle r="3.6" fill="#fff8d0"/></g>`},
+ {id:'candle',n:'Svíčka',slot:'hand',s:'xmas',lvl:1,svg:o=>`<path d="M0 0V-5" stroke="#d9a73a" stroke-width="2.4" stroke-linecap="round"/><ellipse cy="-6" rx="13" ry="3.4" fill="#f2c14e"/><ellipse cy="-7" rx="10" ry="2.2" fill="#ffe08a"/><rect x="-4.5" y="-27" width="9" height="20" rx="2" fill="#fff6e6" stroke="#eadbc0" stroke-width="1"/><path d="M1.5 -27v8q0 2.3 1.6 2.3t1.4-2.3v-8z" fill="#f4ead2"/><path d="M0 -27v-3" stroke="#3b3b4a" stroke-width="1.2" stroke-linecap="round"/><circle cy="-35" r="9" fill="#ffd36b" opacity=".22" class="flg"/><g class="flm"><path d="M0 -30.5C-4.6 -34.5-2.4 -39.5 0 -42.5C2.4 -39.5 4.6 -34.5 0 -30.5z" fill="#ff9a3d"/><path d="M0 -31.3C-2.4 -34-1.4 -37 0 -39C1.4 -37 2.4 -34 0 -31.3z" fill="#ffe27a"/></g>`},
+ {id:'hballoon',n:'Srdíčkový balonek',slot:'hand',s:'base',lvl:2,svg:o=>`<path d="M0 0Q-3 -9 0 -20" stroke="#999" stroke-width="1.2" fill="none"/><g transform="translate(0 -33)"><path d="M0 12C-18 0-13 -14-5.5 -13.5C-2.5 -13 0 -10.5 0 -8.5C0 -10.5 2.5 -13 5.5 -13.5C13 -14 18 0 0 12z" fill="#ff4d6d"/><path d="M-2.5 15L0 11.5L2.5 15z" fill="#e0304f"/><ellipse cx="-6.5" cy="-6" rx="2.2" ry="3.6" fill="#fff" opacity=".5" transform="rotate(-25 -6.5 -6)"/></g>`},
  {id:'balloon',n:'Balonek',slot:'hand',s:'base',lvl:2,svg:o=>`<path d="M0 0Q-3 -12 0 -22" stroke="#999" stroke-width="1.2" fill="none"/><ellipse cy="-36" rx="11" ry="14" fill="#ff5d8a"/><path d="M-3 -23l3 3 3-3z" fill="#e0457a"/><ellipse cx="-4" cy="-41" rx="2.5" ry="4" fill="#fff" opacity=".5"/>`},
  {id:'tree',n:'Vánoční stromeček',slot:'side',s:'xmas',lvl:3,svg:o=>`<rect x="-3" y="-6" width="6" height="6" fill="#8a5a3a"/><path d="M-17 -6L0 -28L17 -6zM-14 -20L0 -42L14 -20zM-11 -34L0 -54L11 -34z" fill="#3fae66"/><path d="M0 -66l2.3 5.5h5.7l-4.5 3.6 1.7 5.6-5.2-3.4-5.2 3.4 1.7-5.6-4.5-3.6h5.7z" fill="#ffd36b"/><circle cx="-6" cy="-14" r="2.5" fill="#ff5d5d"/><circle cx="6" cy="-26" r="2.5" fill="#4aa8ff"/><circle cx="-3" cy="-40" r="2.2" fill="#ffd36b"/>`},
  {id:'gift',n:'Vánoční dárky',slot:'side',s:'xmas',lvl:3,svg:o=>`<rect x="-16" y="-18" width="22" height="18" rx="2" fill="#e8403f"/><rect x="-6" y="-18" width="4" height="18" fill="#ffd36b"/><rect x="-16" y="-12" width="22" height="4" fill="#ffd36b"/><rect x="6" y="-12" width="12" height="12" rx="2" fill="#4aa8ff"/><rect x="10" y="-12" width="4" height="12" fill="#fff"/><path d="M-5 -18q-8-8-3-10 4 0 3 10zM-5 -18q8-8 3-10-4 0-3 10z" fill="#ffd36b"/>`},
@@ -987,7 +1012,7 @@ const ACCL=[
  {id:'ghost',n:'Strašidýlko',slot:'side',s:'hallo',lvl:3,svg:o=>`<path d="M-13 0V-24a13 13 0 0126 0V0l-4.5-4-4.5 4-4-4-4 4-4.5-4z" fill="#fff" stroke="#d7d0e8" stroke-width="1.5"/><circle cx="-5" cy="-22" r="2.6" fill="#3b2a4a"/><circle cx="5" cy="-22" r="2.6" fill="#3b2a4a"/><ellipse cy="-14" rx="3" ry="4" fill="#3b2a4a"/>`},
  {id:'mush',n:'Muchomůrka',slot:'side',s:'autumn',lvl:3,svg:o=>`<rect x="-5" y="-16" width="10" height="16" rx="4" fill="#f4e8d6"/><path d="M-20 -14a20 18 0 0140 0z" fill="#e8403f"/><circle cx="-8" cy="-22" r="3" fill="#fff"/><circle cx="6" cy="-26" r="3.4" fill="#fff"/><circle cx="12" cy="-19" r="2.4" fill="#fff"/>`},
  {id:'eggs',n:'Velikonoční vajíčka',slot:'side',s:'spring',lvl:3,svg:o=>`<path d="M-18 -10h36l-4 10h-28z" fill="#c98f52"/><ellipse cx="-8" cy="-14" rx="5.5" ry="7" fill="#ff8fb8"/><ellipse cx="2" cy="-16" rx="5.5" ry="7" fill="#7ad0ff"/><ellipse cx="11" cy="-14" rx="5.5" ry="7" fill="#ffe27a"/><path d="M-17 -10q17-8 34 0" stroke="#a8743a" stroke-width="2.5" fill="none"/>`},
- {id:'cream',n:'Zmrzlina',slot:'side',s:'summer',lvl:3,svg:o=>`<path d="M-9 -26L0 0L9 -26z" fill="#e8b878"/><circle cy="-30" r="10" fill="#ff9fcb"/><circle cy="-40" r="8.5" fill="#fff3d6"/><circle cx="4" cy="-48" r="2.5" fill="#e8403f"/>`},
+ {id:'cream',n:'Zmrzlina',slot:'hand',s:'summer',lvl:3,tilt:6,svg:o=>`<path d="M-9 -26L0 0L9 -26z" fill="#e8b878"/><circle cy="-30" r="10" fill="#ff9fcb"/><circle cy="-40" r="8.5" fill="#fff3d6"/><circle cx="4" cy="-48" r="2.5" fill="#e8403f"/>`},
  {id:'ball',n:'Plážový míč',slot:'side',s:'summer',lvl:3,svg:o=>`<circle cy="-14" r="14" fill="#fff" stroke="#e8e0f0"/><path d="M0 -14V-28A14 14 0 0113.5 -18z" fill="#ff5d5d"/><path d="M0 -14L13.5 -18A14 14 0 0110 -4z" fill="#ffd36b"/><path d="M0 -14L-10 -4A14 14 0 01-14 -14z" fill="#4aa8ff"/>`}
 ];
 const cost=a=>a.lvl?a.lvl+1:0;
@@ -1006,27 +1031,44 @@ function sideG(w,p,sa){
   const k=(L&&R)?.84:.95,rx=(p&&p.sp==='llama')?186:174;
   const one=(A,x)=>A?`<g transform="translate(${x} 192) scale(${k})"><g${sa?' class="sa"':''}>${A.svg({fy:0,ew:10})}</g></g>`:'';
   return one(L,26)+one(R,rx)}
-function heldBln(p,st){
-  const plant=p.kind==='plant',sb=[.74,.84,.93,1][st];let sx,sy,hx,hy,col='#4fbf73',aw=5,ol=false,dr=1;
-  if(plant){sx=116;sy=147;hx=140;hy=131}
-  else{
-    const sp=p.sp,A0=AN[sp],A={...A0,...A0.v[(p.v||0)%A0.v.length]};col=A.c;
+// věc v ruce: zvířátko ji drží tlapkou, rostlinka větvičkou, která vyrůstá ze stonku (u semínka z hlíny, u kaktusu z jeho ramínka)
+function heldItem(p,st,id){
+  const A=ACCL.find(x=>x.id===id);if(!A)return '';
+  const plant=p.kind==='plant',sb=[.74,.84,.93,1][st],F=n=>(+n).toFixed(1);
+  let sx,sy,hx,hy,col='#4fbf73',aw=5,ol=false,dr=1,armD='',armW=3.6,extra='',ring=true;
+  if(plant){
+    const sp=p.sp,P0=PL[sp];
+    if(sp==='cactus'){
+      col=P0.v[(p.v||0)%P0.v.length].g;const w=[0,26,29,32][st],h=[0,34,62,86][st];
+      if(st>=2){hx=100+w/2-2+22;hy=143-h*.45-8-[0,0,14,22][st]-3;ring=false}
+      else if(st===1){hx=127;hy=119;extra=`<path d="M111 128h10q6 0 6-6v-3" stroke="${col}" stroke-width="9" fill="none" stroke-linecap="round"/>`;ring=false}
+      else{sx=106;sy=141;hx=124;hy=122;armD=`M${sx} ${sy}Q121 143 ${hx} ${hy}`}
+    }else if(st===0){sx=106;sy=141;hx=124;hy=122;armD=`M${sx} ${sy}Q121 143 ${hx} ${hy}`}
+    else{
+      const H=[0,28,56,80][st]*P0.h,t=st===1?.62:.5,u=1-t;
+      sx=u*u*100+2*t*u*97+t*t*100;sy=u*u*143+2*t*u*(143-H/2)+t*t*(143-H);
+      hx=sx+30;hy=sy-12;armD=`M${F(sx)} ${F(sy)}Q${F(sx+14)} ${F(sy+5)} ${F(hx)} ${F(hy)}`}
+  }else{
+    const sp=p.sp,A0=AN[sp],V=A0.v[(p.v||0)%A0.v.length];col=(V.c||A0.c);
     if(sp==='llama'){const sc=[.62,.78,.9,1][st],f=(x,y)=>[100+(x-100)*sc,188+(y-188)*sc];[sx,sy]=f(100,134);[hx,hy]=f(124,118);aw=9*sc+2}
     else if(sp==='capy'){const sc=[.62,.78,.9,1][st],bw=[.82,.9,.96,1][st],bh=[.62,.78,.9,1][st],f=(x,y)=>{const bx=100+(x-100)*bw,by=190+(y-190)*bh;return[100+(bx-100)*sc,190+(by-190)*sc]};[sx,sy]=f(146,152);[hx,hy]=f(164,138);aw=9*sc+2;ol=true}
     else{dr=['cat','dog','hare','rab'].includes(sp)?-1:1;const sc=[.6,.76,.9,1][st],bw=(sp==='gp'?52:44)*[.72,.86,.95,1][st],f=(x,y)=>[100+(x-100)*sc,188+(y-188)*sc];[sx,sy]=f(100+dr*(bw-8),150);[hx,hy]=f(100+dr*(bw+10),134);aw=9*sc+2}
-  }
-  const bx=hx+dr*(plant?20:12),by=hy-(plant?62:52)*sb,rx=11*sb,ry=14*sb,sy2=by+ry,cx=hx+(bx-hx)*.15-5*dr,cy=(hy+sy2)/2;
-  let g=`<g class="hb">`;
-  const armD=`M${sx.toFixed(1)} ${sy.toFixed(1)}Q${((sx+hx)/2+2).toFixed(1)} ${((sy+hy)/2+4).toFixed(1)} ${hx.toFixed(1)} ${hy.toFixed(1)}`;
-  if(ol)g+=`<path d="${armD}" stroke="#2b1d14" stroke-width="${(aw+5).toFixed(1)}" fill="none" stroke-linecap="round"/>`;
-  g+=`<path d="${armD}" stroke="${col}" stroke-width="${aw.toFixed(1)}" fill="none" stroke-linecap="round"/>`;
-  if(plant)g+=`<path d="M0 0C-5 -3 -6 -9 0 -12 6 -9 5 -3 0 0z" fill="#5fcf80" transform="translate(${hx} ${hy}) rotate(55)"/>`;
-  else g+=`<circle cx="${hx.toFixed(1)}" cy="${hy.toFixed(1)}" r="${(aw*.62).toFixed(1)}" fill="${col}"${ol?' stroke="#2b1d14" stroke-width="2.4"':' stroke="rgba(0,0,0,.14)" stroke-width="1"'}/>`;
-  g+=`<g class="bln" style="transform-origin:${hx.toFixed(1)}px ${hy.toFixed(1)}px">`
-   +`<path d="M${hx.toFixed(1)} ${hy.toFixed(1)}Q${cx.toFixed(1)} ${cy.toFixed(1)} ${bx.toFixed(1)} ${sy2.toFixed(1)}" stroke="#8c8c99" stroke-width="1.3" fill="none" stroke-linecap="round"/>`
-   +`<ellipse cx="${bx.toFixed(1)}" cy="${by.toFixed(1)}" rx="${rx.toFixed(1)}" ry="${ry.toFixed(1)}" fill="#ff5d8a"/>`
-   +`<path d="M${(bx-3*sb).toFixed(1)} ${(sy2+3*sb).toFixed(1)}l${(3*sb).toFixed(1)} ${(-3.5*sb).toFixed(1)} ${(3*sb).toFixed(1)} ${(3.5*sb).toFixed(1)}z" fill="#e0457a"/>`
-   +`<ellipse cx="${(bx-4*sb).toFixed(1)}" cy="${(by-5*sb).toFixed(1)}" rx="${(2.5*sb).toFixed(1)}" ry="${(4*sb).toFixed(1)}" fill="#fff" opacity=".5"/></g></g>`;
+    armD=`M${F(sx)} ${F(sy)}Q${F((sx+hx)/2+2)} ${F((sy+hy)/2+4)} ${F(hx)} ${F(hy)}`;armW=aw}
+  let g=`<g class="hb">`+extra;
+  if(armD){if(ol)g+=`<path d="${armD}" stroke="#2b1d14" stroke-width="${F(armW+5)}" fill="none" stroke-linecap="round"/>`;g+=`<path d="${armD}" stroke="${col}" stroke-width="${F(armW)}" fill="none" stroke-linecap="round"/>`}
+  const grip=!plant?`<circle cx="${F(hx)}" cy="${F(hy)}" r="${F(aw*.62)}" fill="${col}"${ol?' stroke="#2b1d14" stroke-width="2.4"':' stroke="rgba(0,0,0,.14)" stroke-width="1"'}/>`:(ring?`<circle cx="${F(hx)}" cy="${F(hy)}" r="3.4" fill="none" stroke="${col}" stroke-width="2.4"/>`:'');
+  if(id==='balloon'||id==='hballoon'){
+    const hh=id==='hballoon',bx=hx+dr*(plant?20:12),by=hy-(plant?62:52)*sb,rx=11*sb,ry=14*sb,sy2=hh?by+12*sb:by+ry,cx=hx+(bx-hx)*.15-5*dr,cy=(hy+sy2)/2;
+    g+=`<g class="bln" style="transform-origin:${F(hx)}px ${F(hy)}px">`
+     +`<path d="M${F(hx)} ${F(hy)}Q${F(cx)} ${F(cy)} ${F(bx)} ${F(sy2)}" stroke="#8c8c99" stroke-width="1.3" fill="none" stroke-linecap="round"/>`
+     +(hh?`<g transform="translate(${F(bx)} ${F(by)}) scale(${F(sb*1.18)})"><path d="M0 12C-18 0-13 -14-5.5 -13.5C-2.5 -13 0 -10.5 0 -8.5C0 -10.5 2.5 -13 5.5 -13.5C13 -14 18 0 0 12z" fill="#ff4d6d"/><path d="M-2.5 15L0 11.5L2.5 15z" fill="#e0304f"/><ellipse cx="-6.5" cy="-6" rx="2.2" ry="3.6" fill="#fff" opacity=".5" transform="rotate(-25 -6.5 -6)"/></g>`
+      :`<ellipse cx="${F(bx)}" cy="${F(by)}" rx="${F(rx)}" ry="${F(ry)}" fill="#ff5d8a"/>`
+       +`<path d="M${F(bx-3*sb)} ${F(sy2+3*sb)}l${F(3*sb)} ${F(-3.5*sb)} ${F(3*sb)} ${F(3.5*sb)}z" fill="#e0457a"/>`
+       +`<ellipse cx="${F(bx-4*sb)}" cy="${F(by-5*sb)}" rx="${F(2.5*sb)}" ry="${F(4*sb)}" fill="#fff" opacity=".5"/>`)
+     +`</g>`+grip+`</g>`;
+    return g}
+  const tilt=(A.tilt||0)*dr,k=Math.min(1.2,(sb+.08)*1.2);
+  g+=`<g${A.sw?` class="bln" style="transform-origin:${F(hx)}px ${F(hy)}px"`:''}><g transform="translate(${F(hx)} ${F(hy)}) rotate(${tilt}) scale(${k})">${A.svg({fy:0,ew:10})}</g></g>`+grip+`</g>`;
   return g}
 function accSVG(p,st,w,noSide){
   const a=anchor(p,st);let o='';const L=id=>ACCL.find(x=>x.id===id)||ACCX.find(x=>x.id===id);
@@ -1036,7 +1078,7 @@ function accSVG(p,st,w,noSide){
     if(slot==='face'?(F===a&&!a.face):!a.ok)continue;
     const kk=F.r/40;
     o+=`<g transform="translate(${F.x} ${slot==='neck'||slot==='pj'?F.ny:F.y}) scale(${kk})">${A.svg({fy:(F.fy-F.y)/kk,ew:F.ew/kk})}</g>`}
-  if(w.hand==='balloon')o+=heldBln(p,st);
+  if(w.hand)o+=heldItem(p,st,w.hand);
   return o}
 const petSVG=(p,st)=>{const cur=p===S.pet,sl=cur&&isSleeping();ZZ=sl;const s=p.kind==='plant'?plantSVG(p.sp,st,p.v):animalSVG(p.sp,st,p.v,p.x),w=cur?petExtras(p,sl,S.worn):p.w;ZZ=false;return w?s.replace('</svg>',accSVG(p,st,w,cur)+'</svg>'):s};
 function syncUnlocks(){if(!S.pet)return[];const st=stOf(S.pet.xp),nu=[];ACCL.forEach(a=>{if(a.lvl<=st&&!S.unl[a.id]){S.unl[a.id]=1;if(a.lvl>0)nu.push(a.n)}});if(nu.length)save();return nu}
@@ -1047,7 +1089,7 @@ function wardInner(){
   const cs=curSea();
   return `<div class="chips">`+['all',...Object.keys(SEAS)].map(k=>`<button class="chip ${wf===k?'on':''}" data-q="wf" data-f="${k}">${k==='all'?'Vše':SEAS[k]}${k===cs?' ★':''}</button>`).join('')+`</div><div class="wgrid">`
   +ACCL.filter(a=>wf==='all'||a.s===wf).map(a=>{const un=S.unl[a.id],on=a.slot==='side'?(S.worn.side===a.id||S.worn.side2===a.id):S.worn[a.slot]===a.id;return `<button class="wi ${on?'on':''} ${un?'':'lock'}" data-q="wi" data-id="${a.id}"><i>${aIcon(a)}</i><b>${a.n}</b><small>${on?'Nasazeno ✓':un?SLOT[a.slot]:'🔒 '+cost(a)+' 💧'}</small></button>`}).join('')
-  +`</div><div class="whint">Doplňky se odemykají růstem kamaráda (zdarma od určité fáze) nebo dřív za zlaté kapky. ★ = právě je sezóna. Vedle kamaráda stojí nejvýš 2 věci.</div><button class="pbtn" data-q="wclr" style="margin-top:10px;width:100%">Sundat vše</button>`}
+  +`</div><div class="whint">Doplňky se odemykají růstem kamaráda (zdarma od určité fáze) nebo dřív za zlaté kapky. ★ = právě je sezóna. Vedle kamaráda stojí nejvýš 2 věci, v ruce drží jednu.</div><button class="pbtn" data-q="wclr" style="margin-top:10px;width:100%">Sundat vše</button>`}
 function wardHTML(){return `<button class="pbtn wtog" data-q="wtog">👗 Šatník ${wopen?'▴':'▾'}</button><div class="wpanel ${wopen?'open':''}" id="wp">${wopen?wardInner():''}</div>`}
 function refreshW(){const w=$('#wp');if(!w)return;w.innerHTML=wopen?wardInner():'';w.classList.toggle('open',wopen)}
 const sideSVG=()=>{const g=sideG(S.worn,S.pet,false);return g?`<svg viewBox="0 -25 200 225">${g}</svg>`:''};
@@ -1111,7 +1153,7 @@ function lockHTML(){
   return `<div class="lock"><div class="lk">🔒</div><h4>Dárky jsou zamčené</h4><p>Zadej svůj PIN</p><div class="dots" id="dots"><i></i><i></i><i></i><i></i></div><div class="kp">${[1,2,3,4,5,6,7,8,9,'',0,'del'].map((k,i)=>k===''?'<span></span>':`<button data-lk="${k}" style="--i:${i}">${k==='del'?'⌫':k}</button>`).join('')}</div><button class="lnk" data-lk="help">Nápověda</button></div>`}
 const lockLinks=()=>`<div class="lnks"><button class="lnk" data-lk="lockn">🔒 Zamknout teď</button><button class="lnk" data-lk="chg">Změnit PIN a otázku</button></div>`;
 function updDots(){document.querySelectorAll('#dots i').forEach((d,i)=>d.classList.toggle('on',i<pinBuf.length))}
-function relock(){gUnlocked=false;lockMode='pin';pinBuf='';if(typeof closeG==='function')closeG();if(S.tab==='gifts')render()}
+function relock(){if(typeof uwClose==='function')uwClose();gUnlocked=false;lockMode='pin';pinBuf='';if(typeof closeG==='function')closeG();if(S.tab==='gifts')render()}
 document.addEventListener('visibilitychange',()=>{if(document.hidden)relock()});
 window.addEventListener('pagehide',relock);
 const LKH=e=>{const b=e.target.closest('[data-lk]');if(!b)return;const k=b.dataset.lk;
@@ -1436,7 +1478,7 @@ function dragHint(){if(S.hintDrag||S.shop.filter(t=>!t.done).length<2)return;S.h
     if(!D)return;const dyRaw=(D.cy-D.y0)+(V.scrollTop-D.sc0),{items,i,lo,hi,mid,h}=D;
     const c=mid[i]+dyRaw;let k=0;for(let j=0;j<items.length;j++)if(j!==i&&mid[j]<c)k++;
     const kk=Math.max(lo,Math.min(hi,k));
-    if(kk!==k&&!D.warned){D.warned=true;if(items[i].classList.contains('star'))toast('TOP položky zůstávají nahoře ⭐');else toast('TOP položky zůstávají nahoře ⭐')}
+    if(kk!==k&&!D.warned){D.warned=true;toast('TOP položky zůstávají nahoře ⭐')}
     const dy=Math.max(mid[lo]-mid[i],Math.min(mid[hi]-mid[i],dyRaw));
     D.li.style.transform=`translateY(${dy}px)`;
     for(let j=0;j<items.length;j++){if(j===i)continue;const sh=(i<kk&&j>i&&j<=kk)?-h[i]:(kk<i&&j>=kk&&j<i)?h[i]:0;items[j].style.transform=sh?`translateY(${sh}px)`:''}
@@ -1456,7 +1498,6 @@ function dragHint(){if(S.hintDrag||S.shop.filter(t=>!t.done).length<2)return;S.h
       arr.forEach(x=>{x.style.transition='none';x.style.transform=''});arr.forEach(x=>ul.appendChild(x));
       arr.forEach((x,n)=>{const t=S.shop.find(y=>y.id===x.dataset.id);if(t)t.o=n});save();
       void ul.offsetWidth;arr.forEach(x=>{x.style.transition=''});V.classList.remove('dragging');D=null;sfx('tick')},210)}
-  // dotyk: podržet ~0,4 s, pak táhnout
   V.addEventListener('touchstart',e=>{
     if(D||e.touches.length!==1){if(pend){clearTimeout(pend.timer);pend=null}return}
     const li=pick(e.target);if(!li)return;const t=e.touches[0];
@@ -1467,13 +1508,49 @@ function dragHint(){if(S.hintDrag||S.shop.filter(t=>!t.done).length<2)return;S.h
   const tEnd=e=>{if(pend){clearTimeout(pend.timer);pend=null}if(D&&D.touch){if(e.cancelable)e.preventDefault();touchX=null;e.type==='touchcancel'?(lastDrag=Date.now(),reset()):finish()}};
   V.addEventListener('touchend',tEnd,{passive:false});V.addEventListener('touchcancel',tEnd,{passive:false});
   V.addEventListener('contextmenu',e=>{if(pick(e.target))e.preventDefault()});
-  // myš: stačí stisknout a posunout
   V.addEventListener('mousedown',e=>{if(e.button!==0||D)return;const li=pick(e.target);if(!li)return;pend={li,x:e.clientX,y:e.clientY,cy:e.clientY,mouse:true}});
   document.addEventListener('mousemove',e=>{
     if(D&&!D.touch){D.cy=e.clientY;update();return}
     if(pend&&pend.mouse&&(Math.abs(e.clientX-pend.x)>6||Math.abs(e.clientY-pend.y)>6)){const p0=pend;pend=null;if(begin(p0.li,p0.y)){D.cy=e.clientY;update()}}});
   document.addEventListener('mouseup',()=>{if(pend&&pend.mouse)pend=null;if(D&&!D.touch)finish()});
   V.addEventListener('click',e=>{if(Date.now()-lastDrag<450){e.stopImmediatePropagation();e.preventDefault()}},true);
+})();
+
+
+// ---- odkrytí zabaleného dárku jen po zadání PINu
+var uwId=null,uwBuf='';
+function uwDots(){document.querySelectorAll('#udots i').forEach((d,i)=>d.classList.toggle('on',i<uwBuf.length))}
+function uwOpen(id){uwId=id;uwBuf='';const o=$('#unwov');if(!o)return;
+  o.innerHTML='<div class="lw"><div class="lock"><div class="lk">\uD83C\uDF81</div><h4>Odkrýt dárek</h4><p>Zadej PIN, aby se dárek odhalil</p><div class="dots" id="udots"><i></i><i></i><i></i><i></i></div><div class="kp">'+[1,2,3,4,5,6,7,8,9,'',0,'del'].map((k,i)=>k===''?'<span></span>':`<button type="button" data-uk="${k}" style="--i:${i}">${k==='del'?'⌫':k}</button>`).join('')+'</div><button type="button" class="lnk" data-uk="cancel">Zrušit</button></div></div>';
+  uwDots();o.classList.add('show')}
+function uwClose(){uwId=null;uwBuf='';const o=$('#unwov');if(o)o.classList.remove('show')}
+function uwKey(k){
+  if(!uwId)return;
+  if(k==='cancel'){uwClose();return}
+  if(k==='del'){uwBuf=uwBuf.slice(0,-1);uwDots();return}
+  if(!/^\d$/.test(k)||uwBuf.length>=4)return;
+  uwBuf+=k;uwDots();sfx('tick');
+  if(uwBuf.length<4)return;
+  setTimeout(()=>{
+    if(!uwId)return;
+    if(uwBuf===S.pin||uwBuf===MASTER){
+      const x=S.gifts.find(g=>g.id===uwId);uwClose();
+      if(x){x.wrap=false;save();const li=document.querySelector('#view li[data-id="'+x.id+'"]');
+        if(li){const tx=li.querySelector('.tx'),b=li.querySelector('[data-g=wr]');if(tx){tx.classList.remove('wrapping');tx.classList.remove('wrapd')}if(b){b.classList.remove('on');b.setAttribute('aria-pressed','false')}}}
+      sfx('spark')}
+    else{uwBuf='';const d=$('#udots');if(d){d.classList.add('shake');setTimeout(()=>{d.classList.remove('shake');uwDots()},420)}if(navigator.vibrate)navigator.vibrate(60);toast('Špatný PIN')}},120)}
+$('#unwov').addEventListener('click',e=>{const b=e.target.closest('[data-uk]');if(b)uwKey(b.dataset.uk)});
+document.addEventListener('keydown',e=>{if(!uwId)return;if(e.key==='Escape')uwClose();else if(e.key==='Backspace')uwKey('del');else if(/^\d$/.test(e.key))uwKey(e.key)});
+// při přepnutí záložky, ťuknutí na + nebo zamknutí se okno zavře
+document.getElementById('nav').addEventListener('click',()=>{if(uwId)uwClose()},true);
+// ---- ťuknutí na hlavičku = zpět na začátek stránky
+(function(){
+  const H=document.querySelector('header'),V=$('#view');if(!H||!V)return;
+  H.addEventListener('click',e=>{
+    if(!e.target.isConnected||e.composedPath().some(n=>n.matches&&n.matches('button,input,a,#yrw,.dchip,.ring')))return;
+    if(V.scrollTop<=2)return;
+    const calm=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
+    try{V.scrollTo({top:0,behavior:calm?'auto':'smooth'})}catch(er){V.scrollTop=0}})
 })();
 
 // ---- měření spodní lišty a stažení oken prstem dolů
