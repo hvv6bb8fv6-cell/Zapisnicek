@@ -481,11 +481,37 @@ header h1{line-height:34px;height:34px;white-space:nowrap}
 .flg{animation:flg 1.4s ease-in-out infinite alternate}
 @keyframes flg{from{opacity:.14}to{opacity:.32}}
 @media(prefers-reduced-motion:reduce){.spk,.flm,.flg{animation:none}}
-/* ===== pára z latte ===== */
+/* ===== pára (latte, čaj) ===== */
 .stm{transform-box:fill-box;transform-origin:50% 100%;animation:stm 2.6s ease-in-out infinite}
 .stm:nth-of-type(2){animation-delay:.85s}.stm:nth-of-type(3){animation-delay:1.7s}
 @keyframes stm{0%{transform:translateY(5px) scaleY(.7);opacity:0}30%{opacity:1}100%{transform:translateY(-10px) scaleY(1.1);opacity:0}}
 @media(prefers-reduced-motion:reduce){.stm{animation:none}}
+/* ===== ŠATNÍK: řádky filtrů, narozeniny, plovoucí náhled ===== */
+.wsc{display:flex;gap:6px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;margin:0 -2px 7px;padding:1px 2px}
+.wsc::-webkit-scrollbar{display:none}
+.wsc .chip{flex:none;white-space:nowrap}
+.wcnt{font-size:11px;color:var(--mut);text-align:right;margin:-2px 2px 0}
+.wempty{grid-column:1/-1;text-align:center;color:var(--mut);padding:22px 0;font-size:14px}
+.wbd{margin-top:10px;width:100%;text-align:center}
+.bdp{margin-top:8px;padding:10px;border:1px solid var(--bd);background:var(--glass);border-radius:16px}
+.bdr{display:flex;align-items:center;gap:8px;padding:4px 2px;font-size:14px}
+.bdr span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bdr b{color:var(--mut);font-weight:600}
+.bdx{border:0;background:none;color:var(--mut);font-size:15px;width:30px;height:30px;border-radius:50%;cursor:pointer;flex:none}
+.bdf{display:flex;gap:6px;margin-top:6px;align-items:center}
+.bdf input{min-width:0;background:var(--glass);border:1px solid var(--bd);border-radius:12px;color:var(--txt);font:600 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:8px 10px;outline:none}
+#bdn{flex:1 1 auto}#bdd,#bdm{flex:0 0 60px;text-align:center}
+#fpv{position:absolute;left:50%;top:100px;transform:translate(-50%,-8px) scale(.96);z-index:60;width:210px;pointer-events:none;opacity:0;transition:opacity .25s ease,transform .25s ease;
+ background:rgba(255,255,255,.22);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.6);border-radius:22px;box-shadow:0 14px 36px rgba(0,0,0,.3);overflow:hidden}
+#fpv.show{opacity:1;transform:translate(-50%,0) scale(1)}
+#fpv .fs{position:relative;height:176px;opacity:.93;background:linear-gradient(var(--sk1,#bfe6ff),var(--sk2,#ffe9f6) 62%,var(--gr,#d6f5c9) 62%)}
+#fpv .fs.night{background:linear-gradient(#0f1538,#2a2358 62%,var(--ngr,#1c3b3e) 62%)}
+#fpv .fb{position:absolute;left:50%;top:7px;transform:translateX(-50%);z-index:7;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#3b2a4a;padding:6px 11px;border-radius:14px;font:600 12px/1.25 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;max-width:92%;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.14)}
+#fpv .fb:empty{display:none}
+#fpv .pv{position:absolute;left:50%;bottom:-8px;width:140px;height:158px;transform:translateX(-50%)}
+#fpv .pv svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}
+#fpv .cap{font:600 10px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#3b2a4a;text-align:center;padding:6px 0 7px;background:rgba(255,255,255,.62)}
+@media(prefers-reduced-motion:reduce){#fpv{transition:none}}
 </style>
 </head>
 <body>
@@ -687,7 +713,7 @@ function render(){
   if(T==='gifts'&&gUnlocked&&lockMode!=='setup')giftsFX();
   navTop();
   if(T==='shop')dragHint();
-  if(T==='garden')startWalk();else{clearTimeout(walkT);clearTimeout(visT);clearTimeout(gvT)}
+  if(T==='garden')startWalk();else{clearTimeout(walkT);clearTimeout(visT);clearTimeout(gvT);clearTimeout(ambT);fpvHide()}
 }
 $('#view').addEventListener('click',e=>{
   const b=e.target.closest('[data-a]');if(!b)return;
@@ -718,7 +744,7 @@ document.querySelectorAll('nav .t[data-t]').forEach(b=>b.onclick=()=>{S.tab=b.da
 $('#snowbtn').onclick=()=>{S.snow=S.snow===false;save();document.body.classList.toggle('nosnow',S.snow===false);$('#snowbtn').classList.toggle('off',S.snow===false);toast(S.snow===false?'Přestalo sněžit 🌤️':'Sněží! ❄️')};
 $('#theme').onclick=()=>{S.theme=S.theme==='dark'?'light':'dark';document.querySelector('meta[name=theme-color]').content=S.theme==='dark'?'#0e0f23':'#f2f0ff';save();document.documentElement.dataset.theme=S.theme;$('#theme').innerHTML=ic(S.theme==='dark'?'sun':'moon')};
 let touchX=null,touchY=0;
-const tS=e=>{touchX=e.touches[0].clientX;touchY=e.touches[0].clientY};
+const tS=e=>{if(e.target.closest&&e.target.closest('.wsc')){touchX=null;return}touchX=e.touches[0].clientX;touchY=e.touches[0].clientY};
 const tE=e=>{if(touchX===null)return;const d=e.changedTouches[0].clientX-touchX,dy=e.changedTouches[0].clientY-touchY;touchX=null;if(Math.abs(d)<80||Math.abs(dy)>Math.abs(d)*.8)return;const o=['tasks','shop','gifts','garden'],i=o.indexOf(S.tab)+(d<0?1:-1);if(o[i]){S.tab=o[i];save();render()}};
 ['#view','#lockov'].forEach(s=>{$(s).addEventListener('touchstart',tS,{passive:true});$(s).addEventListener('touchend',tE,{passive:true});$(s).addEventListener('touchcancel',()=>{touchX=null},{passive:true})});
 
@@ -854,7 +880,7 @@ function capySVG(A,st,x){
   const body='M52 170C44 140 60 112 82 104H118C140 112 156 140 148 170C146 184 130 190 100 190S54 184 52 170Z',head='M52 98C48 70 66 52 100 52S152 70 148 98C146 116 128 124 100 124S54 116 52 98Z';
   const bT=`translate(100 190) scale(${bw} ${bh}) translate(-100 -190)`,hT=`translate(0 ${hd}) translate(100 110) scale(${hs}) translate(-100 -110)`;
   const shapes=(f,s)=>`<g ${f} ${s}><g transform="${bT}"><path d="${body}"/><ellipse cx="74" cy="184" rx="17" ry="10"/><ellipse cx="126" cy="184" rx="17" ry="10"/></g><g transform="${hT}"><circle cx="65" cy="60" r="12"/><circle cx="135" cy="60" r="12"/><path d="${head}"/></g></g>`;
-  const tea=st===3&&x===1&&!HF,yz=st===3&&x===0;
+  const yz=st===3&&x===0;
   let g=`<ellipse cx="100" cy="195" rx="${62*sc}" ry="7" fill="rgba(0,0,0,.16)"/><g transform="translate(100 190) scale(${sc}) translate(-100 -190)">`
    +shapes(`fill="${ol}"`,`stroke="${ol}" stroke-width="7" stroke-linejoin="round"`)+shapes(`fill="${A.c}"`,'')
    +`<g transform="${bT}"><ellipse cx="100" cy="162" rx="27" ry="22" fill="${A.b}" opacity=".6"/><path d="M62 186a12 8 0 0124 0zM114 186a12 8 0 0124 0z" fill="${A.i}" opacity=".7"/></g>`
@@ -867,9 +893,7 @@ function capySVG(A,st,x){
   if(yz)g+=`<path d="M84 54l4-16 9 8 3-14 3 14 9-8 4 16z" fill="#ffd36b" stroke="#f2a93b" stroke-width="2.4" stroke-linejoin="round"/>`;
   g+=`</g>`;
   const paws=(a,b)=>`<ellipse cx="${a}" cy="150" rx="8" ry="9" fill="${A.i}" stroke="${ol}" stroke-width="3"/><ellipse cx="${b}" cy="150" rx="8" ry="9" fill="${A.i}" stroke="${ol}" stroke-width="3"/>`;
-  if(tea)g+=`<g transform="translate(100 150)"><path d="M-14 -16h28l-4 34q-1 5-6 5h-8q-5 0-6-5z" fill="#eab08a" stroke="${ol}" stroke-width="3" stroke-linejoin="round"/><rect x="-17" y="-23" width="34" height="8" rx="4" fill="#fff" stroke="${ol}" stroke-width="3"/>${[[-6,17],[1,19.5],[8,17],[-2,12.5],[5,12.5]].map(c=>`<circle cx="${c[0]}" cy="${c[1]}" r="3.3" fill="#6b3a2a"/>`).join('')}<rect x="-2" y="-62" width="6" height="42" rx="3" fill="#9b6bc2" stroke="${ol}" stroke-width="2" transform="rotate(-4)"/></g>`+paws(82,118);
-  else if(yz&&!HF)g+=`<g transform="translate(100 152)"><circle r="15" fill="#ffc83d" stroke="${ol}" stroke-width="3"/><path d="M-3 -14q6-8 12-4q-3 8-12 4z" fill="#5fcf80" stroke="${ol}" stroke-width="2"/><path d="M-7 -4a8 8 0 018-5" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8"/></g>`+paws(83,117);
-  else if(st>=1&&!HF)g+=paws(62,138);
+  if(st>=1&&!HF)g+=paws(62,138);
   return `<svg viewBox="0 -25 200 225">${g}</g></svg>`}
 function animalSVG(sp,st,vi,x){
   const A0=AN[sp],A={...A0,...A0.v[(vi||0)%A0.v.length]},ec=A.ec?'#2b1d14':'#3b2a4a';
@@ -1042,7 +1066,7 @@ function sideG(w,p,sa){
   return one(L,26)+one(R,rx)}
 // věc v ruce: zvířátko ji drží tlapkou, rostlinka větvičkou, která vyrůstá ze stonku (u semínka z hlíny, u kaktusu z jeho ramínka)
 
-// věc držená před sebou oběma packami (kelímek latte): zvířátka packami, kytičky dvěma lístkovými ručkami ze stonku
+// věc držená před sebou oběma packami (kelímek latte, dortík...): zvířátka packami, kytičky dvěma lístkovými ručkami ze stonku
 function frontHold(p,st,A){
   const plant=p.kind==='plant',F=n=>(+n).toFixed(1),ik=A.svg({fy:0,ew:10});
   let g='<g class="hb">';
@@ -1116,11 +1140,11 @@ function accSVG(p,st,w,noSide){
     o+=`<g transform="translate(${F.x} ${slot==='neck'||slot==='pj'?F.ny:F.y}) scale(${kk})">${A.svg({fy:(F.fy-F.y)/kk,ew:F.ew/kk})}</g>`}
   if(w.hand)o+=heldItem(p,st,w.hand);
   return o}
-const petSVG=(p,st)=>{const cur=p===S.pet,sl=cur&&isSleeping();ZZ=sl;{const w0=cur?S.worn:p.w;HF=!!(w0&&w0.hand==='latte')}const s=p.kind==='plant'?plantSVG(p.sp,st,p.v):animalSVG(p.sp,st,p.v,p.x),w=cur?petExtras(p,sl,S.worn):p.w;ZZ=false;HF=false;return w?s.replace('</svg>',accSVG(p,st,w,cur)+'</svg>'):s};
+const petSVG=(p,st)=>{const cur=p===S.pet,sl=cur&&isSleeping();ZZ=sl;{const w0=cur?S.worn:p.w,hA=w0&&w0.hand&&ACCL.find(x=>x.id===w0.hand);HF=!!(hA&&hA.front)}const s=p.kind==='plant'?plantSVG(p.sp,st,p.v):animalSVG(p.sp,st,p.v,p.x),w=cur?petExtras(p,sl,S.worn):p.w;ZZ=false;HF=false;return w?s.replace('</svg>',accSVG(p,st,w,cur)+'</svg>'):s};
 function syncUnlocks(){if(!S.pet)return[];const st=stOf(S.pet.xp),nu=[];ACCL.forEach(a=>{if(a.lvl<=st&&!S.unl[a.id]){S.unl[a.id]=1;if(a.lvl>0)nu.push(a.n)}});if(nu.length)save();return nu}
 let wopen=false,wf='all';
 const curSea=()=>{const m=new Date().getMonth()+1;return m===12?'xmas':m===10?'hallo':m>=9&&m<=11?'autumn':m>=3&&m<=5?'spring':m>=6&&m<=8?'summer':'winter'};
-const aIcon=a=>`<svg viewBox="${{head:'-42 -92 84 66',face:'-30 -20 60 40',neck:'-34 -20 68 50',side:'-24 -64 48 70',hand:'-24 -64 48 70'}[a.slot]}">${a.svg({fy:-2,ew:16})}</svg>`;
+const aIcon=a=>`<svg viewBox="${{head:'-42 -92 84 66',face:'-40 -26 80 52',neck:'-34 -20 68 50',side:'-24 -64 48 70',hand:'-24 -64 48 70'}[a.slot]}">${a.svg({fy:-2,ew:16})}</svg>`;
 function wardInner(){
   const cs=curSea();
   return `<div class="chips">`+['all',...Object.keys(SEAS)].map(k=>`<button class="chip ${wf===k?'on':''}" data-q="wf" data-f="${k}">${k==='all'?'Vše':SEAS[k]}${k===cs?' ★':''}</button>`).join('')+`</div><div class="wgrid">`
@@ -1159,12 +1183,17 @@ function addTpl(){const i=$('#tnew'),v=i&&i.value.trim();if(!v)return;if(!S.tpl.
 $('#view').addEventListener('keydown',e=>{if(e.target.id==='tnew'&&e.key==='Enter'){e.preventDefault();addTpl()}});
 $('#view').addEventListener('click',e=>{
   const b=e.target.closest('[data-q]');if(!b)return;const a=b.dataset.q;
-  if(a==='wtog'){wopen=!wopen;b.innerHTML='👗 Šatník '+(wopen?'▴':'▾');refreshW()}
+  if(a==='wtog'){wopen=!wopen;if(wopen){wf=wardDefault();wp='all';ws=''}b.innerHTML='👗 Šatník '+(wopen?'▴':'▾');refreshW()}
   else if(a==='wf'){wf=b.dataset.f;refreshW()}
+  else if(a==='wp'){wp=b.dataset.f;refreshW()}
+  else if(a==='ws'){ws=ws===b.dataset.f?'':b.dataset.f;refreshW()}
+  else if(a==='bdt'){bdOpen=!bdOpen;refreshW()}
+  else if(a==='bda'){bdAdd()}
+  else if(a==='bdx'){bdDel(+b.dataset.i)}
   else if(a==='wclr'){S.worn={};save();refreshW();repaint();sfx('tick')}
   else if(a==='wi'){const A=ACCL.find(x=>x.id===b.dataset.id);
     if(!S.unl[A.id]){const c=cost(A);if(S.drops<c){toast('Chybí ti ještě '+(c-S.drops)+' 💧');return}if(!confirm('Odemknout „'+A.n+'“ za '+c+' zlatých kapek?'))return;S.drops-=c;S.unl[A.id]=1;chip(true);if($('#pcnt'))$('#pcnt').textContent=S.drops}
-    toggleAcc(A);save();refreshW();repaint();sfx('tick')}
+    const was=wornIds().includes(A.id);toggleAcc(A);save();refreshW();repaint();sfx('tick');wearReact(A,was)}
   else if(a==='tt'){tplOpen=!tplOpen;b.nextElementSibling.classList.toggle('open',tplOpen);b.querySelector('span').textContent=tplOpen?'▴':'▾'}
   else if(a==='ta'){if(lpFired)return;const t=S.tpl[+b.dataset.i];if(S.shop.some(x=>!x.done&&x.text.toLowerCase()===t.toLowerCase())){toast('Už je v seznamu');return}keep(()=>{S.shop.push({id:uid(),text:t,done:false,o:-Date.now()});save()});toast('Přidáno: '+t);sfx('tick')}
   else if(a==='tn')addTpl();
@@ -1357,7 +1386,7 @@ function petTouch(e){
   if(isSleeping()){const b=$('#bub');if(!b)return;b.textContent=bag('tslp'+K,TAPM.sleep[K]);b.hidden=false;b.classList.add('sleepy');b.classList.remove('show');void b.offsetWidth;b.classList.add('show');
     clearTimeout(bt);bt=setTimeout(()=>{if(isSleeping()&&$('#bub'))$('#bub').textContent='ššš spinkám 💤'},2600);pfAt(sg,'💤',x,y-6);return}
   const young=K==='plant'&&stOf(p.xp)<2,L=young?TAPM.young:TAPM[K][z];
-  const msg=bag('tap'+K+z+(young?'y':''),L).replace('{s}',K==='animal'?AN[p.sp].s:'Hurá');
+  const msg=(Math.random()<.5&&wornLine())||bag('tap'+K+z+(young?'y':''),L).replace('{s}',K==='animal'?AN[p.sp].s:'Hurá');
   pe.classList.remove('hop','sway','r-head','r-belly');void pe.offsetWidth;pe.classList.add(z==='head'?'r-head':'r-belly');
   clearTimeout(pe._rt);pe._rt=setTimeout(()=>pe.classList.remove('r-head','r-belly'),850);
   if(z==='head'){for(let i=0;i<4;i++)pfAt(sg,i%2?'💗':'❤️',x+(Math.random()-.5)*30,y-10);sfx('stroke')}
@@ -1592,6 +1621,229 @@ document.getElementById('nav').addEventListener('click',()=>{if(uwId)uwClose()},
     const calm=window.matchMedia&&matchMedia('(prefers-reduced-motion:reduce)').matches;
     try{V.scrollTo({top:0,behavior:calm?'auto':'smooth'})}catch(er){V.scrollTop=0}})
 })();
+
+// ============================================================
+// DOPLŇKY 2: nové věci, dvouúrovňové členění šatníku, hlášky, narozeniny, plovoucí náhled
+// ============================================================
+const ACCN=[
+// ---------- HLAVA ----------
+ {id:'bunny',n:'Zajíčí ouška',slot:'head',s:'easter',lvl:1,svg:o=>`<g transform="rotate(-8 -13 -36)"><ellipse cx="-13" cy="-58" rx="7.5" ry="22" fill="#fff" stroke="#e4dcef" stroke-width="1.4"/><ellipse cx="-13" cy="-57" rx="3.6" ry="16" fill="#ffc2dd"/></g><g transform="rotate(8 13 -36)"><ellipse cx="13" cy="-58" rx="7.5" ry="22" fill="#fff" stroke="#e4dcef" stroke-width="1.4"/><ellipse cx="13" cy="-57" rx="3.6" ry="16" fill="#ffc2dd"/></g><path d="M-24 -33Q0 -42 24 -33" stroke="#ff9fc6" stroke-width="4" fill="none" stroke-linecap="round"/>`},
+ {id:'devil',n:'Čertovské růžky',slot:'head',s:'nick',lvl:1,svg:o=>`<path d="M-24 -33Q-36 -50 -22 -64Q-23 -48 -10 -40z" fill="#d92f3c"/><path d="M24 -33Q36 -50 22 -64Q23 -48 10 -40z" fill="#d92f3c"/><path d="M-27 -42Q-30 -50 -25 -57M27 -42Q30 -50 25 -57" stroke="#ff8a92" stroke-width="1.8" fill="none" stroke-linecap="round"/>`},
+ {id:'halo',n:'Andělská svatozář',slot:'head',s:'nick',lvl:1,svg:o=>`<ellipse cy="-58" rx="22" ry="8" fill="#ffe27a" opacity=".25"/><ellipse cy="-58" rx="19" ry="6" fill="none" stroke="#ffd36b" stroke-width="5"/><ellipse cy="-59" rx="19" ry="6" fill="none" stroke="#fff3b0" stroke-width="1.6" opacity=".85"/>`},
+ {id:'antlers',n:'Sobí parohy',slot:'head',s:'xmas',lvl:2,svg:o=>[-1,1].map(d=>`<g transform="scale(${d} 1)"><path d="M-13 -36Q-16 -52 -26 -62M-18 -50Q-28 -50 -32 -57M-15 -44Q-23 -42 -28 -36" stroke="#8a5a3c" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="-26" cy="-62" r="2" fill="#6b4329"/></g>`).join('')+`<path d="M-26 -33Q0 -42 26 -33" stroke="#e8403f" stroke-width="3.4" fill="none" stroke-linecap="round"/>`},
+ {id:'chef',n:'Kuchařská čepice',slot:'head',s:'base',lvl:1,svg:o=>`<circle cx="-14" cy="-58" r="13" fill="#fff" stroke="#e4dcef" stroke-width="1.4"/><circle cx="0" cy="-66" r="14" fill="#fff" stroke="#e4dcef" stroke-width="1.4"/><circle cx="14" cy="-58" r="13" fill="#fff" stroke="#e4dcef" stroke-width="1.4"/><rect x="-20" y="-52" width="40" height="22" rx="3" fill="#fff"/><rect x="-21" y="-40" width="42" height="9" rx="3" fill="#f3eefb" stroke="#e4dcef" stroke-width="1.2"/>`},
+ {id:'cowboy',n:'Kovbojský klobouk',slot:'head',s:'base',lvl:2,svg:o=>`<path d="M-39 -33Q-24 -26 0 -28Q24 -26 39 -33Q32 -43 20 -38L18 -62Q0 -70 -18 -62L-20 -38Q-32 -43 -39 -33z" fill="#b97a3f"/><path d="M-19 -42Q0 -36 19 -42" stroke="#7a4a20" stroke-width="4" fill="none"/><circle cx="0" cy="-39.5" r="3" fill="#ffd36b"/>`},
+ {id:'helmet',n:'Cyklistická přilba',slot:'head',s:'base',lvl:1,svg:o=>`<path d="M-30 -30Q-32 -70 0 -72Q32 -70 30 -30z" fill="#ff7a3d"/><path d="M-30 -30H30" stroke="#d25a22" stroke-width="5" stroke-linecap="round"/><path d="M-16 -60Q-14 -46 -16 -36M0 -66V-36M16 -60Q14 -46 16 -36" stroke="#ffb27a" stroke-width="4" stroke-linecap="round"/>`},
+ {id:'cap',n:'Kšiltovka',slot:'head',s:'base',lvl:1,svg:o=>`<path d="M-27 -30Q-28 -64 0 -66Q28 -64 27 -30z" fill="#3a78d6"/><path d="M-27 -30Q-10 -24 10 -30Q40 -32 45 -25Q34 -21 12 -22L-27 -22z" fill="#2c5fb0"/><circle cy="-66" r="3" fill="#2c5fb0"/><path d="M-6 -48l6 -6 6 6-6 6z" fill="#ffd36b"/>`},
+ {id:'bowband',n:'Čelenka s mašlí',slot:'head',s:'base',lvl:0,svg:o=>`<path d="M-30 -34Q0 -52 30 -34" stroke="#ff7aa8" stroke-width="4" fill="none" stroke-linecap="round"/><g transform="translate(16 -46) rotate(18)"><path d="M0 0L-13 -8V8zM0 0L13 -8V8z" fill="#ff5d8a"/><circle r="3.6" fill="#e0457a"/></g>`},
+ {id:'bcrown',n:'Narozeninová korunka',slot:'head',s:'bday',lvl:1,svg:o=>`<path d="M-22 -32L-25 -60L-12 -47L0 -66L12 -47L25 -60L22 -32z" fill="#ffd36b" stroke="#f2b13b" stroke-width="2" stroke-linejoin="round"/><circle cx="-25" cy="-60" r="3.2" fill="#ff5d8a"/><circle cx="0" cy="-66" r="3.4" fill="#6bc8ff"/><circle cx="25" cy="-60" r="3.2" fill="#ff5d8a"/><path d="M-18 -38h36" stroke="#fff" stroke-width="2.2" stroke-dasharray="3 4"/>`},
+ {id:'nyehat',n:'Třpytivá čepice',slot:'head',s:'nye',lvl:2,svg:o=>`<path d="M-19 -31L0 -82L19 -31z" fill="#3a3aa8"/><path d="M-13 -48h26M-16 -39h32" stroke="#ffd36b" stroke-width="2.6"/>`+[[-4,-60],[5,-52],[-8,-44],[3,-70],[10,-40]].map(p=>`<path d="M${p[0]} ${p[1]-3}l1 2 2 1-2 1-1 2-1-2-2-1 2-1z" fill="#fff3b0"/>`).join('')+`<path d="${xStarPath(0,-84,6,2.8)}" fill="#ffd36b"/>`},
+// ---------- OBLIČEJ ----------
+ {id:'rednose',n:'Červený sobí nos',slot:'face',s:'xmas',lvl:1,svg:o=>`<circle cx="0" cy="${o.fy+o.ew*1.05}" r="${o.ew*.55+1.5}" fill="#ff3b3b"/><circle cx="${-o.ew*.18}" cy="${o.fy+o.ew*.85}" r="${o.ew*.16+.5}" fill="#fff" opacity=".7"/>`},
+ {id:'mask',n:'Karnevalová maska',slot:'face',s:'base',lvl:1,svg:o=>{const e=o.ew,y=o.fy,rx=e*.62+1,ry=e*.5+1,hole=x=>`M${x-rx} ${y}a${rx} ${ry} 0 1 0 ${2*rx} 0a${rx} ${ry} 0 1 0 ${-2*rx} 0z`;return `<path fill-rule="evenodd" d="M${-e*2.5} ${y-e*.5}Q0 ${y-e*1.6} ${e*2.5} ${y-e*.5}Q${e*2.8} ${y+e*1.2} ${e*1.4} ${y+e*1.1}Q0 ${y+e*.2} ${-e*1.4} ${y+e*1.1}Q${-e*2.8} ${y+e*1.2} ${-e*2.5} ${y-e*.5}z ${hole(-e)} ${hole(e)}" fill="#8a4fd6"/><path d="M${-e*2.2} ${y-e*.6}Q0 ${y-e*1.5} ${e*2.2} ${y-e*.6}" stroke="#ffd36b" stroke-width="2" fill="none"/><circle cx="${e*2.3}" cy="${y-e*.4}" r="2" fill="#ffd36b"/><circle cx="${-e*2.3}" cy="${y-e*.4}" r="2" fill="#ffd36b"/>`}},
+ {id:'snorkel',n:'Šnorchl s brýlemi',slot:'face',s:'summer',lvl:2,svg:o=>{const e=o.ew,y=o.fy,r=e*.85+3;return [-1,1].map(s=>`<circle cx="${s*e}" cy="${y}" r="${r}" fill="rgba(150,215,255,.4)" stroke="#1f7acf" stroke-width="2.8"/>`).join('')+`<path d="M${-e+r} ${y}H${e-r}" stroke="#1f7acf" stroke-width="2.8"/><path d="M${-e-r} ${y-1}L${-e*2.6} ${y-3}M${e+r} ${y-1}L${e*2.6} ${y-3}" stroke="#143c80" stroke-width="2.4" stroke-linecap="round"/><path d="M${e*2.6} ${y-3}L${e*2.9} ${y-e*2}V${y-e*3.2}" stroke="#ff7a3d" stroke-width="3.4" fill="none" stroke-linecap="round"/>`}},
+ {id:'glass3d',n:'3D brýle',slot:'face',s:'base',lvl:1,svg:o=>{const e=o.ew,y=o.fy,w=e*.85+3,h=e*.65+3;return `<rect x="${-e-w}" y="${y-h}" width="${2*w}" height="${2*h}" rx="3" fill="rgba(255,70,70,.5)" stroke="#2b2140" stroke-width="2.4"/><rect x="${e-w}" y="${y-h}" width="${2*w}" height="${2*h}" rx="3" fill="rgba(70,160,255,.5)" stroke="#2b2140" stroke-width="2.4"/><path d="M${-e-w} ${y-h*.4}l-9-3M${e+w} ${y-h*.4}l9-3" stroke="#2b2140" stroke-width="2.4" stroke-linecap="round"/>`}},
+ {id:'starglass',n:'Brýle s hvězdičkami',slot:'face',s:'nye',lvl:1,svg:o=>{const e=o.ew,y=o.fy,R=e*.95+4;return [-1,1].map(s=>`<path d="${xStarPath(s*e,y,R,R*.5)}" fill="rgba(255,226,122,.55)" stroke="#f2a93b" stroke-width="2.2" stroke-linejoin="round"/>`).join('')+`<path d="M${-e+R*.45} ${y}H${e-R*.45}" stroke="#f2a93b" stroke-width="2.2"/>`}},
+ {id:'web',n:'Pavoučí síť na tváři',slot:'face',s:'hallo',lvl:1,svg:o=>{const e=o.ew,y=o.fy,cx=e*2.1,cy=y-e*.9,A=i=>Math.PI*(.45+i*.28);let g='';for(let i=0;i<5;i++)g+=`M${cx} ${cy}L${(cx+Math.cos(A(i))*e*2.4).toFixed(1)} ${(cy+Math.sin(A(i))*e*2.4).toFixed(1)}`;for(let k=1;k<=3;k++){let d='';for(let i=0;i<5;i++)d+=(i?'L':'M')+(cx+Math.cos(A(i))*e*.8*k).toFixed(1)+' '+(cy+Math.sin(A(i))*e*.8*k).toFixed(1);g+=d}return `<path d="${g}" stroke="#fff" stroke-width="1.2" fill="none" opacity=".9"/><circle cx="${cx}" cy="${cy}" r="1.8" fill="#2b2140"/>`}},
+// ---------- KRK ----------
+ {id:'garland',n:'Vánoční girlanda',slot:'neck',s:'xmas',lvl:2,svg:o=>{let g='<path d="M-30 -4Q0 16 30 -4" stroke="#2fbf71" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M-30 -4Q0 16 30 -4" stroke="#7be0a0" stroke-width="2" fill="none" stroke-dasharray="2 5" stroke-linecap="round"/>';const C=['#e8403f','#ffd36b','#4f8dff','#e8403f','#ffd36b'];[-22,-11,0,11,22].forEach((x,i)=>{const t=(x+30)/60,y=-4*(1-t)*(1-t)+32*t*(1-t)-4*t*t;g+=`<circle cx="${x}" cy="${(y+2).toFixed(1)}" r="3.6" fill="${C[i]}"/><circle cx="${x-1}" cy="${(y+.8).toFixed(1)}" r=".9" fill="#fff"/>`});return g}},
+ {id:'medal',n:'Medaile',slot:'neck',s:'base',lvl:2,svg:o=>`<path d="M-12 -4L-3 17H4L-2 -4z" fill="#e8403f"/><path d="M12 -4L3 17H-4L2 -4z" fill="#2c5fb0"/><circle cy="22" r="9" fill="#ffd36b" stroke="#e0a93b" stroke-width="2.2"/><path d="${xStarPath(0,22,5.2,2.4)}" fill="#fff3b0" stroke="#e0a93b" stroke-width=".8"/>`},
+ {id:'tie',n:'Kravata',slot:'neck',s:'base',lvl:1,svg:o=>`<path d="M-7 -3h14l-2.5 7h-9z" fill="#1f4a91"/><path d="M-2.5 4h5l5 20-7.5 6-7.5-6z" fill="#2c5fb0"/><path d="M-3 12l6-2M-4 18l8-2" stroke="#7aa8f0" stroke-width="1.6"/>`},
+ {id:'bunting',n:'Vlaječková girlanda',slot:'neck',s:'bday',lvl:1,svg:o=>{let g='<path d="M-30 -4Q0 16 30 -4" stroke="#8c8c99" stroke-width="1.4" fill="none"/>';const C=['#ff5d8a','#ffd36b','#4f8dff','#5be3b0','#ff8a4d','#c06bff'];[-25,-15,-5,5,15,25].forEach((x,i)=>{const t=(x+30)/60,y=-4*(1-t)*(1-t)+32*t*(1-t)-4*t*t;g+=`<path d="M${x-5} ${(y-.2).toFixed(1)}L${x+5} ${(y-.2).toFixed(1)}L${x} ${(y+11).toFixed(1)}z" fill="${C[i]}"/>`});return g}},
+ {id:'ring',n:'Nafukovací kruh',slot:'neck',s:'summer',lvl:2,svg:o=>`<path d="M-31 2A31 13 0 0 0 31 2" stroke="#ff5d8a" stroke-width="11" fill="none" stroke-linecap="round"/><path d="M-31 2A31 13 0 0 0 31 2" stroke="#fff" stroke-width="11" fill="none" stroke-dasharray="9 19" stroke-dashoffset="4"/><path d="M-29 -1A29 12 0 0 0 29 -1" stroke="rgba(255,255,255,.45)" stroke-width="2" fill="none"/>`},
+ {id:'bandana',n:'Kovbojský šátek',slot:'neck',s:'base',lvl:1,svg:o=>`<path d="M-29 -4Q0 12 29 -4L2 31Q0 33 -2 31z" fill="#d8403f"/><path d="M-29 -4Q0 12 29 -4" stroke="#b02d2d" stroke-width="2" fill="none"/>`+[[-14,2],[-6,10],[6,6],[2,20],[-3,17],[14,1]].map(p=>`<circle cx="${p[0]}" cy="${p[1]+4}" r="1.7" fill="#fff"/>`).join('')},
+ {id:'heartscarf',n:'Šál ze srdíček',slot:'neck',s:'val',lvl:1,svg:o=>{let g='<path d="M-30 -4Q0 16 30 -4" stroke="#ffb3c9" stroke-width="1.6" fill="none"/>';const C=['#ff4d6d','#ff8fb8'];[-27,-18,-9,0,9,18,27].forEach((x,i)=>{const t=(x+30)/60,y=-4*(1-t)*(1-t)+32*t*(1-t)-4*t*t;g+=`<path transform="translate(${x} ${(y+3).toFixed(1)}) scale(.75)" d="M0 7C-11-3-9-12 0-8 9-12 11-3 0 7z" fill="${C[i%2]}"/>`});return g}},
+// ---------- V RUCE ----------
+ {id:'bubbletea',n:'Bubble tea',slot:'hand',s:'base',lvl:1,front:1,svg:o=>`<path d="M-12.5 -30L-8.2 0H8.2L12.5 -30Z" fill="rgba(255,250,244,.62)" stroke="#e4d4c0" stroke-width="1.2" stroke-linejoin="round"/><path d="M-11.6 -24L-8.1 -1.2H8.1L11.6 -24Z" fill="#e3b184"/><path d="M-11.6 -24H11.6" stroke="#f6dcc0" stroke-width="1.6"/><path d="M-8.2 -7.5L-8.1 -1.2Q0 1 8.1 -1.2L8.2 -7.5Q0 -4.5 -8.2 -7.5Z" fill="#6b3a2a"/><circle cx="-4.6" cy="-4" r="2.5" fill="#6b3a2a"/><circle cx="0.6" cy="-3" r="2.5" fill="#5a3023"/><circle cx="5.2" cy="-4.6" r="2.5" fill="#6b3a2a"/><circle cx="-1.8" cy="-9.4" r="2.3" fill="#6b3a2a"/><circle cx="3.4" cy="-10" r="2.3" fill="#5a3023"/><path d="M-8.6 -26L-7 -12" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".6"/><rect x="-13.8" y="-34.2" width="27.6" height="4.6" rx="2.3" fill="#fffdf8" stroke="#e4d4c0" stroke-width="1"/><path d="M1.6 -34.2L5.4 -57" stroke="#7a5ad6" stroke-width="3.6" stroke-linecap="round"/><path d="M1.6 -34.2L5.4 -57" stroke="#b79cff" stroke-width="1.1" stroke-linecap="round" opacity=".7"/>`},
+  {id:'pomlazka',n:'Pomlázka',slot:'hand',s:'easter',lvl:1,tilt:6,svg:o=>`<path d="M0 0C-4 -9 4 -18 0 -27S-4 -41 0 -49" stroke="#9c8a2a" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M0 0C4 -9 -4 -18 0 -27S4 -41 0 -49" stroke="#c8b43a" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M0 -20l-5-3v6zM0 -20l5-3v6z" fill="#ff5d8a"/><path d="M0 -49Q-7 -47 -10 -37" stroke="#e8403f" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M0 -49Q1 -45 3 -35" stroke="#ffd36b" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M0 -49Q7 -47 11 -40" stroke="#4f8dff" stroke-width="2.2" fill="none" stroke-linecap="round"/>`},
+ {id:'candycane',n:'Cukrová hůl',slot:'hand',s:'xmas',lvl:1,tilt:6,svg:o=>`<path d="M0 0V-34Q0 -46 9 -46Q18 -46 18 -37" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M0 0V-34Q0 -46 9 -46Q18 -46 18 -37" stroke="#e8403f" stroke-width="6" fill="none" stroke-dasharray="4.5 5" stroke-linecap="butt"/><path d="M0 0V-34Q0 -46 9 -46Q18 -46 18 -37" stroke="rgba(0,0,0,.08)" stroke-width="1" fill="none"/>`},
+ {id:'nicksack',n:'Mikulášský pytel',slot:'hand',s:'nick',lvl:1,svg:o=>`<circle cx="-4" cy="-38" r="3.6" fill="#ff7aa8"/><circle cx="5" cy="-39" r="3.6" fill="#6bc8ff"/><path d="M-13 0Q-18 -14 -9 -26Q-4 -32 0 -30Q4 -32 9 -26Q18 -14 13 0z" fill="#b9772e"/><path d="M-9 -27Q0 -22 9 -27" stroke="#7a4a20" stroke-width="2" fill="none"/><path d="M-6 -29h12" stroke="#e8403f" stroke-width="3.2" stroke-linecap="round"/><path d="${xStarPath(0,-12,5,2.2)}" fill="#ffd36b"/>`},
+ {id:'apple',n:'Jablko',slot:'hand',s:'autumn',lvl:0,svg:o=>`<circle cy="-11" r="11" fill="#e8403f"/><path d="M0 -21Q-2 -25 1 -28" stroke="#6b4329" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M1 -24Q8 -29 11 -24Q5 -20 1 -24z" fill="#5fcf80"/><ellipse cx="-4.5" cy="-14" rx="2.2" ry="3.6" fill="#fff" opacity=".4"/>`},
+ {id:'tangerine',n:'Mandarinka',slot:'hand',s:'winter',lvl:0,svg:o=>`<circle cy="-11" r="11" fill="#ff9a1f"/><circle cx="3" cy="-8" r="9" fill="#ffb347" opacity=".5"/><path d="M0 -22Q-1 -24 1 -25" stroke="#6b4329" stroke-width="1.6" fill="none"/><path d="M0 -22Q7 -27 11 -22Q5 -18 0 -22z" fill="#5fcf80"/><ellipse cx="-4.5" cy="-14" rx="2" ry="3.4" fill="#fff" opacity=".45"/>`},
+ {id:'can',n:'Konvička',slot:'hand',s:'spring',lvl:1,svg:o=>`<path d="M-12 0L-10 -20H8L10 0z" fill="#4aa8ff"/><path d="M-12 -20H10" stroke="#2f86d6" stroke-width="2"/><path d="M10 -8L24 -22" stroke="#2f86d6" stroke-width="4" stroke-linecap="round"/><path d="M21 -27l8 8" stroke="#2f86d6" stroke-width="5" stroke-linecap="round"/><path d="M-10 -17Q-24 -12 -10 -4" stroke="#2f86d6" stroke-width="3" fill="none"/><circle cx="31" cy="-12" r="1.6" fill="#8fd1ff"/><circle cx="28" cy="-6" r="1.4" fill="#8fd1ff"/><circle cx="33" cy="-5" r="1.2" fill="#8fd1ff"/>`},
+ {id:'lupa',n:'Lupa',slot:'hand',s:'base',lvl:1,svg:o=>`<path d="M0 0V-14" stroke="#7a5a3a" stroke-width="4.4" stroke-linecap="round"/><circle cy="-26" r="12" fill="rgba(190,230,255,.35)" stroke="#c79a2e" stroke-width="3.2"/><path d="M-7 -30Q-5 -35 0 -36" stroke="#fff" stroke-width="2" fill="none" opacity=".75" stroke-linecap="round"/>`},
+ {id:'flag',n:'Vlaječka',slot:'hand',s:'base',lvl:0,sw:1,svg:o=>`<path d="M0 0V-50" stroke="#7a5a3a" stroke-width="2.6" stroke-linecap="round"/><path d="M1.3 -50h24l-6 8 6 8h-24z" fill="#e8403f"/><path d="${xStarPath(10,-42,4.4,1.9)}" fill="#fff"/>`},
+ {id:'bfly',n:'Motýl na prstu',slot:'hand',s:'spring',lvl:2,sw:1,svg:o=>`<g transform="translate(0 -12)"><path d="M0 0C-4 -10-16 -12-15 -4C-14 3-5 2 0 0z" fill="#ff8fb8"/><path d="M0 0C-3 6-10 10-8 14C-6 17-1 10 0 0z" fill="#ffc2dd"/><path d="M0 0C4 -10 16 -12 15 -4C14 3 5 2 0 0z" fill="#ff8fb8"/><path d="M0 0C3 6 10 10 8 14C6 17 1 10 0 0z" fill="#ffc2dd"/><circle cx="-8" cy="-5" r="2" fill="#fff" opacity=".75"/><circle cx="8" cy="-5" r="2" fill="#fff" opacity=".75"/><rect x="-1" y="-6" width="2" height="14" rx="1" fill="#4a3358"/><path d="M-.5 -6Q-3 -11 -6 -11M.5 -6Q3 -11 6 -11" stroke="#4a3358" stroke-width="1" fill="none"/></g>`},
+ {id:'tea',n:'Šálek čaje',slot:'hand',s:'autumn',lvl:1,svg:o=>`<ellipse cy="-1.4" rx="14" ry="3" fill="#fff" stroke="#e4dcef" stroke-width="1.1"/><path d="M-9 -3.4Q-9 -17 0 -17Q9 -17 9 -3.4z" fill="#fff" stroke="#e4dcef" stroke-width="1.1"/><path d="M-9 -9H9" stroke="#8fd1ff" stroke-width="2.4"/><ellipse cy="-16.5" rx="8" ry="1.6" fill="#c98d57"/><path d="M9 -13Q15 -13 15 -9Q15 -5 9 -6" stroke="#e4dcef" stroke-width="2" fill="none"/><g fill="none" stroke-linecap="round"><g class="stm"><path d="M-3 -20q-2.4 -3 0 -5.4t0 -5.4" stroke="rgba(140,128,168,.3)" stroke-width="3.4"/><path d="M-3 -20q-2.4 -3 0 -5.4t0 -5.4" stroke="#fff" stroke-width="1.8" stroke-opacity=".92"/></g><g class="stm"><path d="M3 -20q2.4 -3 0 -5.4t0 -5.4" stroke="rgba(140,128,168,.3)" stroke-width="3.4"/><path d="M3 -20q2.4 -3 0 -5.4t0 -5.4" stroke="#fff" stroke-width="1.8" stroke-opacity=".92"/></g></g>`},
+ {id:'snowglobe',n:'Sněhová koule',slot:'hand',s:'winter',lvl:2,front:1,svg:o=>`<ellipse cy="-1" rx="13" ry="2.6" fill="rgba(0,0,0,.14)"/><path d="M-12 -1L-9 -9H9L12 -1z" fill="#8b5a37"/><circle cy="-23" r="15" fill="rgba(190,225,255,.4)" stroke="#bfe0ff" stroke-width="1.6"/><path d="M0 -29L-6 -17H6z" fill="#2fbf71"/><path d="M0 -33L-4.5 -24H4.5z" fill="#3fd17f"/><rect x="-1" y="-17" width="2" height="4" fill="#8a5a3c"/>`+[[-8,-27],[7,-31],[9,-20],[-10,-18],[3,-14],[-3,-35]].map(p=>`<circle cx="${p[0]}" cy="${p[1]}" r="1.1" fill="#fff"/>`).join('')+`<path d="M-10 -29Q-8 -35 -3 -37" stroke="#fff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity=".6"/>`},
+ {id:'potion',n:'Kouzelný lektvar',slot:'hand',s:'hallo',lvl:1,svg:o=>`<path d="M-4 -35h8v9l9 19q2.6 7-4 7h-18q-6.6 0-4-7l9-19z" fill="rgba(255,255,255,.3)" stroke="#e4dcef" stroke-width="1.6" stroke-linejoin="round"/><path d="M-10.4 -11Q0 -7 10.4 -11L13 -6q2.6 6-4 6h-18q-6.6 0-4-6z" fill="#8b4fe8"/><rect x="-4.6" y="-39" width="9.2" height="5" rx="1.6" fill="#b97a3f"/><circle cx="-3" cy="-5" r="1.7" fill="#d6b8ff"/><circle cx="3" cy="-8" r="1.2" fill="#d6b8ff"/><circle cx="1" cy="-3" r=".9" fill="#d6b8ff"/>`},
+ {id:'melon',n:'Meloun',slot:'hand',s:'summer',lvl:1,svg:o=>`<path d="M-17 -17H17A17 17 0 0 1 -17 -17z" fill="#4fbf73"/><path d="M-14.6 -17H14.6A14.6 14.6 0 0 1 -14.6 -17z" fill="#e8f5c8"/><path d="M-13 -17H13A13 13 0 0 1 -13 -17z" fill="#ff5d6c"/>`+[[-6,-12],[0,-8],[6,-12],[-2,-13],[3,-6]].map(p=>`<ellipse cx="${p[0]}" cy="${p[1]}" rx="1" ry="1.7" fill="#2b2140"/>`).join('')},
+ {id:'lemonade',n:'Limonáda',slot:'hand',s:'summer',lvl:1,svg:o=>`<path d="M-11 -34L-8 0H8L11 -34z" fill="rgba(255,238,120,.72)" stroke="#e8dfb0" stroke-width="1.4" stroke-linejoin="round"/><path d="M-10.6 -26H10.6" stroke="#fff6b0" stroke-width="1.4"/><rect x="-6" y="-24" width="6.4" height="6.4" rx="1.4" fill="#fff" opacity=".6" transform="rotate(14 -3 -20)"/><rect x="1" y="-17" width="6" height="6" rx="1.4" fill="#fff" opacity=".5" transform="rotate(-10 4 -14)"/><path d="M3 -26L9 -46" stroke="#ff5d8a" stroke-width="3" stroke-linecap="round"/><circle cx="-11" cy="-34" r="6.6" fill="#ffe27a" stroke="#f2c230" stroke-width="1.4"/><path d="M-11 -40.6V-27.4M-17.6 -34H-4.4M-15.7 -38.7L-6.3 -29.3M-15.7 -29.3L-6.3 -38.7" stroke="#f2c230" stroke-width=".8"/>`},
+ {id:'heartbouq',n:'Kytice srdíček',slot:'hand',s:'val',lvl:1,svg:o=>`<path d="M0 0L-2 -20M0 0L2 -20M0 0V-22" stroke="#4fbf73" stroke-width="2.4" stroke-linecap="round"/><path d="M-6 -9L6 -9L3 -2H-3z" fill="#ffd36b"/>`+[[-10,-29,'#ff4d6d',.9],[10,-29,'#ff8fb8',.9],[0,-37,'#ff4d6d',1]].map(h=>`<path transform="translate(${h[0]} ${h[1]}) scale(${h[3]})" d="M0 7C-11-3-9-12 0-8 9-12 11-3 0 7z" fill="${h[2]}"/>`).join('')},
+ {id:'cake',n:'Dortík se svíčkou',slot:'hand',s:'bday',lvl:2,front:1,svg:o=>`<ellipse cy="-1.6" rx="18" ry="3.4" fill="#fff" stroke="#e4dcef" stroke-width="1.1"/><rect x="-13" y="-18" width="26" height="15" rx="3" fill="#ffd9a8"/><path d="M-13 -18H13V-15Q10 -11 7 -15Q4 -11 1 -15Q-2 -11 -5 -15Q-8 -11 -13 -15z" fill="#ff7aa8"/><path d="M-13 -8H13" stroke="#f2b97a" stroke-width="1.4"/><circle cx="-6" cy="-6" r="1.2" fill="#fff"/><circle cx="2" cy="-5" r="1.2" fill="#ffd36b"/><circle cx="8" cy="-7" r="1.2" fill="#6bc8ff"/><rect x="-1.6" y="-27" width="3.2" height="9" rx="1" fill="#6bc8ff"/><path d="M-1.6 -22l3.2-1.6M-1.6 -25l3.2-1.6" stroke="#fff" stroke-width=".9"/><g class="flm"><path d="M0 -28.3C-3 -31-1.6 -34.6 0 -37C1.6 -34.6 3 -31 0 -28.3z" fill="#ff9a3d"/><path d="M0 -29C-1.5 -31-.9 -33 0 -34.6C.9 -33 1.5 -31 0 -29z" fill="#ffe27a"/></g>`},
+ {id:'kite',n:'Papírový drak',slot:'hand',s:'autumn',lvl:2,sw:1,svg:o=>`<path d="M0 0Q-3 -12 3 -22" stroke="#8c8c99" stroke-width="1.2" fill="none"/><path d="M3 -52L14 -38L3 -24L-8 -38z" fill="#ff5d8a"/><path d="M3 -52L14 -38H3z" fill="#ffd36b"/><path d="M3 -24L-8 -38H3z" fill="#ffd36b"/><path d="M3 -52V-24M-8 -38H14" stroke="#fff" stroke-width="1" opacity=".7"/><path d="M3 -24Q-4 -19 2 -14T0 -6" stroke="#8c8c99" stroke-width="1" fill="none"/><path d="M-1 -17l-4-2v4zM1.4 -11l4-2v4z" fill="#4f8dff"/>`},
+// ---------- VEDLE ----------
+ {id:'gingerhouse',n:'Perníková chaloupka',slot:'side',s:'xmas',lvl:3,svg:o=>`<ellipse cy="-1" rx="22" ry="3" fill="rgba(0,0,0,.14)"/><rect x="-17" y="-26" width="34" height="25" rx="2" fill="#b9772e"/><path d="M-22 -24L0 -46L22 -24z" fill="#fff" stroke="#e4dcef" stroke-width="1.5" stroke-linejoin="round"/><path d="M-22 -24q4 5 8 0q4 5 8 0q4 5 8 0q4 5 8 0q4 5 8 0" stroke="#fff" stroke-width="3" fill="none"/><rect x="-5" y="-15" width="10" height="14" rx="5" fill="#7a4a20"/><rect x="-14" y="-21" width="7" height="7" rx="1" fill="#ffd36b"/><rect x="7" y="-21" width="7" height="7" rx="1" fill="#ffd36b"/><circle cx="-8" cy="-31" r="2" fill="#e8403f"/><circle cx="2" cy="-37" r="2" fill="#2fbf71"/><circle cx="9" cy="-30" r="2" fill="#4f8dff"/>`},
+ {id:'reindeer',n:'Sobík',slot:'side',s:'xmas',lvl:3,svg:o=>`<g transform="translate(-3 0) scale(.82)"><ellipse cy="-1" rx="17" ry="3" fill="rgba(0,0,0,.14)"/><path d="M-11 -14V-1M-5 -13V-1M5 -13V-1M11 -14V-1" stroke="#7a4a20" stroke-width="3.4" stroke-linecap="round"/><ellipse cx="0" cy="-19" rx="16" ry="9.5" fill="#a9703a"/><path d="M-16 -23q-5-3-6-7" stroke="#fff" stroke-width="4" stroke-linecap="round" fill="none"/><path d="M11 -24L17 -34" stroke="#a9703a" stroke-width="7" stroke-linecap="round"/><ellipse cx="20" cy="-36" rx="7" ry="6" fill="#b9803f"/><circle cx="18.5" cy="-37.5" r="1.3" fill="#2b2140"/><circle cx="25.5" cy="-35.5" r="2.6" fill="#ff3b3b"/><path d="M17 -41Q15 -50 10 -53M16 -46Q11 -46 9 -50M22 -41Q24 -50 28 -53M23 -46Q27 -46 29 -50" stroke="#7a4a20" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M8 -26Q12 -22 8 -17" stroke="#e8403f" stroke-width="2" fill="none"/></g>`},
+ {id:'xstar',n:'Vánoční hvězda',slot:'side',s:'xmas',lvl:2,svg:o=>`<ellipse cy="-1" rx="9" ry="2.4" fill="rgba(0,0,0,.14)"/><path d="M0 0V-20" stroke="#8a5a3c" stroke-width="4" stroke-linecap="round"/><circle cy="-40" r="19" fill="#ffe27a" opacity=".25"/><path d="${xStarPath(0,-40,18,8.4)}" fill="#ffd36b" stroke="#f2a93b" stroke-width="2" stroke-linejoin="round"/><path d="${xStarPath(0,-40,9,4.2)}" fill="#fff3b0"/>`},
+ {id:'cauldron',n:'Kotlík s lektvarem',slot:'side',s:'hallo',lvl:3,svg:o=>`<ellipse cy="-1" rx="21" ry="3" fill="rgba(0,0,0,.16)"/><path d="M-14 -3L-17 0M14 -3L17 0" stroke="#2a2238" stroke-width="3.4" stroke-linecap="round"/><path d="M-19 -26Q-23 -3-10 -4H10Q23 -3 19 -26z" fill="#3a3248"/><ellipse cy="-26" rx="19" ry="5.4" fill="#5be3b0"/><ellipse cy="-26" rx="20" ry="6" fill="none" stroke="#2a2238" stroke-width="3"/><circle cx="-6" cy="-29" r="3.2" fill="#9cf2d2"/><circle cx="6" cy="-31" r="2.2" fill="#9cf2d2"/><circle cx="1" cy="-38" r="2.6" fill="#7aeab9" opacity=".8"/><circle cx="-4" cy="-45" r="1.8" fill="#7aeab9" opacity=".6"/><path d="M-10 -18Q0 -14 10 -18" stroke="#554a6a" stroke-width="1.6" fill="none"/>`},
+ {id:'spider',n:'Pavouk',slot:'side',s:'hallo',lvl:2,svg:o=>{let l='';[-1,1].forEach(s=>{for(let i=0;i<4;i++){const y0=-19+i*2.8;l+=`M${s*7} ${y0}Q${s*(19+i)} ${y0-13} ${s*(21+i*1.2)} -1`}});return `<ellipse cy="-1" rx="18" ry="2.6" fill="rgba(0,0,0,.14)"/><path d="${l}" stroke="#2b2140" stroke-width="2.2" fill="none" stroke-linecap="round"/><ellipse cy="-15" rx="10" ry="9" fill="#2b2140"/><circle cy="-27" r="6.6" fill="#2b2140"/><circle cx="-2.6" cy="-28" r="1.9" fill="#fff"/><circle cx="2.6" cy="-28" r="1.9" fill="#fff"/><circle cx="-2.6" cy="-28" r=".8" fill="#e8403f"/><circle cx="2.6" cy="-28" r=".8" fill="#e8403f"/><path d="M-3 -17l3 5 3-5z" fill="#e8403f"/>`}},
+ {id:'lamb',n:'Beránek',slot:'side',s:'easter',lvl:3,svg:o=>`<ellipse cy="-1" rx="20" ry="3" fill="rgba(0,0,0,.14)"/><path d="M-9 -13V-1M-3 -12V-1M6 -12V-1M12 -13V-1" stroke="#4a3a3f" stroke-width="3.6" stroke-linecap="round"/>`+[[-14,-22,8],[-6,-27,9],[3,-28,9],[11,-23,8],[-12,-16,8],[0,-17,9],[10,-15,8]].map(c=>`<circle cx="${c[0]}" cy="${c[1]}" r="${c[2]}" fill="#fff" stroke="#efe9f7" stroke-width="1"/>`).join('')+`<ellipse cx="17" cy="-26" rx="6.6" ry="7.6" fill="#4a3a3f"/><ellipse cx="11.4" cy="-30" rx="2.6" ry="4.4" fill="#4a3a3f" transform="rotate(-30 11.4 -30)"/><circle cx="19" cy="-28" r="1.2" fill="#fff"/><ellipse cx="21" cy="-23.6" rx="1.8" ry="1.2" fill="#ff9fae"/><path d="M12 -19Q16 -16 20 -19" stroke="#ff5d8a" stroke-width="2.4" fill="none"/>`},
+ {id:'bucket',n:'Kbelík s pomlázkami',slot:'side',s:'easter',lvl:2,svg:o=>`<ellipse cy="-1" rx="15" ry="2.6" fill="rgba(0,0,0,.14)"/><path d="M-1 -20Q-4 -36-13 -48M2 -20Q3 -38 3 -52M5 -20Q10 -36 17 -46" stroke="#9c8a2a" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M-13 -48q-4-1-6 4M3 -52q-2-2-5 1M17 -46q4-1 5 3" stroke="#e8403f" stroke-width="2" fill="none"/><path d="M-1 -48q2-4-4-7" stroke="#ffd36b" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M-14 -22L-11 0H11L14 -22z" fill="#b9772e"/><path d="M-13.4 -16H13.4M-12.2 -7H12.2" stroke="#7a4a20" stroke-width="2"/><ellipse cy="-22" rx="14" ry="3.2" fill="#d79a52"/><ellipse cx="-4" cy="-23" rx="3.2" ry="4.2" fill="#ff8fb8"/><ellipse cx="4" cy="-23.5" rx="3.2" ry="4.2" fill="#7ad0ff"/>`},
+ {id:'lounger',n:'Lehátko se slunečníkem',slot:'side',s:'summer',lvl:3,svg:o=>`<g transform="translate(-2 0) scale(.85)"><ellipse cy="-1" rx="26" ry="3" fill="rgba(0,0,0,.14)"/><path d="M-12 0V-52" stroke="#8a5a3c" stroke-width="2.4" stroke-linecap="round"/><path d="M-30 -44Q-12 -66 6 -44Q-3 -48 -12 -44Q-21 -48 -30 -44z" fill="#ff5d8a"/><path d="M-12 -44L-18 -54M-12 -44L-6 -54" stroke="#fff" stroke-width="1.4" opacity=".7"/><path d="M-3 -9H18" stroke="#4aa8ff" stroke-width="5" stroke-linecap="round"/><path d="M18 -9L27 -21" stroke="#4aa8ff" stroke-width="5" stroke-linecap="round"/><path d="M-3 -13H17L25 -23" stroke="#fff" stroke-width="3.4" stroke-linecap="round" fill="none" stroke-linejoin="round"/><path d="M-2 -9V0M17 -9V0" stroke="#8a5a3c" stroke-width="2.4" stroke-linecap="round"/></g>`},
+ {id:'melonside',n:'Melounek',slot:'side',s:'summer',lvl:2,svg:o=>`<ellipse cy="-1" rx="22" ry="3" fill="rgba(0,0,0,.14)"/><path d="M-22 0A22 22 0 0 1 22 0z" fill="#4fbf73"/><path d="M-19.6 0A19.6 19.6 0 0 1 19.6 0z" fill="#e8f5c8"/><path d="M-17.6 0A17.6 17.6 0 0 1 17.6 0z" fill="#ff5d6c"/>`+[[-9,-6],[-3,-11],[5,-8],[11,-4],[0,-4],[-12,-2]].map(p=>`<ellipse cx="${p[0]}" cy="${p[1]}" rx="1.2" ry="2" fill="#2b2140" transform="rotate(${p[0]*3} ${p[0]} ${p[1]})"/>`).join('')+`<path d="M-4 -19Q0 -22 4 -19" stroke="#fff" stroke-width="1.6" fill="none" opacity=".5" stroke-linecap="round"/>`},
+ {id:'tent',n:'Stan',slot:'side',s:'summer',lvl:3,svg:o=>`<ellipse cy="-1" rx="23" ry="3" fill="rgba(0,0,0,.14)"/><path d="M-23 0L0 -42L23 0z" fill="#ff8a4d"/><path d="M0 -42L23 0H11z" fill="#e66f2e"/><path d="M0 -28L-9 0H9z" fill="#3b2a4a"/><path d="M0 -28L-9 0M0 -28L9 0" stroke="#ffd0b0" stroke-width="1.4"/><path d="M0 -42V-52" stroke="#7a5a3a" stroke-width="2"/><path d="M0 -52h10l-3 3l3 3h-10z" fill="#e8403f"/>`},
+ {id:'igloo',n:'Iglú',slot:'side',s:'winter',lvl:3,svg:o=>`<ellipse cy="-1" rx="25" ry="3" fill="rgba(0,0,0,.14)"/><path d="M-24 0A24 24 0 0 1 24 0z" fill="#eaf4ff" stroke="#cfe3f5" stroke-width="1.5"/><path d="M-21 -10H21M-16 -18H16M-8 -23H8" stroke="#cfe3f5" stroke-width="1.2"/><path d="M-12 -10V-20M-3 -10V-17M10 -10V-20M-6 -18V-23M6 -18V-23M-18 0V-10M18 0V-10" stroke="#cfe3f5" stroke-width="1.2"/><path d="M-9 0V-9A9 9 0 0 1 9 -9V0z" fill="#3b4a75"/>`},
+ {id:'sled',n:'Sáňky',slot:'side',s:'winter',lvl:2,svg:o=>`<g transform="translate(3 0) scale(.82)"><ellipse cy="-1" rx="25" ry="3" fill="rgba(0,0,0,.14)"/><ellipse cx="-2" cy="-3" rx="26" ry="5" fill="#fff" opacity=".9"/><path d="M-20 -10H18Q26 -10 23 -18" stroke="#b9772e" stroke-width="3.4" fill="none" stroke-linecap="round"/><rect x="-17" y="-19" width="34" height="6" rx="2.4" fill="#e8403f"/><path d="M-12 -13V-10M10 -13V-10" stroke="#7a4a20" stroke-width="2.6"/><path d="M-17 -16h34" stroke="#fff" stroke-width="1.2" stroke-dasharray="4 4"/><path d="M-20 -10Q-30 -12 -32 -20" stroke="#8c8c99" stroke-width="1.4" fill="none"/></g>`},
+ {id:'haybale',n:'Balík slámy s vránou',slot:'side',s:'autumn',lvl:3,svg:o=>`<ellipse cy="-1" rx="22" ry="3" fill="rgba(0,0,0,.14)"/><rect x="-19" y="-26" width="38" height="26" rx="5" fill="#e8c46a"/><path d="M-19 -17H19M-19 -9H19" stroke="#c9a24a" stroke-width="1.6"/><path d="M-9 -26V0M9 -26V0" stroke="#b9772e" stroke-width="2.4"/><path d="M-14 -22l4-2M-4 -23l3-3M4 -21l4-2M14 -24l3-2" stroke="#f3d98a" stroke-width="1.4" stroke-linecap="round"/><ellipse cx="4" cy="-33" rx="8" ry="6" fill="#2b2140"/><circle cx="12" cy="-38" r="4.6" fill="#2b2140"/><path d="M15.8 -38l5 1.4l-5 1.6z" fill="#ff9a3d"/><circle cx="12.6" cy="-39" r="1" fill="#fff"/><path d="M-3 -32L-12 -30L-2 -29z" fill="#2b2140"/><path d="M2 -27V-24M6 -27V-24" stroke="#ff9a3d" stroke-width="1.4"/>`},
+ {id:'nicktrio',n:'Mikuláš, čert a anděl',slot:'side',s:'nick',lvl:3,svg:o=>`<ellipse cy="-1" rx="26" ry="3" fill="rgba(0,0,0,.14)"/><g transform="translate(-17 0)"><path d="M-5 0L-4 -16H4L5 0z" fill="#fff" stroke="#e4dcef" stroke-width=".8"/><path d="M-4 -14Q-14 -22-10 -29Q-6 -23-3 -18zM4 -14Q14 -22 10 -29Q6 -23 3 -18z" fill="#fff" stroke="#e4dcef" stroke-width=".8"/><circle cy="-21" r="4.6" fill="#ffd9c2"/><path d="M-4.4 -22Q0 -27 4.4 -22" fill="#ffd36b"/><ellipse cy="-28" rx="4.8" ry="1.4" fill="none" stroke="#ffd36b" stroke-width="1.5"/></g><g transform="translate(1 0)"><path d="M-8 0L-6 -26H6L8 0z" fill="#e8403f"/><path d="M-8 -2H8" stroke="#ffd36b" stroke-width="2"/><circle cy="-31" r="6" fill="#ffd9c2"/><path d="M-6 -30Q0 -15 6 -30Q0 -26-6 -30z" fill="#fff"/><path d="M-6 -35L0 -53L6 -35z" fill="#e8403f"/><path d="M-6 -35H6" stroke="#ffd36b" stroke-width="2"/><path d="M0 -50V-40M-3 -45H3" stroke="#ffd36b" stroke-width="1.2"/><path d="M7 -22L14 -42" stroke="#b9772e" stroke-width="2" stroke-linecap="round"/><path d="M14 -42Q19 -46 14 -49" stroke="#b9772e" stroke-width="2" fill="none" stroke-linecap="round"/></g><g transform="translate(18 0)"><path d="M-5 0L-4 -18H4L5 0z" fill="#3a2a2f"/><circle cy="-23" r="5.4" fill="#d9302f"/><path d="M-4 -27L-7 -35L-1 -28zM4 -27L7 -35L1 -28z" fill="#2b2140"/><circle cx="-2" cy="-24" r=".9" fill="#fff"/><circle cx="2" cy="-24" r=".9" fill="#fff"/><path d="M-2 -20Q0 -18 2 -20" stroke="#2b2140" stroke-width="1" fill="none"/><path d="M5 -8Q12 -6 12 -14" stroke="#2b2140" stroke-width="1.6" fill="none"/></g>`},
+ {id:'nyedrink',n:'Šampaňské z džusu',slot:'side',s:'nye',lvl:2,svg:o=>`<ellipse cy="-1" rx="22" ry="3" fill="rgba(0,0,0,.14)"/><rect x="-19" y="-30" width="9" height="30" rx="3" fill="#2f8f5a"/><rect x="-17" y="-40" width="5" height="11" rx="1.4" fill="#2f8f5a"/><rect x="-18" y="-46" width="7" height="8" rx="1.4" fill="#ffd36b"/><rect x="-18" y="-22" width="7" height="8" rx="1.4" fill="#fff"/>`+[[3,8],[15,-8]].map(g=>`<g transform="rotate(${g[1]} ${g[0]} 0)"><path d="M${g[0]-4.5} -30L${g[0]-3} -12Q${g[0]} -8 ${g[0]+3} -12L${g[0]+4.5} -30z" fill="rgba(255,236,160,.75)" stroke="#e8dfb0" stroke-width="1.2"/><path d="M${g[0]} -9V-2M${g[0]-4.5} -2H${g[0]+4.5}" stroke="#e8dfb0" stroke-width="1.6"/><circle cx="${g[0]}" cy="-20" r="1" fill="#fff"/><circle cx="${g[0]+1.6}" cy="-25" r=".8" fill="#fff"/></g>`).join('')+`<path d="M9 -38l1.4 3.4 3.4 1.4-3.4 1.4L9 -28l-1.4-3.4-3.4-1.4 3.4-1.4z" fill="#ffd36b"/>`}
+];
+Object.assign(SEAS,{easter:'Velikonoce 🐣',nick:'Mikuláš 😇',nye:'Silvestr 🎆',bday:'Narozeniny 🎂',val:'Valentýn 💕'});
+// pár starších věcí patří lépe do nových kategorií
+const RESEASON={chick:'easter',eggs:'easter',sparkler:'nye',party:'bday',balloon:'bday',heart:'val',hballoon:'val'};
+ACCL.forEach(a=>{if(RESEASON[a.id])a.s=RESEASON[a.id]});
+ACCL.push(...ACCN);
+const SEASO=['base','spring','easter','summer','autumn','hallo','nick','xmas','winter','nye','bday','val'];
+const SLOTO={head:0,face:1,neck:2,hand:3,side:4};
+const PARTN={all:'Vše',head:'Hlava',face:'Obličej',neck:'Krk',hand:'V ruce',side:'Vedle'};
+const STN={worn:'Nasazené',own:'Odemčené',new:'Nové',lock:'Zamčené'};
+ACCL.sort((a,b)=>SLOTO[a.slot]-SLOTO[b.slot]||SEASO.indexOf(a.s)-SEASO.indexOf(b.s));
+const NEW_IDS=[...ACCN.map(a=>a.id),'latte'];
+var wp='all',ws='',bdOpen=false,wcenter=false;
+
+// ---------- hlášky ----------
+const HL={
+ base:['Jak mi to sluší? 😎','Nový styl, co na to říkáš? ✨','Cítím se jako celebrita 🌟','Tohle mám moc rád! 😊','Dneska jsem hezky vyšňořený 💫'],
+ hallo:['Bú! Strašit neumím, jsem moc roztomilý 🎃','Dneska jsem strašidlo. Bú! 👻','Sladkosti, sladkosti, sladkosti! 🍭','Dýně je vydlabaná a svíčka svítí 🕯️','Šššt, slyšíš to? To duchové z kuchyně 👻','Mám pro tebe kouzelný lektvar… nebo čaj 🧪'],
+ autumn:['Listí jak z pohádky 🍂','Dneska je ten pravý čas na teplý čaj ☕','Slyšíš, jak chrupe listí pod nohama? 🍁','Můžeme jít pouštět draka? 🪁','Kaštany se válí všude, vezmu pár do kapsy 🌰','Podzim voní po jablkách a dýních 🍎'],
+ winter:['Brrr! Dej mi deku a kakao 🧣','Sníh, sníh a ještě víc sněhu ❄️','Postavíme spolu sněhuláka? ⛄','Nos mám celý studený 🥶','Kdo si dá horký čaj? ☕','Venku mrzne, uvnitř je nejlíp 🏠'],
+ nick:['Celý rok jsem byl hodný! 😇','Čert nese brambory, anděl cukroví 🍬','Mikuláš se blíží, připravuju básničku ⭐','Já se čerta nebojím! (Možná trošku 😅)','Slyšíš ty řetězy? To bude čert! ⛓️'],
+ xmas:['Cink, cink, rolničky zvoní 🔔','Už cítím vanilkové rohlíčky 🍪','Kolik dnů zbývá do Štědrého dne? 🎄','Zazpíváme si koledy? 🎶','Byl to dobrý rok, určitě dostanu dárek 🎁','Ve vzduchu je cítit cukroví 🍪'],
+ nye:['Nový rok klepe na dveře! 🎆','Čočka na štěstí, prskavky na radost ✨','Dáme si předsevzetí? Třeba víc spinkat 😴','Za chvíli bude půlnoc, držím palce 🥂','Poslední dny roku, co ty na to? 🎉'],
+ spring:['Probouzí se příroda, probouzím se i já 🌱','Slyšíš ptáčky? Zpívají jen pro tebe 🐦','Kytičky rozkvétají na všech stranách 🌸','Dneska je ideální den na procházku 🌷','Konečně sluníčko, už mě to hřeje ☀️'],
+ easter:['Pomlázka je připravená! Jen jemně 🌿','Vajíčka jsou nazdobená, můžeme koledovat 🥚','Kuřátko nám pípá z vajíčka 🐣','Mazanec, vajíčka a pomlázka. To je jaro 🐰','Už se těším na velikonoční mazanec 🍞'],
+ summer:['Prázdniny, hurá! ☀️','Mám žízeň, ale zmrzlina je lepší 🍦','Pojďme se vykoupat a zahrát si míč 🏖️','Dneska můžeme klidně nic nedělat 😎','Meloun je nejlepší do tepla 🍉'],
+ bday:['Dneska je výjimečný den! Hurá! 🎂','Já dnes dostanu největší kousek dortu 🍰','Foukáme svíčky a přejeme si něco 🕯️','Narozeninové konfety jsou všude! 🎉','Kdo má dnes narozeniny? Gratuluju! 🎈'],
+ val:['Posílám ti srdíčko 💕','Nejsi v tom sama, jsem u tebe 🥰','Mám pro tebe malé překvapení 💌','Láska je ve vzduchu, cítíš to? 💗','Srdíčka na všechny strany ❤️']
+};
+// hlášky ke konkrétním věcem (když žádná není, použije se hláška podle období)
+const HLI={
+ bubbletea:['Bubble tea! Perličky na dně jsou nejlepší 🧋','Srkám a srkám, mňam 🧋','Slámka je moc dlouhá, ale funguje 😄'],
+ latte:['Dýňové latte? Voní jako podzim 🎃','Opatrně, je horké! ☕'],umbrella:['Deštník? Já se deště nebojím! ☔','Kapky nám nic neudělají 🌧️'],
+ sparkler:['Prskavka! Třpytí se jako hvězdy ✨','Prskavky jen pod dohledem 🎇'],candle:['Plamínek mi dělá společnost 🕯️','Foukej opatrně, ať nezhasne! 🕯️'],
+ hballoon:['Srdíčko pro tebe 💕','Držím ho, ať neuletí 🎈'],balloon:['Balonek! Držím ho pevně 🎈','Jestli uletí, poletím s ním 😄'],
+ cream:['Mňam, zmrzlina! Tak rychle taje 🍦','Dáš mi ochutnat? 🍦'],lolli:['Lízátko! Sladké jako ty 🍭','Mlask mlask 🍭'],
+ wand:['Čáry máry fuk! ✨','Hůlka říká, že budeš mít dobrý den 🪄'],book:['Čtu zajímavou knížku 📘','Pšt, dočítám kapitolu 📖'],
+ lantern:['Lucerna svítí na cestu 🏮','Za tmy je s lucernou líp 🏮'],flower:['Kytička jen pro tebe 🌸','Voní jako květinářství 🌼'],
+ mug:['Hrníček čaje, to je život ☕','Hřeje do dlaní ☕'],
+ bunny:['Zajíčí ouška! Hop hop 🐰','Skáču jako zajíc po louce 🐇'],devil:['Jsem malý čertík… ale roztomilý 😈','Brambory, nebo uhlí? 🥔'],
+ halo:['Svatozář! Jsem malý andílek 😇','Hodný jsem byl celý rok 😇'],antlers:['Sobí parohy! Rudolf by záviděl 🦌','Jsem malý sob, kam poletíme? 🦌'],
+ chef:['Dnes vaří šéfkuchař! 👨‍🍳','Kdo má hlad? Něco dobrého nachystám 🍳'],cowboy:['Yee-haw! Kovboj je tady 🤠','Tohle město je moc malé pro nás dva 🤠'],
+ helmet:['Bezpečnost především! 🚴','Přilba na hlavě, můžeme vyrazit 🚲'],cap:['Kšiltovka, tady je styl! 🧢','Kšilt dozadu a jedeme 😎'],
+ bowband:['Čelenka s mašlí, to je móda 🎀','Sluší mi to? 🎀'],bcrown:['Dnes jsem král narozenin! 👑','Korunka na oslavu 🎉'],nyehat:['Třpytivá čepice na Silvestra ✨','Připravený na půlnoc! 🎆'],
+ rednose:['Červený nos jako Rudolf 🔴','Můj nos svítí! Skoro 🔴'],mask:['Maska! Poznáš mě? 🎭','Karneval je tady! 🎭'],snorkel:['Šnorchl! Skáču pod vodu 🤿','Vidím rybičky! 🐠'],
+ glass3d:['3D brýle, film může začít 🎬','Skoro vidím, jak z plátna lítá popcorn 🍿'],starglass:['Brýle s hvězdičkami! ⭐','Jsem hvězda Silvestra ✨'],web:['Pavoučí síť na tváři, brrr 🕸️','Pavouk říká, že mi sluší 🕷️'],
+ garland:['Vánoční girlanda se třpytí ✨','Třpytky jsou všude! 🎄'],medal:['Medaile za nejlepšího kamaráda 🥇','Vyhrál jsem! Hurá 🏅'],tie:['Kravata, dnes jsem formální 👔','Jsem připravený na schůzku 💼'],
+ bunting:['Vlaječky, začíná oslava! 🎉','Girlanda pro dnešní den 🚩'],ring:['Nafukovací kruh, na vodu připravený 🏊','Plácáme se v bazénu? 🏊'],bandana:['Kovbojský šátek, to je styl 🤠','Šátek na krku, vítr ať si fouká 🌬️'],
+ heartscarf:['Šál ze srdíček 💕','Tolik srdíček na jednom krku 💖'],
+ candycane:['Cukrová hůl, hned ji ochutnám 🍬','Pruhovaná a sladká 🍭'],nicksack:['Mikulášský pytel plný dobrot 🎅','Co je v pytli? Sladkosti! 🍬'],
+ pomlazka:['Pomlázka! Jen jemně, prosím 🌿','Koleda, koleda, Anička 🎶'],apple:['Jablíčko, zdravé a šťavnaté 🍎','Jedno jablko denně… 🍏'],tangerine:['Mandarinka! Cítíš tu vůni? 🍊','Loupu a mlsám 🍊'],
+ can:['Zalévám kytičky 🚿','Konvička je plná, zalévám dál 🌱'],lupa:['Hledám stopy, detektiv v akci 🔍','Pod lupou je všechno větší 🔎'],flag:['Vlaječka! Hurá, vítězíme 🚩','Mávám vlaječkou pro radost 🏁'],
+ bfly:['Motýl mi sedí na prstě! 🦋','Pšt, ať neuletí 🦋'],tea:['Čaj s citronem, ahh ☕','Pomalu popíjím čaj 🍵'],snowglobe:['Sněhová koule! Zatřes s ní ❄️','Uvnitř sněží a je tam klid ⛄'],
+ potion:['Kouzelný lektvar bublá 🧪','Neptej se, co je uvnitř 🧪'],melon:['Meloun, mňam! 🍉','Ještě jeden kousek melounu 🍉'],lemonade:['Limonáda se slámkou, ach, léto 🍋','Ledová limonáda v tomhle vedru 🧊'],
+ heartbouq:['Kytice srdíček jen pro tebe 💐','Tolik srdíček! 💕'],cake:['Dortík se svíčkou! Přej si něco 🎂','Já dnes dostanu největší kousek dortu 🍰'],kite:['Drak letí vysoko 🪁','Vítr, foukej, ať drak letí 🍂'],
+ gingerhouse:['Perníková chaloupka voní skořicí 🍪','Nekousej, je z perníku 🏠'],reindeer:['Sob čeká na Ježíška 🦌','Rudolf je poblíž 🦌'],xstar:['Vánoční hvězda svítí ⭐','Hvězda nás povede ✨'],
+ cauldron:['Kotlík bublá lektvarem 🧪','Něco se v něm vaří… 🍲'],spider:['Pavouček se plazí po zahrádce 🕷️','Nebojíš se pavouků? 🕸️'],lamb:['Béé! Beránek je tady 🐑','Velikonoční beránek, ahoj! 🐏'],
+ bucket:['Kbelík plný pomlázek 🌿','Připraveno na velikonoční pondělí 🥚'],lounger:['Lehátko! Čas odpočívat 🏖️','Slunečník, lehátko a pohoda 🌴'],melonside:['Melounek jako ze zahrady 🍉','Kousek melounu čeká 🍉'],
+ tent:['Stan! Jedeme na tábor ⛺','Spaní pod širákem 🌌'],igloo:['Iglú! Uvnitř je teplo 🧊','Eskymáci by záviděli ❄️'],sled:['Sáňky! Jedeme z kopce 🛷','Kdo se svezne? 🛷'],
+ haybale:['Balík slámy a vrána 🐦','Vrána krákorá z balíku 🌾'],nicktrio:['Mikuláš, čert a anděl 😇','Mikuláš nese dárky 🎅'],nyedrink:['Šampaňské z džusu, na zdraví! 🥂','Cink! Šťastný nový rok 🥂'],
+ gnome:['Trpaslík hlídá zahrádku 🧙','Pst, říká, že tu bydlí 🏡'],chick:['Pip pip! Kuřátko se klube 🐣','Kuřátko říká pip 🐥'],tree:['Stromeček už svítí 🎄','Pod ním budou dárky 🎁'],
+ snowman:['Sněhulák nikdy nezmrzne ⛄','Jmenuje se Olaf? Možná ☃️'],pumpkin:['Dýně se usmívá 🎃','Vydlabaná a hotová 🎃'],ghost:['Buu! Strašidýlko se schovává 👻','Šššt, nikomu nic neříkej 👻'],
+ mush:['Muchomůrka! Nejíst, jen koukat 🍄','Muchomůrka vyrostla přes noc 🍄'],eggs:['Vajíčka čekají na hledání 🥚','Kdo najde nejvíc? 🥚'],ball:['Plážový míč! Hrajeme? 🏐','Odrazí se až k nebi 🏐'],
+ gift:['Vánoční dárky pod stromečkem 🎁','Který je pro mě? 🎁'],party:['Párty čepička! Kdy bude dort? 🎉','Oslavujeme? 🥳'],santa:['Mikulášská čepice sluší, co? 🎅','Ho ho ho! 🎅'],
+ witch:['Čarodějnice jsou tady! 🧙‍♀️','Zakleju tě… do sladkého snu ✨'],straw:['Slaměný klobouk na slunce ☀️','Slunce pálí, klobouk pomáhá 🌞'],beanie:['Zimní čepice hřeje uši 🧣','Brr, venku je zima 🧶'],
+ flowerc:['Věneček z květin, jsem princezna 🌼','Voním jako louka 🌸'],leafc:['Podzimní věnec z listí 🍂','Šustím jako les 🍁'],sun:['Sluneční brýle, jsem cool 😎','Slunce, ani se nesnaž ☀️'],
+ heart:['Vidím svět v růžové 💗','Srdíčka v očích 😍'],round:['Kulaté brýle, jsem učenec 🤓','Čtu mezi řádky 🧐'],stache:['Knírek jako pán 🥸','Dobrý den, pane! 🎩'],patch:['Jarrr! Pirát je tady 🏴‍☠️','Kde je poklad? 💰'],
+ bow:['Mašle, čistá elegance 🎀','Mašle sluší každému ✨'],bowtie:['Motýlek, jsem elegán 🤵','Pozor, elegán! 🎩'],bell:['Rolnička cinká při každém kroku 🔔','Cink cink! 🔔'],pearls:['Perlový náhrdelník, jak z filmu 💎','Dnes jsem fajnový 💎'],
+ scarf:['Šála, v zimě nezbytnost 🧣','Zima mě nedostane 🧣'],lei:['Havajský věnec, aloha! 🌺','Aloha, léto je tady 🌴'],hat:['Klobouček se pěkně hodí 🎩','Dobrý den, pánové 🎩']
+};
+function wornIds(){const w=S.worn||{};return ['hand','head','face','neck','side','side2'].map(k=>w[k]).filter(Boolean).filter(id=>ACCL.some(a=>a.id===id))}
+var lastLine='';
+function lineFor(id){const A=ACCL.find(x=>x.id===id);if(!A)return null;let l,n=0;do{const it=HLI[id];l=(it&&Math.random()<.7)?bag('hi'+id,it):bag('hs'+A.s,HL[A.s]||HL.base)}while(l===lastLine&&++n<6);lastLine=l;return l}
+function wornLine(amb){let ids=wornIds();if(amb)ids=ids.filter(id=>{const A=ACCL.find(a=>a.id===id);return A.s!=='base'||HLI[id]});if(!ids.length)return null;return lineFor(ids[Math.random()*ids.length|0])}
+
+// ---------- narozeniny a období podle data ----------
+const bdList=()=>Array.isArray(S.bdays)?S.bdays:[];
+function bdToday(d){d=d||new Date();const m=d.getMonth()+1,dd=d.getDate(),y=d.getFullYear(),leap=y%4===0&&(y%100!==0||y%400===0);return bdList().filter(b=>b.m===m&&(b.d===dd||(b.d===29&&b.m===2&&!leap&&dd===28)))}
+function easterDate(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=b%4,f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30,i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451),mo=Math.floor((h+l-7*m+114)/31),da=((h+l-7*m+114)%31)+1;return new Date(y,mo-1,da)}
+function curSeas(d){d=d||new Date();const m=d.getMonth()+1,dd=d.getDate(),t0=new Date(d.getFullYear(),d.getMonth(),dd),df=Math.round((t0-easterDate(d.getFullYear()))/864e5),r=[];
+  if(bdToday(d).length)r.push('bday');
+  if((m===12&&dd>=27)||(m===1&&dd===1))r.push('nye');
+  if((m===11&&dd>=28)||(m===12&&dd<=6))r.push('nick');
+  if(m===12&&dd<=26)r.push('xmas');
+  if(m===2&&dd>=7&&dd<=14)r.push('val');
+  if(df>=-14&&df<=1)r.push('easter');
+  if(m===10||(m===11&&dd<=2))r.push('hallo');
+  if(m>=9&&m<=11)r.push('autumn');
+  if(m>=3&&m<=5)r.push('spring');
+  if(m>=6&&m<=8)r.push('summer');
+  if(m===12||m<=2)r.push('winter');
+  return r}
+function wardDefault(){wcenter=true;const cs=curSeas(),P=['bday','nye','nick','val','easter','hallo','xmas','autumn','spring','summer','winter'];return P.find(k=>cs.includes(k))||'all'}
+function petExtras(p,sl,w){w={...(w||{})};
+  if(sl){w.head='_cap';if(p.kind==='animal'&&PJ_OK.includes(p.sp))w.pj='_pj'}
+  else if(!w.head&&bdToday().length)w.head='bcrown';
+  else if(!w.head&&scene().dec)w.head='santa';
+  return w}
+function bdCheck(){const L=bdToday();if(!L.length||!S.pet||S.tab!=='garden'||isSleeping())return;const k=iso(new Date());if(S.bdSeen===k)return;S.bdSeen=k;save();
+  setTimeout(()=>{const sg=$('#stage');if(!sg||S.tab!=='garden')return;confetti(sg);const nm=L.map(b=>b.name).filter(Boolean);
+    say(nm.length?'Všechno nejlepší, '+nm.join(' a ')+'! 🎂🎉':'Dnes je výjimečný den! Všechno nejlepší! 🎂');sfx('fan');for(let i=0;i<8;i++)pf(sg,['🎉','🎈','✨'][i%3],'rise')},900)}
+function bdAdd(){const n=($('#bdn')||{}).value||'',d=parseInt(($('#bdd')||{}).value,10),m=parseInt(($('#bdm')||{}).value,10),dim=[31,29,31,30,31,30,31,31,30,31,30,31];
+  if(!(m>=1&&m<=12)||!(d>=1&&d<=dim[m-1]||0)){toast('Zadej den a měsíc, např. 14 a 5');return}
+  if(bdList().length>=6){toast('Maximum je 6 narozenin');return}
+  S.bdays=[...bdList(),{d,m,name:n.trim().slice(0,18)}].sort((a,b)=>a.m-b.m||a.d-b.d);save();refreshW();toast('Narozeniny uloženy 🎂');bdCheck()}
+function bdDel(i){const L=bdList().slice(),x=L.splice(i,1)[0];S.bdays=L;save();refreshW();toast('Narozeniny smazány',()=>{S.bdays=[...bdList(),x].sort((a,b)=>a.m-b.m||a.d-b.d);save();refreshW()})}
+
+// ---------- šatník: příležitost + část + stav ----------
+const isWorn=a=>{const w=S.worn||{};return a.slot==='side'?(w.side===a.id||w.side2===a.id):w[a.slot]===a.id};
+function wardList(){return ACCL.filter(a=>{
+  if(wf!=='all'&&a.s!==wf)return false;if(wp!=='all'&&a.slot!==wp)return false;
+  const un=!!S.unl[a.id],on=isWorn(a);
+  if(ws==='worn'&&!on)return false;if(ws==='own'&&!un)return false;if(ws==='lock'&&un)return false;if(ws==='new'&&!NEW_IDS.includes(a.id))return false;
+  return true})}
+const wTile=a=>{const un=S.unl[a.id],on=isWorn(a);return `<button class="wi ${on?'on':''} ${un?'':'lock'}" data-q="wi" data-id="${a.id}"><i>${aIcon(a)}</i><b>${a.n}</b><small>${on?'Nasazeno ✓':un?SLOT[a.slot]:'🔒 '+cost(a)+' 💧'}</small></button>`};
+function bdHTML(){const L=bdList();
+  return `<button type="button" class="chip wbd" data-q="bdt">🎂 Narozeniny${L.length?' ('+L.length+')':''} ${bdOpen?'▴':'▾'}</button>`+(bdOpen?`<div class="bdp">`+(L.length?L.map((b,i)=>`<div class="bdr"><span>${esc(b.name||'Narozeniny')}</span><b>${b.d}. ${b.m}.</b><button type="button" class="bdx" data-q="bdx" data-i="${i}" aria-label="Smazat">✕</button></div>`).join(''):'<div class="whint" style="margin:2px 0 8px">Nic není nastaveno. V ten den dostane kamarád korunku a popřeje ti. 🎉</div>')
+   +`<div class="bdf"><input id="bdn" type="text" maxlength="18" placeholder="Jméno" autocomplete="off"><input id="bdd" type="number" inputmode="numeric" min="1" max="31" placeholder="Den"><input id="bdm" type="number" inputmode="numeric" min="1" max="12" placeholder="Měs."><button type="button" class="pill" data-q="bda" aria-label="Přidat">＋</button></div></div>`:'')}
+function wardInner(){
+  const anyLock=ACCL.some(a=>!S.unl[a.id]);if(!anyLock&&ws==='lock')ws='';
+  const cs=curSeas(),L=wardList(),chip=(on,q,k,l,x)=>`<button class="chip ${on?'on':''}" data-q="${q}" data-f="${k}">${l}${x||''}</button>`;
+  return `<div class="wsc">`+['all',...SEASO].map(k=>chip(wf===k,'wf',k,k==='all'?'Vše':SEAS[k],cs.includes(k)?' ★':'')).join('')+`</div>`
+   +`<div class="wsc">`+Object.keys(PARTN).map(k=>chip(wp===k,'wp',k,PARTN[k])).join('')+`</div>`
+   +`<div class="wsc">`+Object.keys(STN).filter(k=>k!=='lock'||anyLock).map(k=>chip(ws===k,'ws',k,STN[k])).join('')+`</div>`
+   +`<div class="wcnt">${L.length} z ${ACCL.length}</div>`
+   +`<div class="wgrid">`+(L.length?L.map(wTile).join(''):`<div class="wempty">Tady zatím nic není</div>`)+`</div>`
+   +bdHTML()
+   +`<div class="whint">Doplňky se odemykají růstem kamaráda (zdarma od určité fáze) nebo dřív za zlaté kapky. ★ = právě je sezóna. Vedle kamaráda stojí nejvýš 2 věci, v ruce drží jednu.</div><button class="pbtn" data-q="wclr" style="margin-top:10px;width:100%">Sundat vše</button>`}
+function refreshW(){const w=$('#wp');if(!w)return;
+  const sl=[...w.querySelectorAll('.wsc')].map(e=>e.scrollLeft);
+  w.innerHTML=wopen?wardInner():'';w.classList.toggle('open',wopen);
+  const rows=[...w.querySelectorAll('.wsc')];
+  rows.forEach((e,i)=>{e.scrollLeft=sl[i]||0});
+  if(wcenter&&wopen){wcenter=false;rows.forEach(r=>{const c=r.querySelector('.chip.on');if(c)r.scrollLeft=Math.max(0,c.offsetLeft-r.clientWidth/2+c.offsetWidth/2)})}}
+
+// ---------- reakce na nasazení + plovoucí náhled ----------
+var fpvT,ambT;
+function fpvHide(){clearTimeout(fpvT);const el=$('#fpv');if(el)el.classList.remove('show')}
+function fpvShow(A,line){
+  const p=S.pet;if(!p)return;let el=$('#fpv');if(!el){el=document.createElement('div');el.id='fpv';el.setAttribute('aria-hidden','true');document.body.appendChild(el)}
+  const st=stOf(p.xp),sc=scene(),hb=document.querySelector('header').getBoundingClientRect().bottom,bt=document.body.getBoundingClientRect().top;
+  el.style.top=Math.round(hb-bt+8)+'px';
+  el.innerHTML=`<div class="fs${isNight()?' night':''}" style="${sceneVars(sc)}"><div class="fb">${esc(line||'')}</div><div class="pv">${sideSVG()}${petSVG(p,st)}</div></div><div class="cap">${esc(A.n)} · nasazeno</div>`;
+  el.classList.remove('show');void el.offsetWidth;el.classList.add('show');
+  clearTimeout(fpvT);fpvT=setTimeout(fpvHide,3600)}
+function wearReact(A,was){
+  const now=wornIds().includes(A.id);
+  if(!now){fpvHide();return}
+  if(was)return;
+  const line=isSleeping()?'ššš spinkám 💤':lineFor(A.id);
+  if(line)say(line);
+  const sg=$('#stage'),vw=$('#view');if(!sg||!vw)return;
+  const r=sg.getBoundingClientRect(),v=vw.getBoundingClientRect(),vis=Math.min(r.bottom,v.bottom)-Math.max(r.top,v.top);
+  if(vis<r.height*.7)fpvShow(A,line)}
+function ambNext(){clearTimeout(ambT);ambT=setTimeout(()=>{if(S.tab==='garden'&&S.pet&&!document.hidden&&!isNight()&&!isSleeping()&&!trickBusy){const l=wornLine(true);if(l)say(l)}ambNext()},150000+Math.random()*120000)}
+{const _sw=startWalk;startWalk=function(){clearTimeout(ambT);ambNext();bdCheck();if(wopen){wcenter=true;refreshW()}_sw()}}
 
 // ---- měření spodní lišty a stažení oken prstem dolů
 function navTop(){try{const n=$('#nav');if(n&&n.offsetTop)document.documentElement.style.setProperty('--navtop',(document.body.clientHeight-n.offsetTop)+'px')}catch(e){}}
