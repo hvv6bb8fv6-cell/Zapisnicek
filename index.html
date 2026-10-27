@@ -501,9 +501,9 @@ header h1{line-height:34px;height:34px;white-space:nowrap}
 .bdf{display:flex;gap:6px;margin-top:6px;align-items:center}
 .bdf input{min-width:0;background:var(--glass);border:1px solid var(--bd);border-radius:12px;color:var(--txt);font:600 16px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;padding:8px 10px;outline:none}
 #bdn{flex:1 1 auto}#bdd,#bdm{flex:0 0 60px;text-align:center}
-#fpv{position:absolute;left:50%;top:100px;transform:translate(-50%,-8px) scale(.96);z-index:60;width:210px;pointer-events:none;opacity:0;transition:opacity .25s ease,transform .25s ease;
+#fpv{position:absolute;left:50%;top:100px;transform:translate(-50%,-8px) scale(.96);z-index:60;width:210px;pointer-events:none;opacity:0;transition:opacity .16s ease,transform .16s ease;
  background:rgba(255,255,255,.22);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.6);border-radius:22px;box-shadow:0 14px 36px rgba(0,0,0,.3);overflow:hidden}
-#fpv.show{opacity:1;transform:translate(-50%,0) scale(1)}
+#fpv.show{opacity:1;transform:translate(-50%,0) scale(1);transition:opacity .25s ease,transform .25s ease}
 #fpv .fs{position:relative;height:176px;opacity:.93;background:linear-gradient(var(--sk1,#bfe6ff),var(--sk2,#ffe9f6) 62%,var(--gr,#d6f5c9) 62%)}
 #fpv .fs.night{background:linear-gradient(#0f1538,#2a2358 62%,var(--ngr,#1c3b3e) 62%)}
 #fpv .fb{position:absolute;left:50%;top:7px;transform:translateX(-50%);z-index:7;background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);color:#3b2a4a;padding:6px 11px;border-radius:14px;font:600 12px/1.25 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;max-width:92%;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.14)}
@@ -511,7 +511,7 @@ header h1{line-height:34px;height:34px;white-space:nowrap}
 #fpv .pv{position:absolute;left:50%;bottom:-8px;width:140px;height:158px;transform:translateX(-50%)}
 #fpv .pv svg{position:absolute;left:0;top:0;width:100%;height:100%;overflow:visible}
 #fpv .cap{font:600 10px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:#3b2a4a;text-align:center;padding:6px 0 7px;background:rgba(255,255,255,.62)}
-@media(prefers-reduced-motion:reduce){#fpv{transition:none}}
+@media(prefers-reduced-motion:reduce){#fpv,#fpv.show{transition:none}}
 </style>
 </head>
 <body>
@@ -880,7 +880,7 @@ function capySVG(A,st,x){
   const body='M52 170C44 140 60 112 82 104H118C140 112 156 140 148 170C146 184 130 190 100 190S54 184 52 170Z',head='M52 98C48 70 66 52 100 52S152 70 148 98C146 116 128 124 100 124S54 116 52 98Z';
   const bT=`translate(100 190) scale(${bw} ${bh}) translate(-100 -190)`,hT=`translate(0 ${hd}) translate(100 110) scale(${hs}) translate(-100 -110)`;
   const shapes=(f,s)=>`<g ${f} ${s}><g transform="${bT}"><path d="${body}"/><ellipse cx="74" cy="184" rx="17" ry="10"/><ellipse cx="126" cy="184" rx="17" ry="10"/></g><g transform="${hT}"><circle cx="65" cy="60" r="12"/><circle cx="135" cy="60" r="12"/><path d="${head}"/></g></g>`;
-  const yz=st===3&&x===0;
+  const tea=st===3&&x===1&&!HF,yz=st===3&&x===0;
   let g=`<ellipse cx="100" cy="195" rx="${62*sc}" ry="7" fill="rgba(0,0,0,.16)"/><g transform="translate(100 190) scale(${sc}) translate(-100 -190)">`
    +shapes(`fill="${ol}"`,`stroke="${ol}" stroke-width="7" stroke-linejoin="round"`)+shapes(`fill="${A.c}"`,'')
    +`<g transform="${bT}"><ellipse cx="100" cy="162" rx="27" ry="22" fill="${A.b}" opacity=".6"/><path d="M62 186a12 8 0 0124 0zM114 186a12 8 0 0124 0z" fill="${A.i}" opacity=".7"/></g>`
@@ -893,7 +893,9 @@ function capySVG(A,st,x){
   if(yz)g+=`<path d="M84 54l4-16 9 8 3-14 3 14 9-8 4 16z" fill="#ffd36b" stroke="#f2a93b" stroke-width="2.4" stroke-linejoin="round"/>`;
   g+=`</g>`;
   const paws=(a,b)=>`<ellipse cx="${a}" cy="150" rx="8" ry="9" fill="${A.i}" stroke="${ol}" stroke-width="3"/><ellipse cx="${b}" cy="150" rx="8" ry="9" fill="${A.i}" stroke="${ol}" stroke-width="3"/>`;
-  if(st>=1&&!HF)g+=paws(62,138);
+  if(tea)g+=`<g transform="translate(100 150)"><path d="M-14 -16h28l-4 34q-1 5-6 5h-8q-5 0-6-5z" fill="#eab08a" stroke="${ol}" stroke-width="3" stroke-linejoin="round"/><rect x="-17" y="-23" width="34" height="8" rx="4" fill="#fff" stroke="${ol}" stroke-width="3"/>${[[-6,17],[1,19.5],[8,17],[-2,12.5],[5,12.5]].map(c=>`<circle cx="${c[0]}" cy="${c[1]}" r="3.3" fill="#6b3a2a"/>`).join('')}<rect x="-2" y="-62" width="6" height="42" rx="3" fill="#9b6bc2" stroke="${ol}" stroke-width="2" transform="rotate(-4)"/></g>`+paws(82,118);
+  else if(yz&&!HF)g+=`<g transform="translate(100 152)"><circle r="15" fill="#ffc83d" stroke="${ol}" stroke-width="3"/><path d="M-3 -14q6-8 12-4q-3 8-12 4z" fill="#5fcf80" stroke="${ol}" stroke-width="2"/><path d="M-7 -4a8 8 0 018-5" stroke="#fff" stroke-width="2.4" fill="none" stroke-linecap="round" opacity=".8"/></g>`+paws(83,117);
+  else if(st>=1&&!HF)g+=paws(62,138);
   return `<svg viewBox="0 -25 200 225">${g}</g></svg>`}
 function animalSVG(sp,st,vi,x){
   const A0=AN[sp],A={...A0,...A0.v[(vi||0)%A0.v.length]},ec=A.ec?'#2b1d14':'#3b2a4a';
@@ -1654,8 +1656,7 @@ const ACCN=[
  {id:'bandana',n:'Kovbojský šátek',slot:'neck',s:'base',lvl:1,svg:o=>`<path d="M-29 -4Q0 12 29 -4L2 31Q0 33 -2 31z" fill="#d8403f"/><path d="M-29 -4Q0 12 29 -4" stroke="#b02d2d" stroke-width="2" fill="none"/>`+[[-14,2],[-6,10],[6,6],[2,20],[-3,17],[14,1]].map(p=>`<circle cx="${p[0]}" cy="${p[1]+4}" r="1.7" fill="#fff"/>`).join('')},
  {id:'heartscarf',n:'Šál ze srdíček',slot:'neck',s:'val',lvl:1,svg:o=>{let g='<path d="M-30 -4Q0 16 30 -4" stroke="#ffb3c9" stroke-width="1.6" fill="none"/>';const C=['#ff4d6d','#ff8fb8'];[-27,-18,-9,0,9,18,27].forEach((x,i)=>{const t=(x+30)/60,y=-4*(1-t)*(1-t)+32*t*(1-t)-4*t*t;g+=`<path transform="translate(${x} ${(y+3).toFixed(1)}) scale(.75)" d="M0 7C-11-3-9-12 0-8 9-12 11-3 0 7z" fill="${C[i%2]}"/>`});return g}},
 // ---------- V RUCE ----------
- {id:'bubbletea',n:'Bubble tea',slot:'hand',s:'base',lvl:1,front:1,svg:o=>`<path d="M-12.5 -30L-8.2 0H8.2L12.5 -30Z" fill="rgba(255,250,244,.62)" stroke="#e4d4c0" stroke-width="1.2" stroke-linejoin="round"/><path d="M-11.6 -24L-8.1 -1.2H8.1L11.6 -24Z" fill="#e3b184"/><path d="M-11.6 -24H11.6" stroke="#f6dcc0" stroke-width="1.6"/><path d="M-8.2 -7.5L-8.1 -1.2Q0 1 8.1 -1.2L8.2 -7.5Q0 -4.5 -8.2 -7.5Z" fill="#6b3a2a"/><circle cx="-4.6" cy="-4" r="2.5" fill="#6b3a2a"/><circle cx="0.6" cy="-3" r="2.5" fill="#5a3023"/><circle cx="5.2" cy="-4.6" r="2.5" fill="#6b3a2a"/><circle cx="-1.8" cy="-9.4" r="2.3" fill="#6b3a2a"/><circle cx="3.4" cy="-10" r="2.3" fill="#5a3023"/><path d="M-8.6 -26L-7 -12" stroke="#fff" stroke-width="1.6" stroke-linecap="round" opacity=".6"/><rect x="-13.8" y="-34.2" width="27.6" height="4.6" rx="2.3" fill="#fffdf8" stroke="#e4d4c0" stroke-width="1"/><path d="M1.6 -34.2L5.4 -57" stroke="#7a5ad6" stroke-width="3.6" stroke-linecap="round"/><path d="M1.6 -34.2L5.4 -57" stroke="#b79cff" stroke-width="1.1" stroke-linecap="round" opacity=".7"/>`},
-  {id:'pomlazka',n:'Pomlázka',slot:'hand',s:'easter',lvl:1,tilt:6,svg:o=>`<path d="M0 0C-4 -9 4 -18 0 -27S-4 -41 0 -49" stroke="#9c8a2a" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M0 0C4 -9 -4 -18 0 -27S4 -41 0 -49" stroke="#c8b43a" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M0 -20l-5-3v6zM0 -20l5-3v6z" fill="#ff5d8a"/><path d="M0 -49Q-7 -47 -10 -37" stroke="#e8403f" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M0 -49Q1 -45 3 -35" stroke="#ffd36b" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M0 -49Q7 -47 11 -40" stroke="#4f8dff" stroke-width="2.2" fill="none" stroke-linecap="round"/>`},
+ {id:'pomlazka',n:'Pomlázka',slot:'hand',s:'easter',lvl:1,tilt:6,svg:o=>`<path d="M0 0C-4 -9 4 -18 0 -27S-4 -41 0 -49" stroke="#9c8a2a" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M0 0C4 -9 -4 -18 0 -27S4 -41 0 -49" stroke="#c8b43a" stroke-width="2.4" fill="none" stroke-linecap="round"/><path d="M0 -20l-5-3v6zM0 -20l5-3v6z" fill="#ff5d8a"/><path d="M0 -49Q-7 -47 -10 -37" stroke="#e8403f" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M0 -49Q1 -45 3 -35" stroke="#ffd36b" stroke-width="2.2" fill="none" stroke-linecap="round"/><path d="M0 -49Q7 -47 11 -40" stroke="#4f8dff" stroke-width="2.2" fill="none" stroke-linecap="round"/>`},
  {id:'candycane',n:'Cukrová hůl',slot:'hand',s:'xmas',lvl:1,tilt:6,svg:o=>`<path d="M0 0V-34Q0 -46 9 -46Q18 -46 18 -37" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M0 0V-34Q0 -46 9 -46Q18 -46 18 -37" stroke="#e8403f" stroke-width="6" fill="none" stroke-dasharray="4.5 5" stroke-linecap="butt"/><path d="M0 0V-34Q0 -46 9 -46Q18 -46 18 -37" stroke="rgba(0,0,0,.08)" stroke-width="1" fill="none"/>`},
  {id:'nicksack',n:'Mikulášský pytel',slot:'hand',s:'nick',lvl:1,svg:o=>`<circle cx="-4" cy="-38" r="3.6" fill="#ff7aa8"/><circle cx="5" cy="-39" r="3.6" fill="#6bc8ff"/><path d="M-13 0Q-18 -14 -9 -26Q-4 -32 0 -30Q4 -32 9 -26Q18 -14 13 0z" fill="#b9772e"/><path d="M-9 -27Q0 -22 9 -27" stroke="#7a4a20" stroke-width="2" fill="none"/><path d="M-6 -29h12" stroke="#e8403f" stroke-width="3.2" stroke-linecap="round"/><path d="${xStarPath(0,-12,5,2.2)}" fill="#ffd36b"/>`},
  {id:'apple',n:'Jablko',slot:'hand',s:'autumn',lvl:0,svg:o=>`<circle cy="-11" r="11" fill="#e8403f"/><path d="M0 -21Q-2 -25 1 -28" stroke="#6b4329" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M1 -24Q8 -29 11 -24Q5 -20 1 -24z" fill="#5fcf80"/><ellipse cx="-4.5" cy="-14" rx="2.2" ry="3.6" fill="#fff" opacity=".4"/>`},
@@ -1719,7 +1720,6 @@ const HL={
 };
 // hlášky ke konkrétním věcem (když žádná není, použije se hláška podle období)
 const HLI={
- bubbletea:['Bubble tea! Perličky na dně jsou nejlepší 🧋','Srkám a srkám, mňam 🧋','Slámka je moc dlouhá, ale funguje 😄'],
  latte:['Dýňové latte? Voní jako podzim 🎃','Opatrně, je horké! ☕'],umbrella:['Deštník? Já se deště nebojím! ☔','Kapky nám nic neudělají 🌧️'],
  sparkler:['Prskavka! Třpytí se jako hvězdy ✨','Prskavky jen pod dohledem 🎇'],candle:['Plamínek mi dělá společnost 🕯️','Foukej opatrně, ať nezhasne! 🕯️'],
  hballoon:['Srdíčko pro tebe 💕','Držím ho, ať neuletí 🎈'],balloon:['Balonek! Držím ho pevně 🎈','Jestli uletí, poletím s ním 😄'],
@@ -1804,14 +1804,13 @@ function wardList(){return ACCL.filter(a=>{
   return true})}
 const wTile=a=>{const un=S.unl[a.id],on=isWorn(a);return `<button class="wi ${on?'on':''} ${un?'':'lock'}" data-q="wi" data-id="${a.id}"><i>${aIcon(a)}</i><b>${a.n}</b><small>${on?'Nasazeno ✓':un?SLOT[a.slot]:'🔒 '+cost(a)+' 💧'}</small></button>`};
 function bdHTML(){const L=bdList();
-  return `<button type="button" class="chip wbd" data-q="bdt">🎂 Narozeniny${L.length?' ('+L.length+')':''} ${bdOpen?'▴':'▾'}</button>`+(bdOpen?`<div class="bdp">`+(L.length?L.map((b,i)=>`<div class="bdr"><span>${esc(b.name||'Narozeniny')}</span><b>${b.d}. ${b.m}.</b><button type="button" class="bdx" data-q="bdx" data-i="${i}" aria-label="Smazat">✕</button></div>`).join(''):'<div class="whint" style="margin:2px 0 8px">Nic není nastaveno. V ten den dostane kamarád korunku a popřeje ti. 🎉</div>')
+  return `<button type="button" class="chip wbd" data-q="bdt">🎂 Narozeniny${L.length?' ('+L.length+')':''} ${bdOpen?'▴':'▾'}</button>`+(bdOpen?`<div class="bdp"><div class="whint" style="margin:0 0 8px">Zadej datum narozenin. V ten den dostane kamarád korunku a popřeje ti. 🎉</div>`+(L.length?L.map((b,i)=>`<div class="bdr"><span>${esc(b.name||'Narozeniny')}</span><b>${b.d}. ${b.m}.</b><button type="button" class="bdx" data-q="bdx" data-i="${i}" aria-label="Smazat">✕</button></div>`).join(''):'')
    +`<div class="bdf"><input id="bdn" type="text" maxlength="18" placeholder="Jméno" autocomplete="off"><input id="bdd" type="number" inputmode="numeric" min="1" max="31" placeholder="Den"><input id="bdm" type="number" inputmode="numeric" min="1" max="12" placeholder="Měs."><button type="button" class="pill" data-q="bda" aria-label="Přidat">＋</button></div></div>`:'')}
 function wardInner(){
-  const anyLock=ACCL.some(a=>!S.unl[a.id]);if(!anyLock&&ws==='lock')ws='';
   const cs=curSeas(),L=wardList(),chip=(on,q,k,l,x)=>`<button class="chip ${on?'on':''}" data-q="${q}" data-f="${k}">${l}${x||''}</button>`;
   return `<div class="wsc">`+['all',...SEASO].map(k=>chip(wf===k,'wf',k,k==='all'?'Vše':SEAS[k],cs.includes(k)?' ★':'')).join('')+`</div>`
    +`<div class="wsc">`+Object.keys(PARTN).map(k=>chip(wp===k,'wp',k,PARTN[k])).join('')+`</div>`
-   +`<div class="wsc">`+Object.keys(STN).filter(k=>k!=='lock'||anyLock).map(k=>chip(ws===k,'ws',k,STN[k])).join('')+`</div>`
+   +`<div class="wsc">`+Object.keys(STN).map(k=>chip(ws===k,'ws',k,STN[k])).join('')+`</div>`
    +`<div class="wcnt">${L.length} z ${ACCL.length}</div>`
    +`<div class="wgrid">`+(L.length?L.map(wTile).join(''):`<div class="wempty">Tady zatím nic není</div>`)+`</div>`
    +bdHTML()
@@ -1824,8 +1823,13 @@ function refreshW(){const w=$('#wp');if(!w)return;
   if(wcenter&&wopen){wcenter=false;rows.forEach(r=>{const c=r.querySelector('.chip.on');if(c)r.scrollLeft=Math.max(0,c.offsetLeft-r.clientWidth/2+c.offsetWidth/2)})}}
 
 // ---------- reakce na nasazení + plovoucí náhled ----------
-var fpvT,ambT;
+// náhled se ukáže, jen když scéna není vidět, a hned zmizí, jakmile se k ní vyroluje zpátky
+const FPV_VIS=.6;
+var fpvT,ambT,fpvRaf=0;
+function sceneVis(){const sg=$('#stage'),vw=$('#view');if(!sg||!vw)return 1;const r=sg.getBoundingClientRect(),v=vw.getBoundingClientRect();return Math.max(0,Math.min(r.bottom,v.bottom)-Math.max(r.top,v.top))/Math.max(1,r.height)}
 function fpvHide(){clearTimeout(fpvT);const el=$('#fpv');if(el)el.classList.remove('show')}
+function fpvScroll(){const el=$('#fpv');if(!el||!el.classList.contains('show')||fpvRaf)return;fpvRaf=requestAnimationFrame(()=>{fpvRaf=0;if(sceneVis()>=FPV_VIS)fpvHide()})}
+$('#view').addEventListener('scroll',fpvScroll,{passive:true});
 function fpvShow(A,line){
   const p=S.pet;if(!p)return;let el=$('#fpv');if(!el){el=document.createElement('div');el.id='fpv';el.setAttribute('aria-hidden','true');document.body.appendChild(el)}
   const st=stOf(p.xp),sc=scene(),hb=document.querySelector('header').getBoundingClientRect().bottom,bt=document.body.getBoundingClientRect().top;
@@ -1839,9 +1843,7 @@ function wearReact(A,was){
   if(was)return;
   const line=isSleeping()?'ššš spinkám 💤':lineFor(A.id);
   if(line)say(line);
-  const sg=$('#stage'),vw=$('#view');if(!sg||!vw)return;
-  const r=sg.getBoundingClientRect(),v=vw.getBoundingClientRect(),vis=Math.min(r.bottom,v.bottom)-Math.max(r.top,v.top);
-  if(vis<r.height*.7)fpvShow(A,line)}
+  if(sceneVis()<FPV_VIS)fpvShow(A,line)}
 function ambNext(){clearTimeout(ambT);ambT=setTimeout(()=>{if(S.tab==='garden'&&S.pet&&!document.hidden&&!isNight()&&!isSleeping()&&!trickBusy){const l=wornLine(true);if(l)say(l)}ambNext()},150000+Math.random()*120000)}
 {const _sw=startWalk;startWalk=function(){clearTimeout(ambT);ambNext();bdCheck();if(wopen){wcenter=true;refreshW()}_sw()}}
 
